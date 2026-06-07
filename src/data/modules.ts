@@ -1,0 +1,1120 @@
+import type { Module } from '../types';
+import { checkpointData } from './checkpointData';
+
+export const modules: Module[] = [
+  {
+  id: 'git',
+  title: 'Git & GitHub',
+  description: 'Learn version control, branching, merging, and collaboration with Git and GitHub.',
+  icon: 'git',
+  whyModuleMatters: 'Version control is the foundation of modern software development. Every project uses Git to track changes, collaborate, and ship reliable code.',
+  learningObjectives: [
+    'Understand version control concepts and Git workflow',
+    'Clone, commit, push, and pull changes',
+    'Create and manage branches effectively',
+    'Resolve merge conflicts confidently',
+    'Collaborate using GitHub pull requests',
+  ],
+  skillsGained: [
+    'Initialize and configure Git repositories',
+    'Execute the full Git workflow',
+    'Create and switch between branches',
+    'Resolve merge conflicts',
+    'Use GitHub for code collaboration',
+  ],
+  estimatedMinutes: 75,
+  lessons: [
+    {
+      id: 'git-what',
+      title: 'What is Git?',
+      why: 'Without version control, you risk losing code or overwriting teammates\' work. Git tracks every change as a snapshot so you can experiment freely and always recover.',
+      keyConcepts: [
+        'Version control tracks every file change as a snapshot',
+        'Commits are permanent checkpoints you can return to',
+        'Branches let you work in isolation without affecting others',
+        'Git runs locally — no internet required for basic operations',
+      ],
+      commandSpotlight: [
+        {
+          command: 'git --version',
+          purpose: 'Verify that Git is installed and check which version you are running.',
+          syntax: 'git --version',
+          example: 'git version 2.39.3 (Apple Git-145)',
+        },
+        {
+          command: 'git init',
+          purpose: 'Create a new Git repository in the current directory, enabling version control.',
+          syntax: 'git init',
+          example: 'Initialized empty Git repository in /Users/you/project/.git/',
+        },
+      ],
+      tryItYourself: 'Open your terminal and run:\n\ngit --version\n\nThen create a test directory and initialize a Git repository:\n\nmkdir my-first-repo\ncd my-first-repo\ngit init',
+    },
+    {
+      id: 'github-what',
+      title: 'What is GitHub?',
+      why: 'Git locally is only half the solution. GitHub adds remote hosting, pull requests, code reviews, and CI/CD — the collaboration layer teams use to ship code together.',
+      keyConcepts: [
+        'GitHub hosts Git repositories in the cloud for team access',
+        'Pull requests enable code review before merging changes',
+        'Issue tracking organizes bugs, feature requests, and tasks',
+        'CI/CD automates testing and deployment on every push',
+      ],
+      commandSpotlight: [
+        {
+          command: 'git remote -v',
+          purpose: 'List the remote URLs connected to your local repository, showing where code is pushed and pulled.',
+          syntax: 'git remote -v',
+          example: 'origin  https://github.com/username/project.git (fetch)\norigin  https://github.com/username/project.git (push)',
+        },
+        {
+          command: 'git remote add origin <url>',
+          purpose: 'Connect your local repository to a remote GitHub repository.',
+          syntax: 'git remote add origin <repository-url>',
+          example: 'git remote add origin https://github.com/username/project.git',
+        },
+      ],
+      tryItYourself: 'After creating a repository on GitHub, connect it locally:\n\ngit remote add origin https://github.com/your-username/test-repo.git\ngit remote -v',
+    },
+    {
+      id: 'git-clone',
+      title: 'Clone a Repository',
+      why: 'You cannot contribute to a project until you have a local copy. Cloning gives you the full repository — all files, branches, and history — in one command.',
+      keyConcepts: [
+        'Clone downloads the entire repo including all branches and history',
+        'The origin remote is automatically set to the source on GitHub',
+        'After cloning you can switch branches, make commits, and push',
+        'Cloning is a one-time setup — subsequent work uses pull and push',
+      ],
+      commandSpotlight: [
+        {
+          command: 'git clone <url>',
+          purpose: 'Download a complete copy of a remote repository to your local machine.',
+          syntax: 'git clone <repository-url>',
+          example: 'git clone https://github.com/facebook/react.git\n\nCloning into \'react\'...\nremote: Enumerating objects: 100, done.\nReceiving objects: 100% (100/100), done.',
+        },
+      ],
+      tryItYourself: 'Clone a public repository to practice:\n\ngit clone https://github.com/your-username/test-repo.git\ncd test-repo\ngit log --oneline',
+    },
+    {
+      id: 'git-branch',
+      title: 'Create and Switch Branches',
+      why: 'Working directly on main is risky — one bad commit breaks everything for everyone. Branches isolate your work so you can experiment safely.',
+      keyConcepts: [
+        'Branches let you develop features in complete isolation',
+        'The main branch should always remain stable and deployable',
+        'You can switch between branches freely without losing work',
+        'Each branch maintains its own independent commit history',
+      ],
+      commandSpotlight: [
+        {
+          command: 'git branch',
+          purpose: 'List all branches in your repository and highlight the currently active branch.',
+          syntax: 'git branch',
+          example: '* main\n  feature/login-form\n  bugfix/header-styling',
+        },
+        {
+          command: 'git checkout -b <branch-name>',
+          purpose: 'Create a new branch and immediately switch to it in one step.',
+          syntax: 'git checkout -b <branch-name>',
+          example: 'git checkout -b feature/dashboard\n\nSwitched to a new branch \'feature/dashboard\'',
+        },
+        {
+          command: 'git checkout <branch-name>',
+          purpose: 'Switch to an existing branch so you can work on it.',
+          syntax: 'git checkout <branch-name>',
+          example: 'git checkout main\n\nSwitched to branch \'main\'',
+        },
+      ],
+      tryItYourself: 'Practice branch creation and switching:\n\ngit checkout -b feature/test-branch\ngit branch\ngit checkout main\ngit branch',
+    },
+    {
+      id: 'git-commit',
+      title: 'Commit Changes',
+      why: 'Without commits your changes exist only in memory. A commit is a permanent save point you can revisit, share, or revert to later.',
+      keyConcepts: [
+        'git add stages specific files for the next commit',
+        'git commit saves the staged snapshot with a descriptive message',
+        'The staging area lets you choose exactly what to include in each commit',
+        'Commit messages should explain what changed and why',
+      ],
+      commandSpotlight: [
+        {
+          command: 'git add <file>',
+          purpose: 'Stage a specific file so its changes are included in the next commit.',
+          syntax: 'git add <filename>',
+          example: 'git add index.html',
+        },
+        {
+          command: 'git add .',
+          purpose: 'Stage all changed, new, or deleted files in the current directory.',
+          syntax: 'git add .',
+          example: 'git add .',
+        },
+        {
+          command: 'git commit -m "<message>"',
+          purpose: 'Save all staged changes as a new commit with a description.',
+          syntax: 'git commit -m "<commit-message>"',
+          example: 'git commit -m "Fix login form validation bug"',
+        },
+      ],
+      tryItYourself: 'Create a file, stage it, and commit:\n\necho "Hello Git" > hello.txt\ngit add hello.txt\ngit commit -m "Add hello.txt with greeting"',
+    },
+    {
+      id: 'git-push',
+      title: 'Push Changes to GitHub',
+      why: 'Local commits are trapped on your machine — if your hard drive dies, they are gone. Pushing uploads your commits to GitHub for backup and collaboration.',
+      keyConcepts: [
+        'Push uploads local commits to the remote repository on GitHub',
+        'The -u flag sets upstream tracking so future pushes are simpler',
+        'After -u is set, you can run git push without extra arguments',
+        'Pushing makes your work visible to teammates for review',
+      ],
+      commandSpotlight: [
+        {
+          command: 'git push -u origin <branch>',
+          purpose: 'Push a local branch to GitHub for the first time and set upstream tracking.',
+          syntax: 'git push -u origin <branch-name>',
+          example: 'git push -u origin feature/dashboard\n\n * [new branch]      feature/dashboard -> feature/dashboard\nBranch \'feature/dashboard\' set up to track remote branch.',
+        },
+        {
+          command: 'git push',
+          purpose: 'Push commits to the previously tracked remote branch.',
+          syntax: 'git push',
+          example: 'git push\n\nEverything up-to-date',
+        },
+      ],
+      tryItYourself: 'After committing locally, share your work:\n\ngit push -u origin feature/dashboard\n\nThen modify the file, commit again, and push without flags:\n\ngit push',
+    },
+    {
+      id: 'git-pull',
+      title: 'Pull Changes from GitHub',
+      why: 'If you never pull, your local code becomes outdated and merge conflicts pile up. Pulling fetches the latest changes and keeps your branch in sync with your team.',
+      keyConcepts: [
+        'Pull fetches the latest commits from GitHub and merges them into your local branch',
+        'Always pull before starting new work to avoid conflicts',
+        'Pulling frequently reduces the size and complexity of merge conflicts',
+        'git pull is equivalent to git fetch followed by git merge',
+      ],
+      commandSpotlight: [
+        {
+          command: 'git pull origin <branch>',
+          purpose: 'Fetch and merge the latest changes from a remote branch into your current local branch.',
+          syntax: 'git pull origin <branch-name>',
+          example: 'git pull origin main\n\nAlready up to date.',
+        },
+        {
+          command: 'git pull',
+          purpose: 'Pull changes from the upstream branch if tracking is already configured.',
+          syntax: 'git pull',
+          example: 'git pull\n\nUpdating a1b2c3d..e4f5g6h\nFast-forward\n README.md | 2 ++\n 1 file changed, 2 insertions(+)',
+        },
+      ],
+      tryItYourself: 'Stay in sync with remote changes:\n\ngit checkout main\ngit pull origin main\n\nThis downloads any new commits your teammates have pushed.',
+    },
+    {
+      id: 'git-merge',
+      title: 'Merge Pull Requests',
+      why: 'Writing code is only half the job. Pull requests let you propose changes, get feedback from teammates, and merge safely with team review.',
+      keyConcepts: [
+        'A pull request proposes changes from one branch to another for review',
+        'Code review catches bugs and design issues before they reach production',
+        'Merge strategies include merge commits, squash merges, and rebase merges',
+        'Always ensure the PR is reviewed and passes CI before merging',
+      ],
+      commandSpotlight: [
+        {
+          command: 'git merge <branch>',
+          purpose: 'Integrate changes from the specified branch into your current branch.',
+          syntax: 'git merge <source-branch>',
+          example: 'git checkout main\ngit merge feature/dashboard\n\nUpdating a1b2c3d..e4f5g6h\nFast-forward\n src/dashboard.tsx | 25 ++++++++++++++++++++++++\n 1 file changed, 25 insertions(+)',
+        },
+        {
+          command: 'git branch -d <branch>',
+          purpose: 'Delete a local branch after its changes have been merged.',
+          syntax: 'git branch -d <branch-name>',
+          example: 'git branch -d feature/dashboard\n\nDeleted branch feature/dashboard (was e4f5g6h).',
+        },
+      ],
+      tryItYourself: 'Merge a feature branch into main:\n\ngit checkout main\ngit merge feature/dashboard\ngit branch -d feature/dashboard',
+    },
+    {
+      id: 'git-conflicts',
+      title: 'Resolve Merge Conflicts',
+      why: 'Merge conflicts are inevitable when multiple people edit the same code. Learning to resolve them keeps the team moving instead of blocked.',
+      keyConcepts: [
+        'Conflicts occur when Git cannot automatically merge competing changes',
+        'Conflict markers show both versions side by side for manual resolution',
+        'After editing the file, stage it and commit to complete the merge',
+        'Good communication and frequent pulls prevent most conflicts',
+      ],
+      commandSpotlight: [
+        {
+          command: 'git merge <branch>',
+          purpose: 'Attempt to merge a branch. If conflicts exist, Git pauses and shows which files need resolution.',
+          syntax: 'git merge <source-branch>',
+          example: 'git merge feature/settings\n\nAuto-merging config.json\nCONFLICT (content): Merge conflict in config.json\nAutomatic merge failed; fix conflicts and then commit the result.',
+        },
+        {
+          command: 'git add <file>',
+          purpose: 'Mark a conflicted file as resolved after manually editing it.',
+          syntax: 'git add <filename>',
+          example: 'git add config.json',
+        },
+        {
+          command: 'git commit -m "<message>"',
+          purpose: 'Complete the merge by committing the resolved changes.',
+          syntax: 'git commit -m "<merge-message>"',
+          example: 'git commit -m "Merge feature/settings into main"',
+        },
+      ],
+      tryItYourself: 'Simulate a merge conflict by creating two branches that modify the same line:\n\nCreate a file with content "version 1", commit it on main.\nCreate branch a, change to "version a", commit.\nGo back to main, change to "version b", commit.\nTry: git merge <branch-a>\nSee the conflict markers, edit the file, then:\ngit add <file>\ngit commit -m "Resolve merge conflict"',
+    },
+  ],
+  quizzes: [
+    { id: 'git-q1', question: 'What command creates a local copy of a remote repository?', options: ['git init', 'git clone', 'git copy', 'git fork'], correctAnswer: 1 },
+    { id: 'git-q2', question: 'How do you create a new branch and switch to it in one command?', options: ['git branch new-branch', 'git checkout new-branch', 'git checkout -b new-branch', 'git switch new-branch'], correctAnswer: 2 },
+    { id: 'git-q3', question: 'What does `git add .` do?', options: ['Commits all files', 'Stages all changed files', 'Deletes all files', 'Pushes all files'], correctAnswer: 1 },
+    { id: 'git-q4', question: 'Which command uploads local commits to GitHub?', options: ['git pull', 'git push', 'git commit', 'git upload'], correctAnswer: 1 },
+    { id: 'git-q5', question: 'What is a Pull Request?', options: ['A request to delete a branch', 'A proposal to merge changes into another branch', 'A command to download code', 'A type of Git conflict'], correctAnswer: 1 },
+    { id: 'git-q6', question: 'What command shows the current state of the working directory?', options: ['git status', 'git log', 'git diff', 'git show'], correctAnswer: 0 },
+    { id: 'git-q7', question: 'What does `git pull` do?', options: ['Uploads changes', 'Downloads and integrates changes', 'Creates a branch', 'Deletes a branch'], correctAnswer: 1 },
+    { id: 'git-q8', question: 'What indicates a merge conflict in a file?', options: ['### CONFLICT ###', '<<<<<<< HEAD', '!! MERGE !!', '---CONFLICT---'], correctAnswer: 1 },
+  ],
+  challenges: [
+    { id: 'git-ch-1', title: 'Fix Typo in Repository', description: 'A teammate committed code with a typo. Fix it and push.', difficulty: 'beginner', task: 'Clone the repo, find the typo in the welcome message, fix it, commit as "Fix typo in welcome message", and push.', hints: ['Use git status to see changed files', 'Stage with git add .', 'Commit with -m flag'], solution: 'git add . && git commit -m "Fix typo in welcome message" && git push' },
+    { id: 'git-ch-2', title: 'Push Code to Feature Branch', description: 'Create a feature branch and push your changes.', difficulty: 'beginner', task: 'Create a branch called "feature/navbar", make a change to the navbar component, commit, and push.', hints: ['Use git checkout -b', 'Stage changes with git add', 'Push with -u flag for first push'], solution: 'git checkout -b feature/navbar && git add . && git commit -m "Update navbar" && git push -u origin feature/navbar' },
+    { id: 'git-ch-3', title: 'Resolve Merge Conflict', description: 'Two branches modified the same file. Resolve the conflict.', difficulty: 'intermediate', task: 'Merge branch "feature/login" into "main". Resolve the conflict in auth.ts by keeping both changes.', hints: ['Look for <<<<<<< markers', 'Edit the file to resolve', 'Remove conflict markers', 'Stage and commit'], solution: 'git checkout main && git merge feature/login, edit auth.ts to resolve, git add auth.ts && git commit -m "Resolve merge conflict"' },
+    { id: 'git-ch-4', title: 'Git History Investigation', description: 'Find when a bug was introduced using git log.', difficulty: 'intermediate', task: 'Use git log and git show to find which commit introduced a bug in the calculateTotal function.', hints: ['Use git log --oneline', 'Use git diff on commits', 'Search for the specific function'], solution: 'git log --oneline --all && git diff <commit1> <commit2>' },
+  ],
+  practices: [
+    { id: 'git-prac-1', title: 'First Repository Setup', description: 'Initialize a Git repository and make your first commit.', task: 'Create a new directory, run git init, create a README.md, stage it, and commit.', hints: ['mkdir then cd into it', 'git init to create repo', 'Create file with echo or touch', 'git add and git commit'] },
+    { id: 'git-prac-2', title: 'Branching Workflow', description: 'Practice creating branches, switching between them, and viewing branch history.', task: 'Create three branches: main, feature/a, feature/b. Make different commits on each.', hints: ['Use git branch to list', 'Use git checkout to switch', 'Each branch can have different files'] },
+  ],
+  checkpointQuizzes: checkpointData['git'],
+  },
+  {
+  id: 'deployment',
+  title: 'Deployment',
+  description: 'Deploy frontend and backend applications to production using Vercel and Railway.',
+  icon: 'deployment',
+  whyModuleMatters: 'Writing code is only half the battle — deploying it so users can access it is what makes your work real. This module teaches you to ship frontend and backend applications to production.',
+  learningObjectives: [
+    'Deploy frontend apps to Vercel with zero configuration',
+    'Configure environment variables securely',
+    'Understand build processes and deployment triggers',
+    'Deploy backend services to Railway',
+    'Manage environment-specific configuration',
+  ],
+  skillsGained: [
+    'Deploy React apps to Vercel',
+    'Configure environment variables',
+    'Manage builds and deployments',
+    'Deploy Node.js backends to Railway',
+    'Debug deployment failures',
+  ],
+  estimatedMinutes: 35,
+  lessons: [
+    {
+      id: 'vercel-intro',
+      title: 'Vercel - Frontend Deployment',
+      why: 'Vercel is the most popular platform for deploying frontend applications. Understanding how to connect a repository and trigger deployments is essential for shipping modern web apps to production.',
+      keyConcepts: [
+        'Vercel deploys frontend frameworks like React, Vue, and Next.js',
+        'Deployments are triggered automatically by pushing to a Git branch',
+        'Each deployment gets a unique preview URL',
+        'Production branches deploy to your custom domain',
+        'The dashboard shows build logs, domains, and analytics',
+      ],
+      scenario: 'Your team just finished building a React dashboard. You need to deploy it so stakeholders can review the work. You push the feature branch to GitHub and watch as Vercel automatically picks it up and generates a preview URL.',
+      commands: undefined,
+    },
+    {
+      id: 'vercel-env',
+      title: 'Vercel - Environment Variables',
+      why: 'Frontend apps often need API URLs and service keys that vary between environments. Setting these as environment variables in Vercel keeps secrets out of your codebase and lets each environment use the right values.',
+      keyConcepts: [
+        'Environment variables are set per project in Project Settings',
+        'Variables can be scoped to Production, Preview, or Development',
+        'Vite variables must be prefixed with VITE_ to be exposed to the client',
+        'Sensitive values are encrypted at rest in Vercel',
+      ],
+      scenario: 'Your React app fetches data from an API that has different URLs for development, staging, and production. Instead of hardcoding the URL, you set VITE_API_URL as an environment variable in Vercel with different values per environment.',
+      commands: [
+        { cmd: 'VITE_API_URL=https://api.example.com', desc: 'Set frontend API URL in Vercel dashboard' },
+      ],
+    },
+    {
+      id: 'vercel-build',
+      title: 'Vercel - Build Process',
+      why: 'Knowing how Vercel builds your project helps you troubleshoot failures, optimize build times, and ensure your production output matches what you expect from local development.',
+      keyConcepts: [
+        'Vercel auto-detects your framework and applies the correct build command',
+        'The build step runs npm install then the build script',
+        'The output directory (e.g. dist/) is deployed as a static site',
+        'Build logs are available in the dashboard for debugging',
+        'Build failures prevent the deployment from going live',
+      ],
+      scenario: 'Your colleague pushed code that broke the build. The Vercel dashboard shows a red failed status. You open the build logs, spot a missing dependency error, fix it, and push a correction that deploys successfully.',
+      commands: undefined,
+    },
+    {
+      id: 'railway-intro',
+      title: 'Railway - Backend Deployment',
+      why: 'Backend services need a runtime environment with persistent processes, not just static file hosting. Railway handles infrastructure so you can focus on building APIs and services without managing servers.',
+      keyConcepts: [
+        'Railway runs backend services as long-running processes',
+        'Deployments are triggered by pushes to a connected Git repo',
+        'Nixpacks auto-detect the language and runtime',
+        'Each service gets a generated domain with HTTPS',
+        'The dashboard shows live logs, CPU, and memory usage',
+      ],
+      scenario: 'Your team built an Express API for the mobile app. You connect the GitHub repository to Railway, which auto-detects Node.js, installs dependencies, starts the server, and gives you a public URL to share with the mobile team.',
+      commands: undefined,
+    },
+    {
+      id: 'railway-env',
+      title: 'Railway - Environment Configuration',
+      why: 'Backend services need database URLs, API keys, and secret tokens to function. Railway provides a secure way to set these values per environment so credentials stay out of your codebase.',
+      keyConcepts: [
+        'Environment variables are set in the Railway dashboard per service',
+        'Variables can reference other Railway services by name',
+        'Secret values are encrypted at rest and never shown in plain text',
+        'Variables are available to the process at runtime',
+        'Each Railway environment (production, preview) can have separate values',
+      ],
+      scenario: 'Your Express app needs a PostgreSQL connection string to store user data. Instead of hardcoding it, you set DATABASE_URL as a secret environment variable in the Railway dashboard and reference it in your code via process.env.',
+      commands: [
+        { cmd: 'DATABASE_URL=postgresql://...', desc: 'Database connection string set in Railway dashboard' },
+      ],
+    },
+  ],
+  quizzes: [
+    { id: 'dep-q1', question: 'What does Vercel primarily deploy?', options: ['Backend servers', 'Frontend applications', 'Databases', 'Mobile apps'], correctAnswer: 1 },
+    { id: 'dep-q2', question: 'Where do you set environment variables in Vercel?', options: ['In your code', 'Project Settings > Environment Variables', 'In package.json', 'In the terminal'], correctAnswer: 1 },
+    { id: 'dep-q3', question: 'What is typically the output directory for a Vite project?', options: ['build/', 'dist/', 'public/', 'out/'], correctAnswer: 1 },
+    { id: 'dep-q4', question: 'Which platform is better suited for backend deployment?', options: ['Vercel', 'Railway', 'GitHub Pages', 'Netlify'], correctAnswer: 1 },
+    { id: 'dep-q5', question: 'What does Railway use to auto-detect your project language?', options: ['Dockerfile', 'Nixpacks', 'package.json', 'All of the above'], correctAnswer: 3 },
+  ],
+  challenges: [
+    { id: 'dep-ch-1', title: 'Fix Deployment Failure', description: 'A build is failing on Vercel. Find and fix the issue.', difficulty: 'intermediate', task: 'The build log shows "Module not found: Can\'t resolve \'missing-dependency\'". Fix the deployment.', hints: ['Check if the dependency is in package.json', 'Run npm install locally', 'Look for typos in imports'], solution: 'Add the missing dependency: npm install <package-name>' },
+    { id: 'dep-ch-2', title: 'Fix Missing Environment Variable', description: 'The app loads but shows no data because an env var is missing.', difficulty: 'beginner', task: 'The app needs VITE_API_URL to fetch data. Add it in Vercel dashboard.', hints: ['Go to Project Settings', 'Find Environment Variables', 'Add VITE_API_URL with value'], solution: 'In Vercel dashboard, add VITE_API_URL=https://jsonplaceholder.typicode.com' },
+    { id: 'dep-ch-3', title: 'Configure Railway Deployment', description: 'A Node.js backend fails to start on Railway.', difficulty: 'intermediate', task: 'Configure the start command and environment variables for a Node.js Express app on Railway.', hints: ['Set start command in Railway', 'Check if main file path is correct', 'Ensure PORT env variable is used'], solution: 'Set start command to "node index.js" and add any required env vars' },
+  ],
+  practices: [
+    { id: 'dep-prac-1', title: 'Vercel Deploy Practice', description: 'Practice deploying a React app to Vercel.', task: 'Push a Vite React app to GitHub, import it on Vercel, and deploy it.', hints: ['Push code to GitHub first', 'Go to vercel.com/import', 'Select the repository', 'Wait for deployment'] },
+    { id: 'dep-prac-2', title: 'Railway Deploy Practice', description: 'Deploy a simple Express server to Railway.', task: 'Create an Express app with a health endpoint, push to GitHub, and deploy on Railway.', hints: ['Create Express server with /health endpoint', 'Push to GitHub', 'Deploy on Railway', 'Test the endpoint'] },
+  ],
+  checkpointQuizzes: checkpointData['deployment'],
+  },
+  {
+  id: 'supabase',
+  title: 'Supabase',
+  description: 'Build backend features with Supabase authentication, databases, CRUD operations, and security policies.',
+  icon: 'supabase',
+  whyModuleMatters: 'Modern apps need authentication, databases, and real-time features. Supabase provides all of this out of the box, replacing the need to build backend infrastructure from scratch.',
+  learningObjectives: [
+    'Implement user authentication with Supabase',
+    'Design and create database tables',
+    'Perform CRUD operations through Supabase',
+    'Implement Row-Level Security policies',
+    'Structure data with foreign keys and relationships',
+  ],
+  skillsGained: [
+    'Set up Supabase authentication',
+    'Design database schemas',
+    'Write and execute CRUD queries',
+    'Configure Row-Level Security',
+    'Link tables with foreign keys',
+  ],
+  estimatedMinutes: 30,
+  lessons: [
+    {
+      id: 'supabase-auth',
+      title: 'Authentication',
+      why: 'Authentication is required for most applications to identify users and secure data. Supabase Auth handles sign-up, login, session management, and integrates directly with your database for user-linked data.',
+      keyConcepts: [
+        'Supabase Auth provides signUp, signIn, and signOut methods on the client',
+        'User sessions are managed automatically with refresh tokens',
+        'Auth state can be listened to with onAuthStateChange',
+        'Each user gets a unique ID in auth.users that you reference in your tables',
+      ],
+      scenario: 'Your team is building a task management app. Users need to create accounts and log in before they can see their tasks. You use supabase.auth.signUp() during registration and supabase.auth.signIn() on the login page.',
+      commands: [
+        { cmd: 'supabase.auth.signUp()', desc: 'Register a new user with email and password' },
+        { cmd: 'supabase.auth.signIn()', desc: 'Log in an existing user' },
+        { cmd: 'supabase.auth.signOut()', desc: 'Log out the current user' },
+      ],
+    },
+    {
+      id: 'supabase-tables',
+      title: 'Database Tables',
+      why: 'Tables are the fundamental building blocks of your database. Designing them correctly with proper types, constraints, and relationships prevents data integrity issues and makes querying efficient.',
+      keyConcepts: [
+        'Tables store data in rows and columns with defined types',
+        'Primary keys uniquely identify each row, typically UUID or BIGINT',
+        'Foreign keys create relationships between tables',
+        'Constraints like NOT NULL and UNIQUE enforce data quality',
+        'The Supabase SQL Editor lets you run queries directly in the dashboard',
+      ],
+      scenario: 'You need to store user profiles in a public users table linked to the auth.users system table. You write a CREATE TABLE statement with a foreign key reference so each profile is tied to the correct authenticated user.',
+      commands: [
+        { cmd: 'CREATE TABLE table_name ( columns )', desc: 'Create a new database table with columns and constraints' },
+      ],
+    },
+    {
+      id: 'supabase-crud',
+      title: 'CRUD Operations',
+      why: 'CRUD operations are the core of any data-driven application. The Supabase JavaScript client provides a clean, chainable API for interacting with your database tables from the frontend or server.',
+      keyConcepts: [
+        '.select() retrieves rows, optionally filtered with .eq()',
+        '.insert() adds new rows to a table',
+        '.update() modifies existing rows when combined with a filter',
+        '.delete() removes rows matching a condition',
+        'All methods return a Promise and must be awaited',
+      ],
+      scenario: 'Your task manager app needs to display all tasks, add new ones, mark them complete, and delete old tasks. You use supabase.from("tasks").select("*") to load tasks, .insert() to add them, .update() to toggle completion, and .delete() to remove them.',
+      commands: [
+        { cmd: 'supabase.from("table").select("*")', desc: 'Read all rows from a table' },
+        { cmd: 'supabase.from("table").insert({})', desc: 'Create a new row' },
+        { cmd: 'supabase.from("table").update({}).eq("id", id)', desc: 'Update a specific row' },
+        { cmd: 'supabase.from("table").delete().eq("id", id)', desc: 'Delete a specific row' },
+      ],
+    },
+    {
+      id: 'supabase-rls',
+      title: 'Row-Level Security',
+      why: 'RLS ensures users can only access data they own. Without it, anyone who can query your tables sees everything. RLS is the primary security mechanism for multi-user Supabase applications.',
+      keyConcepts: [
+        'RLS restricts row access based on a policy expression',
+        'Policies use auth.uid() to identify the current user',
+        'RLS must be explicitly enabled with ALTER TABLE ... ENABLE ROW LEVEL SECURITY',
+        'You write separate policies for SELECT, INSERT, UPDATE, and DELETE',
+        'The USING clause determines which rows are visible or modifiable',
+      ],
+      scenario: 'After deploying your task manager, you realize users can see each others tasks. You enable RLS on the tasks table and create a policy that only shows tasks where user_id matches the currently authenticated user.',
+      commands: undefined,
+    },
+  ],
+  quizzes: [
+    { id: 'supa-q1', question: 'What function creates a new user in Supabase?', options: ['supabase.auth.createUser()', 'supabase.auth.signUp()', 'supabase.auth.register()', 'supabase.auth.newUser()'], correctAnswer: 1 },
+    { id: 'supa-q2', question: 'What SQL type is typically used for primary keys in Supabase?', options: ['INT', 'VARCHAR', 'UUID or BIGINT', 'BOOLEAN'], correctAnswer: 2 },
+    { id: 'supa-q3', question: 'Which CRUD operation uses the .insert() method?', options: ['Read', 'Update', 'Delete', 'Create'], correctAnswer: 3 },
+    { id: 'supa-q4', question: 'What does RLS stand for?', options: ['Remote Login System', 'Row-Level Security', 'Request Limit Service', 'Relational Logic Schema'], correctAnswer: 1 },
+    { id: 'supa-q5', question: 'Which SQL clause filters which rows a policy applies to?', options: ['WHERE', 'USING', 'HAVING', 'FILTER'], correctAnswer: 1 },
+  ],
+  challenges: [
+    { id: 'supa-ch-1', title: 'Build Todo App Database Schema', description: 'Design the database schema for a Todo app with users, tasks, and projects.', difficulty: 'intermediate', task: 'Write SQL to create users, tasks, and projects tables with proper foreign keys and RLS policies.', hints: ['Users table extends auth.users', 'Tasks need user_id and project_id', 'Projects need user_id', 'Add RLS for each table'], solution: 'CREATE TABLE projects (id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, name TEXT, user_id UUID REFERENCES auth.users(id))' },
+    { id: 'supa-ch-2', title: 'Fix RLS Policy Bug', description: 'Users cant see their own data. Fix the RLS policy.', difficulty: 'advanced', task: 'The RLS policy on "notes" table is blocking all SELECT queries. Debug and fix it.', hints: ['Check the USING clause', 'Verify auth.uid() matches user_id', 'Make sure RLS is enabled'], solution: 'DROP POLICY IF EXISTS ... CREATE POLICY ... USING (auth.uid() = user_id)' },
+  ],
+  practices: [
+    { id: 'supa-prac-1', title: 'Create Users Table', description: 'Create a public users table linked to auth.users.', task: 'Write SQL to create a users table with name, avatar_url, and bio columns.', hints: ['Use CREATE TABLE', 'Add REFERENCES auth.users(id)', 'Add appropriate columns'] },
+    { id: 'supa-prac-2', title: 'Create Tasks Table', description: 'Create a tasks table with RLS.', task: 'Create a tasks table with title, completed, and user_id. Enable RLS and add a SELECT policy.', hints: ['Create the table', 'Enable RLS with ALTER TABLE', 'CREATE POLICY for SELECT'] },
+    { id: 'supa-prac-3', title: 'Create Projects Table', description: 'Create a projects table with relationships.', task: 'Create a projects table and link tasks to projects via foreign key.', hints: ['Add project_id to tasks', 'Create foreign key constraint', 'Add RLS policies'] },
+  ],
+  checkpointQuizzes: checkpointData['supabase'],
+  },
+  {
+  id: 'ai',
+  title: 'AI Development',
+  description: 'Learn to effectively prompt AI models and review AI-generated code.',
+  icon: 'ai',
+  whyModuleMatters: 'AI tools are transforming how developers work. Knowing how to prompt effectively and critically review AI output gives you a major productivity advantage while avoiding common pitfalls.',
+  learningObjectives: [
+    'Write effective prompts that produce accurate code',
+    'Use AI to automate repetitive coding tasks',
+    'Critically review and validate AI-generated code',
+    'Apply best practices to avoid AI hallucinations',
+  ],
+  skillsGained: [
+    'Craft precise programming prompts',
+    'Generate code with AI assistance',
+    'Review AI output for correctness',
+    'Identify AI hallucinations and errors',
+  ],
+  estimatedMinutes: 15,
+  lessons: [
+    {
+      id: 'ai-prompt-eng',
+      title: 'Prompt Engineering',
+      why: 'Prompt engineering is a critical skill for modern developers. Writing clear, specific prompts saves time by reducing iterations and getting better results from AI coding assistants on the first attempt.',
+      keyConcepts: [
+        'Specificity drives quality output',
+        'Provide context and constraints',
+        'Break complex tasks into steps',
+        'Include examples for better results'
+      ],
+      scenario: 'Sofia needs to generate a React data table component. She writes a vague prompt and gets unusable code. After learning prompt engineering, she crafts detailed prompts that produce production-ready components with proper typing and error handling.',
+      commands: undefined,
+    },
+    {
+      id: 'ai-code-review',
+      title: 'AI Code Review',
+      why: 'AI assistants can produce buggy or insecure code. Learning to review AI output critically ensures you ship reliable, secure software instead of blindly trusting generated code.',
+      keyConcepts: [
+        'Always review before deploying',
+        'Watch for hallucinated APIs',
+        'Test edge cases thoroughly',
+        'Never trust hardcoded secrets'
+      ],
+      scenario: 'Marcus uses an AI assistant to generate an authentication module. The generated code looks functional but contains hardcoded credentials and missing input validation. His code review catches these issues before deployment.',
+      commands: undefined,
+    }
+  ],
+  quizzes: [
+    { id: 'ai-q1', question: 'What is the most important quality of a good prompt?', options: ['Brevity', 'Specificity', 'Creativity', 'Length'], correctAnswer: 1 },
+    { id: 'ai-q2', question: 'What does AI "hallucination" mean in code generation?', options: ['AI is dreaming', 'AI invents non-existent APIs', 'AI is tired', 'AI deletes code'], correctAnswer: 1 },
+    { id: 'ai-q3', question: 'Which is a well-crafted prompt?', options: ['"Make a website"', '"Build a todo app"', '"Create a React component that fetches and displays user data with TypeScript types, loading states, and error handling"', '"Write code"'], correctAnswer: 2 },
+    { id: 'ai-q4', question: 'What should you NOT do with AI-generated code?', options: ['Review it', 'Test it', 'Deploy it directly without review', 'Add comments'], correctAnswer: 2 },
+    { id: 'ai-q5', question: 'Which is a common issue in AI-generated code?', options: ['Too many comments', 'Outdated API patterns', 'Perfect security', 'Optimal performance'], correctAnswer: 1 }
+  ],
+  challenges: [
+    { id: 'ai-ch-1', title: 'Improve a Bad Prompt', description: 'Turn a vague prompt into a detailed, effective one.', difficulty: 'beginner', task: 'Original prompt: "Make a form". Write an improved version that specifies framework, fields, validation, and behavior.', hints: ['Add context', 'Specify technology stack', 'Include error handling', 'Describe the UI'], solution: 'Create a React TypeScript form with name, email fields, zod validation, and success toast' },
+    { id: 'ai-ch-2', title: 'Find Bugs in AI Code', description: 'Review generated code and find 3 bugs.', difficulty: 'intermediate', task: 'The AI generated a user authentication function. Find and fix 3 issues: no input validation, hardcoded secret, and missing error handling.', hints: ['Check for validation', 'Look for hardcoded values', 'Check error handling', 'Verify SQL injection protection'], solution: 'Add input validation, use env vars, add try/catch' },
+    { id: 'ai-ch-3', title: 'Explain Code Behavior', description: 'Explain what this AI-generated code does and identify the bug.', difficulty: 'intermediate', task: 'Code: const double = (n) => n + n; Is this correct? What does it actually do?', hints: ['Check the operator', 'Test with different types', 'Consider string input'], solution: 'n + n concatenates strings too. Use n * 2 for numeric doubling' }
+  ],
+  practices: [
+    { id: 'ai-prac-1', title: 'Bad vs Good Prompts', description: 'Practice converting bad prompts into good ones.', task: 'Convert "Sort array" into a detailed prompt specifying language, sort order, edge cases, and performance constraints.', hints: ['Specify language', 'Define edge cases', 'Mention performance'] },
+    { id: 'ai-prac-2', title: 'Review AI Code', description: 'Review a piece of AI code for issues.', task: 'Review this: function fetchData() { fetch("/api/data").then(r => r.json()).then(console.log) } - whats missing?', hints: ['Error handling missing', 'No loading state', 'No type safety'] }
+  ],
+  checkpointQuizzes: checkpointData['ai'],
+  },
+  {
+  id: 'api',
+  title: 'API Integration',
+  description: 'Master REST API integration with fetch, covering all four CRUD operations.',
+  icon: 'api',
+  whyModuleMatters: 'Most applications depend on APIs to communicate with servers. Mastering REST API integration is essential for building full-stack features.',
+  learningObjectives: [
+    'Make GET requests to retrieve data',
+    'Send POST requests to create resources',
+    'Use PUT requests to update existing data',
+    'Perform DELETE requests to remove resources',
+    'Handle API errors gracefully',
+  ],
+  skillsGained: [
+    'Fetch data with GET requests',
+    'Create resources with POST',
+    'Update with PUT requests',
+    'Delete resources safely',
+    'Handle API errors and edge cases',
+  ],
+  estimatedMinutes: 30,
+  lessons: [
+    {
+      id: 'api-get',
+      title: 'GET Requests',
+      why: 'GET requests are the foundation of data fetching in web applications. Every app that loads data from a server uses GET, making it the most essential HTTP method to understand.',
+      keyConcepts: [
+        'GET retrieves data from a URL',
+        'fetch() returns a Promise',
+        'response.json() parses JSON body',
+        'Always handle errors and loading'
+      ],
+      scenario: 'Priya is building a team dashboard that needs to display employee profiles. She uses GET requests to fetch user data from the company API and displays it in a responsive grid layout with loading spinners.',
+      commands: [
+        { cmd: 'fetch(url)', desc: 'Make a GET request to the specified URL' },
+        { cmd: 'response.json()', desc: 'Parse the response body as JSON' }
+      ],
+    },
+    {
+      id: 'api-post',
+      title: 'POST Requests',
+      why: 'POST requests enable users to create new data from your application. Whether submitting a form, adding a comment, or uploading a file, POST is how data gets sent to the server.',
+      keyConcepts: [
+        'POST creates new resources',
+        'Set method and headers in options',
+        'Serialize body with JSON.stringify()',
+        'Handle 201 Created responses'
+      ],
+      scenario: 'Aisha is building a blog platform where writers submit new articles. She implements a POST request to save article content, complete with proper Content-Type headers and validation feedback.',
+      commands: [
+        { cmd: 'fetch(url, { method: "POST", headers, body })', desc: 'Send data to create a new resource' },
+        { cmd: 'JSON.stringify(data)', desc: 'Convert a JavaScript object to JSON string for the request body' }
+      ],
+    },
+    {
+      id: 'api-put',
+      title: 'PUT Requests',
+      why: 'PUT requests allow users to edit and update existing data. Knowing how to implement updates correctly prevents data loss and ensures your application stays in sync with the server.',
+      keyConcepts: [
+        'PUT replaces an entire resource',
+        'Send the full updated object',
+        'Similar to POST with different intent',
+        'Often uses 200 OK response'
+      ],
+      scenario: 'Carlos is developing a task management app where users edit task details. He uses PUT requests to send the complete updated task object, replacing the old version on the server.',
+      commands: [
+        { cmd: 'fetch(url, { method: "PUT", headers, body })', desc: 'Replace an entire resource with updated data' }
+      ],
+    },
+    {
+      id: 'api-delete',
+      title: 'DELETE Requests',
+      why: 'DELETE requests let users remove unwanted data. Proper deletion flows with confirmation dialogs and optimistic UI updates create a polished, professional user experience.',
+      keyConcepts: [
+        'DELETE removes a resource',
+        'No request body needed',
+        'Responds with 200 or 204',
+        'Update UI after deletion'
+      ],
+      scenario: 'Mei is building an admin panel for managing user accounts. She implements DELETE requests with a confirmation dialog so admins can safely remove inactive accounts.',
+      commands: [
+        { cmd: 'fetch(url, { method: "DELETE" })', desc: 'Remove a resource from the server' }
+      ],
+    }
+  ],
+  quizzes: [
+    { id: 'api-q1', question: 'What HTTP method retrieves data?', options: ['POST', 'PUT', 'GET', 'DELETE'], correctAnswer: 2 },
+    { id: 'api-q2', question: 'What status code indicates a successful POST request?', options: ['200', '201', '204', '301'], correctAnswer: 1 },
+    { id: 'api-q3', question: 'What header is typically set for POST/PUT requests with JSON?', options: ['Accept: json', 'Content-Type: application/json', 'X-Requested-With: XMLHttpRequest', 'Authorization: Bearer'], correctAnswer: 1 },
+    { id: 'api-q4', question: 'What does the DELETE method do?', options: ['Hides data', 'Removes data from the server', 'Archives data', 'Disables data'], correctAnswer: 1 },
+    { id: 'api-q5', question: 'Which API is used in the examples?', options: ['RandomUser', 'JSONPlaceholder', 'GitHub API', 'OpenWeather'], correctAnswer: 1 }
+  ],
+  challenges: [
+    { id: 'api-ch-1', title: 'Build User Directory', description: 'Fetch users from JSONPlaceholder and display them.', difficulty: 'beginner', task: 'Fetch /users endpoint, display name and email in a list. Add a search filter.', hints: ['Use fetch with GET', 'Map over response', 'Add input for search'], solution: 'fetch(/users).then(r => r.json()).then(users => render users with filter)' },
+    { id: 'api-ch-2', title: 'Build Todo CRUD App', description: 'Build a mini CRUD app using JSONPlaceholder todos.', difficulty: 'intermediate', task: 'Implement: list todos (GET), add todo (POST), toggle complete (PUT), delete (DELETE). Show loading and error states.', hints: ['Use useState for data', 'Create separate functions', 'Handle loading/error', 'Update UI after each operation'], solution: 'Implement fetch functions for each CRUD operation with state management' },
+    { id: 'api-ch-3', title: 'Error Handling Challenge', description: 'Handle various API error scenarios gracefully.', difficulty: 'intermediate', task: 'Create a component that retries failed requests 3 times before showing an error message.', hints: ['Use a retry counter', 'Implement exponential backoff', 'Show meaningful error messages'], solution: 'Implement retry logic with useState counter and useEffect on failure' }
+  ],
+  practices: [
+    { id: 'api-prac-1', title: 'Fetch and Display', description: 'Practice making GET requests.', task: 'Fetch posts from JSONPlaceholder and display them in a styled card layout.', hints: ['Use useEffect for fetching', 'Store data in state', 'Map to render cards'] },
+    { id: 'api-prac-2', title: 'Create New Resource', description: 'Practice making POST requests.', task: 'Create a form that submits a new post to JSONPlaceholder and displays the response.', hints: ['Use form with onSubmit', 'Prevent default behavior', 'POST the form data'] }
+  ],
+  checkpointQuizzes: checkpointData['api'],
+  },
+  {
+  id: 'debugging',
+  title: 'Debugging',
+  description: 'Develop systematic debugging skills using console tools, browser DevTools, and error tracing techniques.',
+  icon: 'debugging',
+  whyModuleMatters: 'Bugs are inevitable. The difference between a stuck developer and an effective one is having a systematic debugging process. This module gives you the tools and mindset to find and fix any bug.',
+  learningObjectives: [
+    'Use console.log and debugger for targeted inspection',
+    'Master browser DevTools panels',
+    'Analyze network requests to debug API issues',
+    'Trace errors using stack traces and logs',
+  ],
+  skillsGained: [
+    'Use console methods effectively',
+    'Navigate browser DevTools',
+    'Debug network requests',
+    'Read and follow stack traces',
+    'Systematically trace error root causes',
+  ],
+  estimatedMinutes: 30,
+  lessons: [
+    {
+      id: 'debug-console',
+      title: 'Console Logs & Debugging',
+      why: 'The console is a developers first line of defense against bugs. Mastering console methods transforms guesswork into data-driven debugging, saving hours of frustration.',
+      keyConcepts: [
+        'console.log() for quick inspection',
+        'console.table() for array data',
+        'console.time() for performance',
+        'debugger pauses execution'
+      ],
+      scenario: 'Rajan is investigating why a shopping cart total displays incorrectly. He uses console.log to inspect the cart array, console.table to visualize all items, and console.time to measure calculation performance.',
+      commands: [
+        { cmd: 'console.log(value)', desc: 'Print a value to the console for inspection' },
+        { cmd: 'console.table(array)', desc: 'Display array data as a sortable table' },
+        { cmd: 'console.time("label") / console.timeEnd("label")', desc: 'Measure how long an operation takes' }
+      ],
+    },
+    {
+      id: 'debug-devtools',
+      title: 'Browser DevTools',
+      why: 'Browser DevTools are the most powerful debugging toolkit available. Every developer must know how to inspect the DOM, debug JavaScript step by step, and edit styles live.',
+      keyConcepts: [
+        'F12 or Cmd+Option+I opens DevTools',
+        'Elements tab for DOM inspection',
+        'Sources tab for JavaScript debugging',
+        'Set breakpoints by clicking line numbers'
+      ],
+      scenario: 'Leilas CSS layout breaks on mobile devices. She opens DevTools, toggles the device toolbar, inspects the broken elements, and tweaks flexbox properties live until the layout works responsively.',
+      commands: undefined,
+    },
+    {
+      id: 'debug-network',
+      title: 'Network Tab',
+      why: 'Most frontend bugs involve incorrect API communication. The Network tab shows every request your app makes, making it indispensable for diagnosing data loading issues and API errors.',
+      keyConcepts: [
+        'View all network activity',
+        'Check request and response headers',
+        'Identify 4xx and 5xx errors',
+        'Analyze timing waterfalls'
+      ],
+      scenario: 'Toms user profile page shows stale data. He opens the Network tab, finds the profile API call, notices the response is cached, and discovers his app isnt sending cache-busting headers.',
+      commands: undefined,
+    },
+    {
+      id: 'debug-error-tracing',
+      title: 'Error Tracing',
+      why: 'Error messages and stack traces tell you exactly what went wrong and where. Learning to read them eliminates blind guessing and turns debugging into a logical, efficient process.',
+      keyConcepts: [
+        'Read the error message first',
+        'Stack traces show the call path',
+        'try/catch prevents crashes',
+        'Isolate variables to narrow issues'
+      ],
+      scenario: 'Ninas React app crashes with "Cannot read properties of undefined". She reads the stack trace, finds the component and line number, and discovers an API response changed shape breaking her data access.',
+      commands: undefined,
+    }
+  ],
+  quizzes: [
+    { id: 'dbg-q1', question: 'Which console method shows data as a table?', options: ['console.log()', 'console.table()', 'console.show()', 'console.list()'], correctAnswer: 1 },
+    { id: 'dbg-q2', question: 'What keyboard shortcut opens DevTools on Mac?', options: ['Cmd+D', 'Cmd+Option+I', 'F12', 'Both B and C'], correctAnswer: 3 },
+    { id: 'dbg-q3', question: 'Which DevTools tab shows API request details?', options: ['Elements', 'Console', 'Network', 'Sources'], correctAnswer: 2 },
+    { id: 'dbg-q4', question: 'What JavaScript statement pauses execution for debugging?', options: ['pause()', 'breakpoint()', 'debugger', 'stop()'], correctAnswer: 2 },
+    { id: 'dbg-q5', question: 'What is the first step in debugging an error?', options: ['Rewrite the code', 'Read the error message', 'Restart the server', 'Clear the cache'], correctAnswer: 1 }
+  ],
+  challenges: [
+    { id: 'dbg-ch-1', title: 'Broken Login Form', description: 'The login form throws an error when submitted.', difficulty: 'beginner', task: 'The form submits to /api/login but gets a 401 error even with valid credentials. Find the issue: the Authorization header format is wrong.', hints: ['Check the Network tab', 'Look at request headers', 'Verify token format'], solution: 'Fix the Authorization header format to Bearer <token>' },
+    { id: 'dbg-ch-2', title: 'Failed API Request', description: 'A GET request keeps failing with CORS error.', difficulty: 'intermediate', task: 'The frontend cant fetch from the API due to CORS. Identify the issue and suggest a solution.', hints: ['Check Network tab for CORS error', 'Check if API has CORS headers', 'Consider proxy or backend change'], solution: 'Add CORS headers on the server or use a proxy in development' },
+    { id: 'dbg-ch-3', title: 'Missing Environment Variable', description: 'The app crashes at startup because of a missing env variable.', difficulty: 'beginner', task: 'The error says "VITE_API_URL is not defined". Find where its used and ensure it has a fallback.', hints: ['Search for VITE_API_URL in code', 'Check if .env file exists', 'Add default value'], solution: 'Create .env file with VITE_API_URL or add fallback in code' },
+    { id: 'dbg-ch-4', title: 'UI Rendering Bug', description: 'A list component renders nothing but no errors appear.', difficulty: 'intermediate', task: 'The task list is empty. Check: the state variable is an array but the data has a different structure than expected.', hints: ['Add console.log to check data', 'Verify the data structure', 'Check the map function'], solution: 'Fix the data mapping to match the actual API response structure' }
+  ],
+  practices: [
+    { id: 'dbg-prac-1', title: 'Debug Console Practice', description: 'Use console methods to debug a sample calculation.', task: 'A function calculateTotal() returns NaN. Use console.log, console.table, and debugger to find the issue.', hints: ['Log each variable', 'Check for undefined values', 'Verify numeric types'] },
+    { id: 'dbg-prac-2', title: 'Network Tab Investigation', description: 'Investigate API requests using the Network tab.', task: 'Open any website, go to Network tab, reload, and identify: the slowest request, largest response, and failed requests.', hints: ['Use the Network tab', 'Sort by time or size', 'Look for red items'] }
+  ],
+  checkpointQuizzes: checkpointData['debugging'],
+  },
+  {
+  id: 'communication',
+  title: 'Professional Communication',
+  description: 'Learn to write clear status updates, bug reports, technical questions, and PR descriptions.',
+  icon: 'communication',
+  whyModuleMatters: 'Technical skill alone isnt enough. Clear communication determines whether teams trust you, stakeholders stay informed, and bugs get fixed quickly. Professional communication is what separates great interns from average ones.',
+  learningObjectives: [
+    'Write clear and concise status updates',
+    'Report bugs with actionable reproduction steps',
+    'Ask technical questions that others can answer quickly',
+    'Create professional pull request descriptions',
+  ],
+  skillsGained: [
+    'Structure daily standup updates',
+    'Write effective bug reports',
+    'Ask precise technical questions',
+    'Write descriptive PR descriptions',
+  ],
+  estimatedMinutes: 30,
+  lessons: [
+    {
+      id: 'comm-status',
+      title: 'Writing Status Updates',
+      why: 'Status updates are how your team knows what you are working on and where you need help. Clear updates build trust and prevent miscommunication that can delay projects.',
+      keyConcepts: [
+        'Structure: What you did, what you are doing, what is next',
+        'Be specific about progress and timelines',
+        'Always mention blockers explicitly',
+        'Keep it concise but informative',
+      ],
+      scenario: 'During a standup, a junior developer says "Working on the login page." The senior developer has no idea if they just started, are almost done, or are stuck. The team loses a day before discovering the developer has been stuck on CSS for 24 hours.',
+      commands: undefined,
+    },
+    {
+      id: 'comm-bugs',
+      title: 'Reporting Bugs',
+      why: 'A good bug report saves hours of back-and-forth between developers and QA. Without clear reproduction steps, developers waste time guessing what went wrong instead of fixing it.',
+      keyConcepts: [
+        'Title should summarize the problem, not the symptom',
+        'Include steps to reproduce with exact inputs',
+        'State expected vs actual behavior',
+        'Add environment details: browser, OS, version',
+        'Attach logs or screenshots when relevant',
+      ],
+      scenario: 'A QA tester files a bug titled "It crashes" with no other information. Three developers spend 30 minutes each trying to reproduce it before discovering it only happens in Safari on iOS when the user uploads a file larger than 10MB.',
+      commands: undefined,
+    },
+    {
+      id: 'comm-questions',
+      title: 'Asking Technical Questions',
+      why: 'Developers who ask good questions get better answers faster. A well-formed question shows respect for the reviewer\'s time and demonstrates that you have done your homework.',
+      keyConcepts: [
+        'Show what you have already tried and what happened',
+        'Include minimal code or error messages',
+        'State your goal, not just your problem',
+        'Use the right channel: team chat, forum, or documentation',
+      ],
+      scenario: 'A developer posts "It doesn\'t work" in the team channel with no code or error message. Five people stop what they are doing to ask clarifying questions. The developer could have solved it themselves by reading the error message carefully.',
+      commands: undefined,
+    },
+    {
+      id: 'comm-pr',
+      title: 'Creating PR Descriptions',
+      why: 'A clear PR description helps reviewers understand what your code does without reading every line first. This speeds up reviews and reduces the chance of bugs slipping through.',
+      keyConcepts: [
+        'Start with the problem the PR solves',
+        'List specific changes made in each file or area',
+        'Include testing steps so reviewers can verify',
+        'Link to related issues, tickets, or design docs',
+        'Mention any breaking changes or migration steps',
+      ],
+      scenario: 'A developer submits a 2000-line PR with the description "Fixes stuff." The reviewer spends 45 minutes figuring out the intent before they can even start evaluating the code quality. A three-sentence summary would have saved everyone time.',
+      commands: undefined,
+    },
+  ],
+  quizzes: [
+    { id: 'comm-q1', question: 'What is the first element of a good bug report?', options: ['Screenshot', 'Steps to reproduce', 'The fix', 'Blame'], correctAnswer: 1 },
+    { id: 'comm-q2', question: 'What should a status update include?', options: ['Only completed work', 'Progress, plans, and blockers', 'Just blockers', 'Only what you will do tomorrow'], correctAnswer: 1 },
+    { id: 'comm-q3', question: 'What makes a good technical question?', options: ['Asking a senior directly', 'Showing what you have tried', 'Just the error message', 'Asking for the solution'], correctAnswer: 1 },
+    { id: 'comm-q4', question: 'What is an important PR description element?', options: ['Personal opinions', 'Testing steps', 'Your weekend plans', 'Commit history'], correctAnswer: 1 },
+    { id: 'comm-q5', question: 'Bad bug report: "It crashes." What is missing?', options: ['Everything (steps, env, expected vs actual)', 'The time of crash', 'Who caused it', 'The color of the button'], correctAnswer: 0 },
+  ],
+  challenges: [
+    { id: 'comm-ch-1', title: 'Fix a Bug Report', description: 'Convert a bad bug report into a professional one.', difficulty: 'beginner', task: 'Bad report: "Search is broken. Fix it." Write a proper bug report with steps, expected vs actual, and environment details.', hints: ['Add environment details', 'Write clear steps', 'Describe expected behavior', 'Add actual behavior'], solution: 'Title: Search returns no results. Environment: Chrome v120... Steps: 1) Go to /search 2) Type "react" 3) Press enter 4) See "No results" even though articles exist. Expected: Show matching articles.' },
+    { id: 'comm-ch-2', title: 'Write a Professional PR', description: 'Create a professional PR description from a vague one.', difficulty: 'intermediate', task: 'Original PR: "Added some stuff". Write a proper description with changes, testing steps, and related info.', hints: ['List specific changes', 'Add testing steps', 'Mention any dependencies', 'Include screenshots if relevant'], solution: 'Write structured PR with Description, Changes, Testing, and Related Issues sections' },
+    { id: 'comm-ch-3', title: 'Improve a Status Update', description: 'Fix a vague status update.', difficulty: 'beginner', task: 'Bad update: "Working on it." Write a clear update for a developer working on the user profile page.', hints: ['What was completed?', 'What is in progress?', 'Any blockers?', 'When will it be done?'], solution: '"Completed the profile layout. Currently adding the edit form with validation. No blockers. Should be done by 4 PM."' },
+  ],
+  practices: [
+    { id: 'comm-prac-1', title: 'Bad to Good Messages', description: 'Practice converting bad messages into professional ones.', task: 'Convert these: "It doesnt work" -> ?, "Fix this bug" -> ?, "Done" -> ?', hints: ['Add specifics', 'Include context', 'Be professional'] },
+    { id: 'comm-prac-2', title: 'Write a Daily Standup', description: 'Write a daily standup update for a fictitious work day.', task: 'You worked on user authentication, are now working on the dashboard, and are blocked by the API team. Write a standup message.', hints: ['Past: What you did', 'Present: What youre doing', 'Future: What you will do', 'Blockers'] },
+  ],
+  checkpointQuizzes: checkpointData['communication'],
+  },
+  {
+  id: 'testing',
+  title: 'Testing & QA',
+  description: 'Learn testing mindset, manual testing, edge cases, unit tests, integration tests, and bug reporting.',
+  icon: 'testing',
+  whyModuleMatters: 'Shipping untested code is reckless. Testing ensures your code works, prevents regressions, and gives you confidence to ship fast. Employers expect developers to own quality.',
+  learningObjectives: [
+    'Develop a testing mindset for all your code',
+    'Conduct manual testing systematically',
+    'Identify and test edge cases',
+    'Write and run unit tests',
+    'Understand integration testing basics',
+    'Write effective bug reports for discovered issues',
+  ],
+  skillsGained: [
+    'Plan test cases before coding',
+    'Execute manual test suites',
+    'Identify boundary and edge cases',
+    'Write unit tests with Arrange-Act-Assert',
+    'Report bugs clearly',
+  ],
+  estimatedMinutes: 45,
+  lessons: [
+    {
+      id: 'test-mindset',
+      title: 'Testing Mindset',
+      why: 'Developers who test their own code catch bugs before they reach QA or users. A testing mindset means you take pride in shipping reliable software, not just working code.',
+      keyConcepts: [
+        'Test your own code before asking others to review it',
+        'Assume there are bugs and try to find them',
+        'Testing saves time by catching issues early',
+        'Good tests make refactoring safer',
+      ],
+      scenario: 'A developer finishes a feature, does a quick manual test of the happy path, and deploys. The feature breaks for users on mobile because the developer never tested responsive behavior. A five-minute mobile test would have caught the issue.',
+      commands: undefined,
+    },
+    {
+      id: 'test-manual',
+      title: 'Manual Testing',
+      why: 'Not everything can be automated, and manual testing helps you discover usability issues that automated tests miss. A structured manual test catches more bugs than clicking around randomly.',
+      keyConcepts: [
+        'Create a test checklist before you start',
+        'Test the happy path first, then break things',
+        'Test on different browsers, devices, and screen sizes',
+        'Document each test case with steps and expected results',
+      ],
+      scenario: 'A developer manually tests a checkout flow by entering valid data and clicks through quickly. The feature goes live, and users immediately report that entering an expired credit card shows a blank page instead of an error message.',
+      commands: undefined,
+    },
+    {
+      id: 'test-edge-cases',
+      title: 'Edge Cases',
+      why: 'Most bugs live at the boundaries of your code. Users will enter empty strings, negative numbers, and special characters. If you do not test those, your users will find them for you.',
+      keyConcepts: [
+        'Edge cases occur at boundary values: 0, empty, max, min',
+        'Test null, undefined, and empty inputs',
+        'Test special characters and very long inputs',
+        'Think about what the user might do that you did not expect',
+      ],
+      scenario: 'A search function works perfectly for normal queries. Then a user searches for an empty string and the entire app crashes because the code assumes search input is always non-empty. A simple guard clause would have prevented this.',
+      commands: undefined,
+    },
+    {
+      id: 'test-unit',
+      title: 'Unit Testing Fundamentals',
+      why: 'Unit tests give you immediate feedback when you break something. A well-tested function can be refactored with confidence because the tests will catch regressions instantly.',
+      keyConcepts: [
+        'A unit test tests one function or component in isolation',
+        'Use assertions to compare actual vs expected output',
+        'Test both success and failure cases',
+        'Keep tests simple and focused on one behavior',
+      ],
+      scenario: 'A developer refactors a utility function and accidentally swaps the min and max parameters. The function still runs without errors but now returns wrong results. Because there were no unit tests, the bug reaches production and corrupts data for a week.',
+      commands: [
+        { cmd: 'test("description", () => { expect(x).toBe(y) })', desc: 'Write a unit test with a description and assertion' },
+      ],
+    },
+    {
+      id: 'test-integration',
+      title: 'Integration Testing Basics',
+      why: 'Individual functions might work perfectly but still fail when combined. Integration tests catch bugs that happen at the boundaries between components, like a function expecting a format that another function does not provide.',
+      keyConcepts: [
+        'Integration tests verify that components work together',
+        'They catch interface mismatches between modules',
+        'They are slower but more realistic than unit tests',
+        'Test data should be set up before tests and cleaned up after',
+      ],
+      scenario: 'The login unit test passes: the auth service returns a token. The profile unit test passes: the profile service fetches user data with a token. But the login flow breaks because the auth service returns the token in a different format than the profile service expects.',
+      commands: undefined,
+    },
+    {
+      id: 'test-bug-reporting',
+      title: 'Bug Reporting',
+      why: 'Bug reports are the primary way developers learn about issues in production. A well-written bug report can be the difference between a one-hour fix and a three-day investigation.',
+      keyConcepts: [
+        'Always include steps to reproduce from a clean state',
+        'Attach logs, screenshots, or screen recordings',
+        'Specify severity and priority',
+        'Include environment details: OS, browser, version',
+        'Link related bugs or tickets',
+      ],
+      scenario: 'A user reports "The app is slow." The developer has no idea which page, which device, or how slow. After three emails back and forth, they discover it is a specific report page in Chrome on Windows that takes 30 seconds to load. A proper bug report would have included all this upfront.',
+      commands: undefined,
+    },
+  ],
+  quizzes: [
+    { id: 'test-q1', question: 'What is the core principle of a testing mindset?', options: ['Assume your code works', 'Actively try to break your code', 'Let QA handle everything', 'Only test after users complain'], correctAnswer: 1 },
+    { id: 'test-q2', question: 'Which testing level verifies individual functions?', options: ['Manual testing', 'Integration testing', 'Unit testing', 'End-to-end testing'], correctAnswer: 2 },
+    { id: 'test-q3', question: 'What is an edge case?', options: ['A feature that is optional', 'Input at the boundary of expected behavior', 'A type of bug', 'A testing tool'], correctAnswer: 1 },
+    { id: 'test-q4', question: 'What makes a bug report reproducible?', options: ['A screenshot', 'Exact steps to reproduce', 'The error message only', 'The developers name'], correctAnswer: 1 },
+    { id: 'test-q5', question: 'What is the difference between unit and integration tests?', options: ['Unit tests are faster, integration tests are slower', 'Unit tests test functions, integration tests test connections between parts', 'There is no difference', 'Unit tests are for backend only'], correctAnswer: 1 },
+  ],
+  challenges: [
+    { id: 'test-ch-1', title: 'Broken Calculator', description: 'Find why the calculator returns wrong results for division by zero.', difficulty: 'beginner', task: 'The calculator app gives unexpected results when dividing by zero. Locate the bug in the calculate function and fix it.', hints: ['Check the division logic', 'What happens when the divisor is 0?', 'Add a guard clause'], solution: 'Add a check: if (b === 0) return "Cannot divide by zero"' },
+    { id: 'test-ch-2', title: 'Broken Form Validation', description: 'The signup form accepts invalid emails. Find and fix validation.', difficulty: 'intermediate', task: 'Users can submit the signup form with emails like "notanemail". Find where validation is missing and implement proper email validation.', hints: ['Check the form submit handler', 'Look for where validation should run', 'Use a regex or validation library'], solution: 'Add email validation regex before form submission' },
+    { id: 'test-ch-3', title: 'Broken Login Flow', description: 'Login works but does not redirect on success.', difficulty: 'intermediate', task: 'Users can log in successfully (API returns 200) but the page stays on the login screen. Find and fix the missing redirect.', hints: ['Check the login success handler', 'Look for router.push or navigate calls', 'The redirect might be commented out'], solution: 'Add router.push("/dashboard") in the login success handler' },
+    { id: 'test-ch-4', title: 'Broken API Response', description: 'API returns 500 for valid requests. Trace the error.', difficulty: 'advanced', task: 'A valid POST request to /api/items returns 500. Use error tracing to find the root cause in the backend code.', hints: ['Check the server logs', 'Look for unhandled errors in the route handler', 'Check if the database query is correct'], solution: 'Fix the database query syntax error in the POST handler' },
+  ],
+  practices: [
+    { id: 'test-prac-1', title: 'Manual Testing Practice', description: 'Test a login form systematically and document findings.', task: 'Go to any login page, create a manual testing checklist, execute each test case, and document any bugs found.', hints: ['Create a checklist of test scenarios', 'Test empty fields, wrong password, valid login', 'Document each test with steps and results'] },
+    { id: 'test-prac-2', title: 'Edge Case Hunting', description: 'Find edge cases in a search function.', task: 'A search function filters an array of products. Identify 5 edge cases that could break it.', hints: ['Empty search string', 'Special characters in search', 'Case sensitivity', 'Very long search string', 'No results found'] },
+  ],
+  checkpointQuizzes: checkpointData['testing'],
+  },
+  {
+  id: 'code-review',
+  title: 'Code Review & PR Review',
+  description: 'Learn code review principles, naming conventions, readability, security, performance, and PR reviews.',
+  icon: 'code-review',
+  whyModuleMatters: 'Code review is how teams maintain quality, share knowledge, and catch bugs before they reach production. Learning to review code effectively will make you a better developer and a valued team member.',
+  learningObjectives: [
+    'Understand the principles and goals of code review',
+    'Apply consistent naming conventions',
+    'Write readable and maintainable code',
+    'Identify common security vulnerabilities',
+    'Spot performance anti-patterns',
+    'Write constructive PR review comments',
+  ],
+  skillsGained: [
+    'Review code for correctness and style',
+    'Apply naming and formatting conventions',
+    'Identify security red flags',
+    'Spot performance issues',
+    'Write professional PR reviews',
+  ],
+  estimatedMinutes: 45,
+  lessons: [
+    {
+      id: 'cr-principles',
+      title: 'Code Review Principles',
+      why: 'Code review is the most effective way to catch bugs and share knowledge across a team. A good review process improves code quality and helps all developers grow their skills.',
+      keyConcepts: [
+        'Review for correctness, not style preferences',
+        'Be specific and constructive in feedback',
+        'Explain why something is a problem, not just that it is',
+        'Focus on the code, not the author',
+      ],
+      scenario: 'A junior developer submits their first PR. The reviewer writes a list of comments about indentation and variable naming but misses a real bug in the logic. The junior fixes the style issues but the bug goes to production.',
+      commands: undefined,
+    },
+    {
+      id: 'cr-naming',
+      title: 'Naming Conventions',
+      why: 'Code is read far more often than it is written. Good naming makes code self-documenting and reduces the need for comments. A developer spends 10 minutes understanding poorly named code versus 10 seconds reading well-named code.',
+      keyConcepts: [
+        'Names should reveal intent, not implementation',
+        'Avoid abbreviations and single-letter names except in loops',
+        'Use verbs for functions and nouns for variables',
+        'Be consistent with the existing codebase style',
+      ],
+      scenario: 'A developer inherits code with variables named x, y, z, a, b, and c. What should take 5 minutes to fix takes 2 hours because every time they read x they have to figure out which piece of data it represents.',
+      commands: undefined,
+    },
+    {
+      id: 'cr-readability',
+      title: 'Readability & Maintainability',
+      why: 'Readable code is maintainable code. When you write clear code, your teammates can understand and modify it without introducing new bugs. The best code is the code that is easiest to understand.',
+      keyConcepts: [
+        'Small functions with single responsibilities are easier to test',
+        'Avoid deep nesting by returning early',
+        'Use comments to explain why, not what',
+        'Prefer clarity over cleverness',
+      ],
+      scenario: 'A developer writes a one-liner using nested ternary operators, bitwise shifts, and array.reduce to format a date. It works perfectly but nobody on the team can understand it. When a format change is needed, nobody dares touch it and they write a new function from scratch.',
+      commands: undefined,
+    },
+    {
+      id: 'cr-security',
+      title: 'Security Awareness',
+      why: 'Security vulnerabilities can lead to data breaches, financial loss, and reputational damage. Most security issues are introduced through simple mistakes that code review can catch before they reach production.',
+      keyConcepts: [
+        'Never trust user input: validate and sanitize everything',
+        'Use parameterized queries to prevent SQL injection',
+        'Escape output to prevent XSS attacks',
+        'Never hardcode secrets or API keys in source code',
+      ],
+      scenario: 'A developer writes a SQL query by concatenating user input directly: `"SELECT * FROM users WHERE id = " + userId`. An attacker passes `"1; DROP TABLE users"` and the entire user table is deleted. A parameterized query would have prevented this.',
+      commands: undefined,
+    },
+    {
+      id: 'cr-performance',
+      title: 'Performance Awareness',
+      why: 'Performance issues often start small and grow as data scales. Catching them in code review is much cheaper than diagnosing them in production after users start complaining about slow load times.',
+      keyConcepts: [
+        'N+1 queries: running a query inside a loop instead of a single batch query',
+        'Avoid unnecessary re-renders in UI code',
+        'Be mindful of expensive operations inside loops',
+        'Profile before optimizing: do not guess where the bottleneck is',
+      ],
+      scenario: 'A feature loads a list of 100 users and for each user makes a separate database query to get their recent orders. The page loads in 30 seconds. A single query with a JOIN would return all the data in under a second.',
+      commands: undefined,
+    },
+    {
+      id: 'cr-pr-reviews',
+      title: 'Pull Request Reviews',
+      why: 'A well-structured PR review process ensures that code quality is consistent across the team. Clear review guidelines prevent bikeshedding and ensure every PR gets the right level of scrutiny.',
+      keyConcepts: [
+        'Check functionality, security, performance, and readability',
+        'Separate blockers from suggestions in your comments',
+        'Start with positive feedback',
+        'Verify that tests are included and meaningful',
+        'Check for edge cases and error handling',
+      ],
+      scenario: 'A reviewer approves a 500-line PR after only reading the description. The PR introduces a security vulnerability because the reviewer did not look at the actual code changes. A simple five-minute scan would have caught the issue.',
+      commands: undefined,
+    },
+  ],
+  quizzes: [
+    { id: 'cr-q1', question: 'What is the primary benefit of code review?', options: ['Slowing down development', 'Catching bugs and sharing knowledge', 'Making the author feel bad', 'Documenting code'], correctAnswer: 1 },
+    { id: 'cr-q2', question: 'Which variable name is best?', options: ['let x = 5', 'let maxRetryCount = 5', 'let mrc = 5', 'let data = 5'], correctAnswer: 1 },
+    { id: 'cr-q3', question: 'What security issue involves injecting malicious code through user input into a database?', options: ['XSS', 'CSRF', 'SQL injection', 'DDoS'], correctAnswer: 2 },
+    { id: 'cr-q4', question: 'What is the N+1 query problem?', options: ['Running N queries instead of 1', 'Having N+1 servers', 'A CSS issue', 'A security vulnerability'], correctAnswer: 0 },
+    { id: 'cr-q5', question: 'How should you give feedback on a PR?', options: ['Say "this is wrong"', 'Explain why and suggest improvements', 'Just approve without reading', 'Rewrite the PR yourself'], correctAnswer: 1 },
+  ],
+  challenges: [
+    { id: 'cr-ch-1', title: 'Review Bad Variable Names', description: 'Identify poorly named variables and suggest better names.', difficulty: 'beginner', task: 'Review this code: let a = 12; let b = "John"; let c = true; function d() { return a * 2; }. Identify the bad names and suggest improvements.', hints: ['What does each variable represent?', 'Use descriptive names', 'Function names should use verbs'], solution: 'Rename: a -> userAge, b -> userName, c -> isActive, d -> doubleUserAge' },
+    { id: 'cr-ch-2', title: 'Find Security Issues', description: 'Find 3 security issues in a PR.', difficulty: 'intermediate', task: 'Review a PR that has: a hardcoded API key, a SQL query built with string concatenation, and an XSS vulnerability. Find all three.', hints: ['Look for hardcoded strings that look like secrets', 'Check how SQL queries are built', 'Look for dangerouslySetInnerHTML or innerHTML'], solution: '1) Move API key to env vars. 2) Use parameterized queries. 3) Sanitize user input before rendering.' },
+    { id: 'cr-ch-3', title: 'Review a PR', description: 'Write a professional PR review for a problematic PR.', difficulty: 'advanced', task: 'The PR has 5 issues: bad variable names, no error handling, missing input validation, hardcoded URL, and a performance issue with N+1 queries. Write a review comment for each.', hints: ['Be constructive and professional', 'Explain why each issue matters', 'Suggest specific improvements'], solution: 'Write a review addressing each issue with explanations and suggestions for improvement' },
+  ],
+  practices: [
+    { id: 'cr-prac-1', title: 'Naming Convention Practice', description: 'Rename bad variables in a provided code snippet.', task: 'Given: let fn = (a, b) => { let x = a + b; return x; }. Rename everything to follow good naming conventions.', hints: ['fn should describe what the function does', 'a and b should describe what they are', 'x should explain what it holds'] },
+    { id: 'cr-prac-2', title: 'PR Review Simulation', description: 'Review a mock PR and write comments.', task: 'Review a sample PR with several issues. Write professional comments for each issue you find, explaining why it matters and how to fix it.', hints: ['Focus on logic, not formatting', 'Be constructive and specific', 'Separate blockers from suggestions'] },
+  ],
+  checkpointQuizzes: checkpointData['code-review'],
+  },
+];

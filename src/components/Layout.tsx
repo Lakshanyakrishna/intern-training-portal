@@ -1,0 +1,66 @@
+import { useState, useEffect } from 'react';
+import { Outlet, Link, useLocation } from 'react-router-dom';
+import Sidebar from './Sidebar';
+
+export default function Layout() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('theme') === 'dark' ||
+        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+    return false;
+  });
+  const location = useLocation();
+  const isModuleRoute = location.pathname.startsWith('/module/');
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode);
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} compact={isModuleRoute} />
+      <div className={`transition-all duration-300 ease-in-out ${isModuleRoute ? 'lg:ml-16' : 'lg:ml-64'}`}>
+        <header className="sticky top-0 z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur border-b border-gray-200 dark:border-gray-800">
+          <div className="flex items-center justify-between px-4 h-14">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <div className="lg:hidden font-semibold text-sm text-gray-800 dark:text-white">Intern Readiness Program</div>
+            <div className="hidden lg:block">
+              <Link to="/dashboard" className="text-sm font-semibold text-gray-800 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                Intern Readiness Program
+              </Link>
+            </div>
+            <div className="flex items-center gap-2 ml-auto">
+              <Link
+                to="/mentor"
+                className="hidden sm:flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                <span>🔒</span>
+                <span>Mentor</span>
+              </Link>
+              <button
+                onClick={() => setDarkMode(p => !p)}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                title="Toggle theme"
+              >
+                {darkMode ? <span className="text-lg">☀️</span> : <span className="text-lg">🌙</span>}
+              </button>
+            </div>
+          </div>
+        </header>
+        <main className={`transition-all duration-300 ease-in-out ${isModuleRoute ? 'p-4 md:p-6 lg:p-8 max-w-none' : 'p-4 md:p-6 lg:p-8 max-w-6xl mx-auto'}`}>
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
+}
