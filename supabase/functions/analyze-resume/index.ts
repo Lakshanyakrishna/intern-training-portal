@@ -40,16 +40,44 @@ interface AIAnalysisResult {
 }
 
 serve(async (req) => {
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+  const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+  let applicationId: string | undefined;
+
   try {
-    const { applicationId } = await req.json() as AnalysisRequest;
+    // 0. Only admin/mentor may trigger screening
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: 'Missing authorization' }), { status: 401 });
+    }
+
+    const callerClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: { user: caller }, error: callerError } = await callerClient.auth.getUser();
+    if (callerError || !caller) {
+      return new Response(JSON.stringify({ error: 'Invalid or expired session' }), { status: 401 });
+    }
+
+    const { data: callerProfile } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', caller.id)
+      .maybeSingle();
+    if (!callerProfile || !['admin', 'mentor'].includes(callerProfile.role)) {
+      return new Response(JSON.stringify({ error: 'Forbidden: admin or mentor role required' }), { status: 403 });
+    }
+
+    const body = await req.json() as AnalysisRequest;
+    applicationId = body.applicationId;
     if (!applicationId) {
       return new Response(JSON.stringify({ error: 'applicationId required' }), { status: 400 });
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const openaiKey = Deno.env.get('OPENAI_API_KEY');
-    const supabase = createClient(supabaseUrl, supabaseKey);
 
     // 1. Fetch application with resume and opportunity
     const { data: application, error: appError } = await supabase
@@ -107,10 +135,18 @@ serve(async (req) => {
     const prompt = buildPrompt(resumeText, application, opportunity, resumeFile.file_name);
 
     // 5. Call OpenAI
+    if (!openaiKey) {
+      await supabase.from('applications').update({ screening_status: 'failed' }).eq('id', applicationId);
+      return new Response(JSON.stringify({ error: 'OpenAI API key not configured' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     const startTime = Date.now();
     let analysis: AIAnalysisResult;
-    
-    if (openaiKey) {
+
+    try {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -128,17 +164,28 @@ serve(async (req) => {
         }),
       });
 
+      if (!response.ok) {
+        throw new Error(`OpenAI request failed with status ${response.status}`);
+      }
+
       const completion = await response.json();
       const rawContent = completion.choices?.[0]?.message?.content;
       if (!rawContent) {
         throw new Error('No response from OpenAI');
       }
       analysis = JSON.parse(rawContent) as AIAnalysisResult;
-    } else {
-      // Mock analysis for local development
-      analysis = getMockAnalysis(application, resumeFile.file_name);
+    } catch (aiError) {
+      console.error('AI analysis failed:', aiError);
+      await supabase.from('applications').update({ screening_status: 'failed' }).eq('id', applicationId);
+      return new Response(JSON.stringify({
+        error: 'AI analysis failed',
+        reason: aiError instanceof Error ? aiError.message : 'Unknown error',
+      }), {
+        status: 502,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
-    
+
     const processingTime = Date.now() - startTime;
 
     // 6. Calculate weighted overall score
@@ -177,7 +224,7 @@ serve(async (req) => {
       positive_findings: analysis.positiveFindings,
       top_reasons: analysis.topReasons,
       raw_response: { raw: analysis },
-      model_used: openaiKey ? 'gpt-4o-mini' : 'mock',
+      model_used: 'gpt-4o-mini',
       analysis_version: newVersion,
       processing_time_ms: processingTime,
       analyzed_at: new Date().toISOString(),
@@ -217,7 +264,7 @@ serve(async (req) => {
       missing_skills: analysis.missingSkills,
       risk_indicators: analysis.riskIndicators,
       raw_response: { raw: analysis },
-      model_used: openaiKey ? 'gpt-4o-mini' : 'mock',
+      model_used: 'gpt-4o-mini',
       processing_time_ms: processingTime,
     });
 
@@ -236,6 +283,9 @@ serve(async (req) => {
 
   } catch (err) {
     console.error('Analysis error:', err);
+    if (applicationId) {
+      await supabase.from('applications').update({ screening_status: 'failed' }).eq('id', applicationId);
+    }
     return new Response(JSON.stringify({ error: err instanceof Error ? err.message : 'Unknown error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
@@ -303,42 +353,3 @@ function calculateWeightedScore(analysis: AIAnalysisResult, w: ScoreWeights): nu
   );
 }
 
-function getMockAnalysis(application: Record<string, unknown>, fileName: string): AIAnalysisResult {
-  // Simulate analysis for development without OpenAI key
-  const name = (application.name as string) || 'Applicant';
-  return {
-    technicalScore: 72,
-    projectsScore: 65,
-    githubScore: 45,
-    portfolioScore: 50,
-    educationScore: 80,
-    experienceScore: 55,
-    communicationScore: 70,
-    learningPotentialScore: 75,
-    motivationScore: 85,
-    resumeQualityScore: 68,
-    strengths: [
-      'Good academic background',
-      'Shows initiative in application',
-      'Clear communication in why-join response',
-    ],
-    weaknesses: [
-      'Limited project experience visible',
-      'No GitHub portfolio link provided',
-    ],
-    missingSkills: ['Advanced frameworks', 'Cloud platforms'],
-    riskIndicators: ['No previous internship experience'],
-    positiveFindings: [
-      'Strong motivation to learn',
-      'Good understanding of program goals',
-    ],
-    topReasons: [
-      'Strong motivation and commitment shown in application',
-      'Good academic foundation in relevant field',
-      'Clear career goals aligned with program',
-    ],
-    recommendation: 'recommend',
-    confidenceScore: 75,
-    reasoning: `${name} shows good potential with strong motivation and academic background. Recommended with some reservations about practical experience.`,
-  };
-}

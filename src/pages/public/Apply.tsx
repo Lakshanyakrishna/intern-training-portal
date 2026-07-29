@@ -89,7 +89,10 @@ export default function Apply() {
         answers: questions.length > 0 ? answers : undefined,
       });
       if (resumeFile) {
-        await uploadResumeFile(applicationId, resumeFile, user?.id || '');
+        if (!user?.id) {
+          throw new Error('You must be signed in to upload a resume.');
+        }
+        await uploadResumeFile(applicationId, resumeFile, user.id);
       }
       setSubmitted(true);
       if (user?.id) {

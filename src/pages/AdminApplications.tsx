@@ -16,6 +16,16 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   accepted: { label: 'Accepted', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' },
 };
 
+const SCREENING_LABELS: Record<string, { label: string; color: string }> = {
+  pending: { label: 'Not screened', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' },
+  processing: { label: 'Screening...', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' },
+  failed: { label: 'Screening failed', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' },
+};
+
+function isUnscored(app: DbApplication): boolean {
+  return app.screeningStatus !== 'analyzed';
+}
+
 type FilterStatus = 'all' | DbApplication['status'];
 
 export default function AdminApplications() {
@@ -89,7 +99,8 @@ export default function AdminApplications() {
     }
   }
 
-  const filtered = filter === 'all' ? applications : applications.filter(a => a.status === filter);
+  const filtered = [...(filter === 'all' ? applications : applications.filter(a => a.status === filter))]
+    .sort((a, b) => Number(isUnscored(b)) - Number(isUnscored(a)));
 
   const countByStatus = (status: FilterStatus) =>
     status === 'all' ? applications.length : applications.filter(a => a.status === status).length;
@@ -140,6 +151,9 @@ export default function AdminApplications() {
             <div className="divide-y divide-gray-100 dark:divide-gray-700 max-h-[70vh] overflow-y-auto">
               {filtered.map(app => {
                 const si = STATUS_LABELS[app.status];
+                const sc = app.screeningStatus && app.screeningStatus !== 'analyzed'
+                  ? SCREENING_LABELS[app.screeningStatus]
+                  : undefined;
                 return (
                   <button
                     key={app.id}
@@ -150,9 +164,10 @@ export default function AdminApplications() {
                   >
                     <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{app.name}</p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{app.email}</p>
-                    <div className="flex items-center justify-between mt-1.5">
+                    <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
                       <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${si.color}`}>{si.label}</span>
-                      <span className="text-[11px] text-gray-400 dark:text-gray-500">{new Date(app.appliedAt).toLocaleDateString()}</span>
+                      {sc && <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${sc.color}`}>{sc.label}</span>}
+                      <span className="text-[11px] text-gray-400 dark:text-gray-500 ml-auto">{new Date(app.appliedAt).toLocaleDateString()}</span>
                     </div>
                   </button>
                 );
@@ -241,16 +256,25 @@ export default function AdminApplications() {
                   <div className="text-sm">
                     <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Resume</p>
                     {resumeFiles.map(rf => (
-                      <a
+                      <button
                         key={rf.id}
-                        href={getResumeDownloadUrl(rf.filePath)}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        onClick={async () => {
+                          // Open the tab synchronously (before the await) so browsers
+                          // don't treat the later navigation as a blocked popup.
+                          const win = window.open('about:blank', '_blank');
+                          if (win) win.opener = null;
+                          try {
+                            const url = await getResumeDownloadUrl(rf.filePath);
+                            if (win) win.location.href = url;
+                          } catch {
+                            win?.close();
+                          }
+                        }}
                         className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-900/30 text-blue-600 dark:text-blue-400 hover:underline text-sm"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                         {rf.fileName} ({(rf.fileSize / 1024).toFixed(0)} KB)
-                      </a>
+                      </button>
                     ))}
                   </div>
                 )}
@@ -259,7 +283,11 @@ export default function AdminApplications() {
                   <p className="text-sm text-gray-400 dark:text-gray-500">Loading analysis...</p>
                 )}
 
-                {analysis === null && resumeFiles.length > 0 && (
+                {analysis === null && detail.screeningStatus === 'failed' && (
+                  <p className="text-sm text-red-500 dark:text-red-400">Screening failed — retry with "Analyze".</p>
+                )}
+
+                {analysis === null && detail.screeningStatus !== 'failed' && resumeFiles.length > 0 && (
                   <p className="text-sm text-gray-400 dark:text-gray-500">Not yet analyzed. Click "Analyze" to run AI screening.</p>
                 )}
 
