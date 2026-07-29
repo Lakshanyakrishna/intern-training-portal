@@ -242,6 +242,20 @@ export interface MentorFeedbackEntry {
   module: string;
 }
 
+export type UserRole = 'intern' | 'mentor' | 'admin';
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  college?: string;
+  yearOfStudy?: string;
+  batch: string;
+  joinedDate: string;
+  onboardingComplete: boolean;
+}
+
 export type SubmissionStatus = 'waiting-review' | 'reviewed' | 'revision-requested' | 'approved';
 
 export interface SubmissionFeedback {
