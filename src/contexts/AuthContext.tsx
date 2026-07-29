@@ -1,18 +1,9 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-
-export type UserRole = 'intern' | 'mentor' | 'admin';
-
-export interface AuthUser {
-  id: string;
-  email: string;
-  name: string;
-  role: UserRole;
-  college?: string;
-  yearOfStudy?: string;
-  batch: string;
-  joinedDate: string;
-  onboardingComplete: boolean;
-}
+import { supabase, requireSupabase } from '../lib/supabase';
+import { getUser, createUser, updateUser, upsertUserSettings, linkApplicationToUser } from '../lib/db';
+import { notifyEvent } from '../lib/notifications';
+import { syncProgressFromDb, clearProgressCache } from '../utils/storage';
+import type { AuthUser } from '../types';
 
 interface SignUpData {
   name: string;
@@ -31,115 +22,144 @@ interface AuthContextType {
   completeOnboarding: () => void;
 }
 
-const USERS_KEY = 'intern-training-users';
-const AUTH_KEY = 'intern-training-auth';
+const DEFAULT_BATCH = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
-function loadUsers(): Record<string, { profile: AuthUser; password: string }> {
-  try {
-    const raw = localStorage.getItem(USERS_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch { return {}; }
-}
-
-function saveUsers(users: Record<string, { profile: AuthUser; password: string }>) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-}
-
-function loadSession(): AuthUser | null {
-  try {
-    const raw = localStorage.getItem(AUTH_KEY);
-    if (!raw) return null;
-    const { userId } = JSON.parse(raw);
-    const users = loadUsers();
-    return users[userId]?.profile || null;
-  } catch { return null; }
-}
-
-function saveSession(userId: string) {
-  localStorage.setItem(AUTH_KEY, JSON.stringify({ userId }));
-}
-
-function clearSession() {
-  localStorage.removeItem(AUTH_KEY);
-}
-
-function simpleHash(str: string): string {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash |= 0;
+async function ensureUserProfile(supabaseUser: { id: string; email?: string | null }): Promise<AuthUser | null> {
+  let profile = await getUser(supabaseUser.id);
+  if (!profile) {
+    const fallback: AuthUser = {
+      id: supabaseUser.id,
+      email: supabaseUser.email || '',
+      name: supabaseUser.email?.split('@')[0] || 'User',
+      role: 'intern',
+      batch: DEFAULT_BATCH,
+      joinedDate: new Date().toISOString().split('T')[0],
+      onboardingComplete: false,
+    };
+    try {
+      await createUser(fallback);
+      profile = fallback;
+    } catch {
+      profile = await getUser(supabaseUser.id);
+    }
   }
-  return hash.toString(36);
+  return profile;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(loadSession);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(false);
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session?.user) {
+        const profile = await ensureUserProfile(session.user);
+        setUser(profile);
+        if (profile) {
+          syncProgressFromDb(profile.id).catch(() => {});
+        }
+      }
+      setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        const profile = await ensureUserProfile(session.user);
+        setUser(profile);
+        if (profile) {
+          syncProgressFromDb(profile.id).catch(() => {});
+        }
+      } else {
+        setUser(null);
+        clearProgressCache();
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const signIn = useCallback(async (email: string, password: string): Promise<{ error?: string }> => {
-    const users = loadUsers();
-    const hashed = simpleHash(password);
-    const entry = Object.values(users).find(u => u.profile.email === email);
-    if (!entry) return { error: 'No account found with this email.' };
-    if (entry.password !== hashed) return { error: 'Invalid password.' };
-    saveSession(entry.profile.id);
-    setUser(entry.profile);
-    return {};
+    try {
+      const sb = requireSupabase();
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) return { error: error.message };
+      if (!data.user) return { error: 'Sign in failed. No user returned.' };
+      const profile = await ensureUserProfile(data.user);
+      if (profile) {
+        setUser(profile);
+        syncProgressFromDb(profile.id).catch(() => {});
+      }
+      return {};
+    } catch (err) {
+      return { error: err instanceof Error ? err.message : 'An unexpected error occurred.' };
+    }
   }, []);
 
   const signUp = useCallback(async (data: SignUpData): Promise<{ error?: string }> => {
-    const users = loadUsers();
-    const existing = Object.values(users).find(u => u.profile.email === data.email);
-    if (existing) return { error: 'An account with this email already exists.' };
     if (data.password.length < 6) return { error: 'Password must be at least 6 characters.' };
-    if (data.password !== data.password) return { error: 'Passwords do not match.' };
 
-    const id = `user-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    const now = new Date().toISOString().split('T')[0];
-    const profile: AuthUser = {
-      id,
-      email: data.email,
-      name: data.name,
-      role: 'intern',
-      college: data.college,
-      yearOfStudy: data.yearOfStudy,
-      batch: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
-      joinedDate: now,
-      onboardingComplete: false,
-    };
+    try {
+      const sb = requireSupabase();
+      const { data: authData, error } = await sb.auth.signUp({
+        email: data.email,
+        password: data.password,
+      });
+      if (error) return { error: error.message };
+      if (!authData.user) return { error: 'Sign up failed. No user returned.' };
 
-    users[id] = { profile, password: simpleHash(data.password) };
-    saveUsers(users);
-    saveSession(id);
-    setUser(profile);
-    return {};
+      const now = new Date().toISOString().split('T')[0];
+      const profile: AuthUser = {
+        id: authData.user.id,
+        email: data.email,
+        name: data.name,
+        role: 'intern',
+        college: data.college,
+        yearOfStudy: data.yearOfStudy,
+        batch: DEFAULT_BATCH,
+        joinedDate: now,
+        onboardingComplete: false,
+      };
+
+      await createUser(profile);
+      notifyEvent('account_created', profile.id, {
+        name: data.name,
+      }).catch(() => {});
+      await upsertUserSettings(authData.user.id, { theme: 'light', displayName: data.name });
+      await linkApplicationToUser(data.email, authData.user.id).catch(() => {});
+
+      setUser(profile);
+      syncProgressFromDb(profile.id).catch(() => {});
+
+      return {};
+    } catch (err) {
+      return { error: err instanceof Error ? err.message : 'An unexpected error occurred.' };
+    }
   }, []);
 
   const signOut = useCallback(() => {
-    clearSession();
+    try {
+      const sb = requireSupabase();
+      sb.auth.signOut();
+    } catch { /* ignore */ }
     setUser(null);
+    clearProgressCache();
   }, []);
 
-  const completeOnboarding = useCallback(() => {
-    setUser(prev => {
-      if (!prev) return prev;
-      const users = loadUsers();
-      const entry = users[prev.id];
-      if (!entry) return prev;
-      const updated = { ...prev, onboardingComplete: true };
-      users[prev.id] = { ...entry, profile: updated };
-      saveUsers(users);
-      saveSession(prev.id);
-      return updated;
-    });
-  }, []);
+  const completeOnboarding = useCallback(async () => {
+    if (!user) return;
+    const updated = { ...user, onboardingComplete: true };
+    try {
+      await updateUser(user.id, { onboardingComplete: true });
+    } catch { /* fallback: continue with local state */ }
+    setUser(updated);
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, completeOnboarding }}>
