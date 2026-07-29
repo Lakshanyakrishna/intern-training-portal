@@ -7,6 +7,8 @@ import About from './pages/public/About';
 import Apply from './pages/public/Apply';
 import Login from './pages/public/Login';
 import SignUp from './pages/public/SignUp';
+import Opportunities from './pages/public/Opportunities';
+import OpportunityDetail from './pages/public/OpportunityDetail';
 import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 import ModulePage from './pages/ModulePage';
@@ -22,6 +24,21 @@ import MentorDashboard from './pages/MentorDashboard';
 import InternManagement from './pages/InternManagement';
 import MentorReviews from './pages/MentorReviews';
 import ProjectReadiness from './pages/ProjectReadiness';
+import ApplicantDashboard from './pages/ApplicantDashboard';
+import AdminApplications from './pages/AdminApplications';
+import AdminInterviews from './pages/AdminInterviews';
+import AdminConversion from './pages/AdminConversion';
+import AdminMentors from './pages/AdminMentors';
+import AdminProjects from './pages/AdminProjects';
+import AdminOpportunities from './pages/AdminOpportunities';
+import ReadinessEvaluation from './pages/ReadinessEvaluation';
+import NotificationCenter from './pages/NotificationCenter';
+import NotificationSettings from './pages/NotificationSettings';
+import AdminNotificationsDashboard from './pages/AdminNotificationsDashboard';
+import AdminScreeningReport from './pages/AdminScreeningReport';
+import AdminCompletionReport from './pages/AdminCompletionReport';
+import InternPortfolio from './pages/InternPortfolio';
+import MentorCompletionReview from './pages/MentorCompletionReview';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 export default function App() {
@@ -34,6 +51,9 @@ export default function App() {
             {/* Public routes */}
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
+            <Route path="/opportunities" element={<Opportunities />} />
+            <Route path="/opportunities/:opportunityId" element={<OpportunityDetail />} />
+            <Route path="/apply/:opportunityId" element={<Apply />} />
             <Route path="/apply" element={<Apply />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
@@ -59,6 +79,27 @@ export default function App() {
               <Route path="/readiness-reviews" element={<ReadinessReviews />} />
               <Route path="/feedback" element={<Feedback />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/applicant/dashboard" element={<ApplicantDashboard />} />
+              <Route path="/notifications" element={<NotificationCenter />} />
+              <Route path="/notifications/settings" element={<NotificationSettings />} />
+              <Route path="/portfolio" element={<InternPortfolio />} />
+            </Route>
+
+            {/* Admin routes (authenticated + admin role) */}
+            <Route element={
+              <ProtectedRoute roles={['admin']}>
+                <Layout />
+              </ProtectedRoute>
+            }>
+              <Route path="/admin/applications" element={<AdminApplications />} />
+              <Route path="/admin/interviews" element={<AdminInterviews />} />
+              <Route path="/admin/conversion" element={<AdminConversion />} />
+              <Route path="/admin/mentors" element={<AdminMentors />} />
+              <Route path="/admin/projects" element={<AdminProjects />} />
+              <Route path="/admin/opportunities" element={<AdminOpportunities />} />
+              <Route path="/admin/notifications" element={<AdminNotificationsDashboard />} />
+              <Route path="/admin/screening-report" element={<AdminScreeningReport />} />
+              <Route path="/admin/completion-report" element={<AdminCompletionReport />} />
             </Route>
 
             {/* Mentor routes (authenticated + mentor/admin role) */}
@@ -71,6 +112,8 @@ export default function App() {
               <Route path="/mentor/interns" element={<InternManagement />} />
               <Route path="/mentor/reviews" element={<MentorReviews />} />
               <Route path="/mentor/readiness" element={<ProjectReadiness />} />
+              <Route path="/mentor/evaluate" element={<ReadinessEvaluation />} />
+              <Route path="/mentor/completion-review" element={<MentorCompletionReview />} />
             </Route>
 
           </Routes>
