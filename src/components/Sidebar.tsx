@@ -19,6 +19,8 @@ import {
   User,
   ChevronDown,
   LogOut,
+  Grid,
+  Target,
 } from './Icons';
 
 const trackIcons: Record<string, React.ReactNode> = {
@@ -90,16 +92,46 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
         <nav className="flex-1 overflow-y-auto py-2 space-y-0.5">
           <NavItem to="/dashboard" label="Dashboard" end onClick={onClose} icon={<LayoutDashboard />} compact={compact} />
 
-          {isMentor ? (
+          {user?.role === 'admin' ? (
+            <>
+              <div className="pt-2 pb-1 px-3">
+                <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Admin</p>
+              </div>
+              <NavItem to="/admin/applications" label="Applications" onClick={onClose} icon={<ClipboardCheck />} compact={compact} />
+              <NavItem to="/admin/interviews" label="Interviews" onClick={onClose} icon={<Grid />} compact={compact} />
+              <NavItem to="/admin/opportunities" label="Opportunities" onClick={onClose} icon={<Flag />} compact={compact} />
+              <NavItem to="/admin/conversion" label="Conversion" onClick={onClose} icon={<Flag />} compact={compact} />
+              <NavItem to="/admin/mentors" label="Mentor Assign" onClick={onClose} icon={<Users />} compact={compact} />
+              <NavItem to="/admin/projects" label="Projects" onClick={onClose} icon={<Briefcase />} compact={compact} />
+              <NavItem to="/admin/notifications" label="Notifications" onClick={onClose} icon={<BarChart3 />} compact={compact} />
+              <NavItem to="/admin/screening-report" label="Screening Report" onClick={onClose} icon={<BarChart3 />} compact={compact} />
+              <NavItem to="/admin/completion-report" label="Completion Report" onClick={onClose} icon={<BarChart3 />} compact={compact} />
+
+              <div className="pt-3 pb-1 px-3">
+                <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Mentor</p>
+              </div>
+              <NavItem to="/mentor" label="Mentor Dashboard" onClick={onClose} icon={<BarChart3 />} compact={compact} />
+              <NavItem to="/mentor/evaluate" label="Readiness Eval" onClick={onClose} icon={<Target />} compact={compact} />
+              <NavItem to="/mentor/interns" label="Intern Mgmt" onClick={onClose} icon={<Users />} compact={compact} />
+              <NavItem to="/mentor/reviews" label="Reviews" onClick={onClose} icon={<ClipboardCheck />} compact={compact} />
+              <NavItem to="/leaderboard" label="Leaderboard" onClick={onClose} icon={<Trophy />} compact={compact} />
+              <NavItem to="/profile" label="Profile" onClick={onClose} icon={<User />} compact={compact} />
+              <NavItem to="/notifications/settings" label="Notification Settings" onClick={onClose} icon={<BarChart3 />} compact={compact} />
+            </>
+          ) : isMentor ? (
             <>
               <div className="pt-2 pb-1 px-3">
                 <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Mentor</p>
               </div>
-              <NavItem to="/mentor/interns" label="Intern Management" onClick={onClose} icon={<Users />} compact={compact} />
+              <NavItem to="/mentor" label="Dashboard" onClick={onClose} icon={<BarChart3 />} compact={compact} />
+              <NavItem to="/mentor/evaluate" label="Readiness Eval" onClick={onClose} icon={<Target />} compact={compact} />
+              <NavItem to="/mentor/interns" label="Intern Mgmt" onClick={onClose} icon={<Users />} compact={compact} />
               <NavItem to="/mentor/reviews" label="Reviews" onClick={onClose} icon={<ClipboardCheck />} compact={compact} />
               <NavItem to="/mentor/readiness" label="Project Readiness" onClick={onClose} icon={<BarChart3 />} compact={compact} />
+              <NavItem to="/mentor/completion-review" label="Completion Review" onClick={onClose} icon={<Flag />} compact={compact} />
               <NavItem to="/leaderboard" label="Leaderboard" onClick={onClose} icon={<Trophy />} compact={compact} />
               <NavItem to="/profile" label="Profile" onClick={onClose} icon={<User />} compact={compact} />
+              <NavItem to="/notifications/settings" label="Notification Settings" onClick={onClose} icon={<BarChart3 />} compact={compact} />
             </>
           ) : (
             <>
@@ -107,6 +139,7 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
                 <NavItem to="/track/foundation" label="Training" onClick={onClose} icon={<BookOpen />} compact={compact} />
               ) : (
                 <>
+                  <NavItem to="/applicant/dashboard" label="My Application" onClick={onClose} icon={<ClipboardCheck />} compact={compact} />
                   <div className="pt-1">
                     <button
                       onClick={() => setProgramOpen(!programOpen)}
@@ -150,6 +183,7 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
               <NavItem to="/progress-center" label="Achievements" onClick={onClose} icon={<Award />} compact={compact} />
               <NavItem to="/leaderboard" label="Leaderboard" onClick={onClose} icon={<Trophy />} compact={compact} />
               <NavItem to="/readiness-reviews" label="Mentor Feedback" onClick={onClose} icon={<MessageSquare />} compact={compact} />
+              <NavItem to="/portfolio" label="My Portfolio" onClick={onClose} icon={<Award />} compact={compact} />
               <NavItem to="/profile" label="Profile" onClick={onClose} icon={<User />} compact={compact} />
             </>
           )}
