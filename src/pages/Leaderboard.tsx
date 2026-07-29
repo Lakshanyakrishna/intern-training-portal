@@ -1,18 +1,7 @@
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { getLeaderboard, type LeaderboardEntry } from '../lib/db';
 import { Trophy } from '../components/Icons';
-
-interface LeaderboardEntry {
-  rank: number;
-  name: string;
-  level: number;
-  xp: number;
-  lessonsCompleted: number;
-  challengesCompleted: number;
-  quizzesPassed: number;
-  score: number;
-  isCurrentUser: boolean;
-}
 
 function getInitials(name: string): string {
   return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
@@ -23,74 +12,39 @@ const rankColors = ['bg-yellow-400', 'bg-gray-300', 'bg-orange-400'];
 
 export default function Leaderboard() {
   const { user: currentUser } = useAuth();
+  const [entries, setEntries] = useState<(LeaderboardEntry & { rank: number; score: number; isCurrentUser: boolean })[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const entries = useMemo<LeaderboardEntry[]>(() => {
-    try {
-      const usersRaw = localStorage.getItem('intern-training-users');
-      if (!usersRaw) return [];
-
-      const users = JSON.parse(usersRaw) as Record<string, { profile: { id: string; name: string } }>;
-      const results: Omit<LeaderboardEntry, 'rank'>[] = [];
-
-      for (const userId of Object.keys(users)) {
-        const profile = users[userId]?.profile;
-        if (!profile) continue;
-
-        const progressRaw = localStorage.getItem(`intern-training-portal-${userId}`);
-        if (!progressRaw) continue;
-
-        let progress: any;
-        try {
-          progress = JSON.parse(progressRaw);
-        } catch {
-          continue;
-        }
-        if (!progress || typeof progress !== 'object') continue;
-
-        const xp = progress.xp ?? 0;
-        const lessonsCompleted = progress.completedLessons?.length ?? 0;
-        const challengesCompleted = progress.completedChallenges?.length ?? 0;
-        const quizzesPassed = progress.passedQuizzes?.length ?? 0;
-        const level = progress.level ?? 1;
-
-        let checkpointsPassed = 0;
-        let assessmentScore = 0;
-        const moduleProgress = progress.moduleProgress ?? {};
-        for (const modId of Object.keys(moduleProgress)) {
-          const mp = moduleProgress[modId];
-          if (mp?.checkpoints) {
-            checkpointsPassed += Object.values(mp.checkpoints).filter((c: any) => c?.passed).length;
-          }
-          if (mp?.assessmentResult?.bestScore != null) {
-            assessmentScore += mp.assessmentResult.bestScore;
-          }
-        }
-
-        const score =
-          xp +
-          lessonsCompleted * 10 +
-          quizzesPassed * 20 +
-          challengesCompleted * 30 +
-          assessmentScore;
-
-        results.push({
-          name: profile.name,
-          level,
-          xp,
-          lessonsCompleted,
-          challengesCompleted,
-          quizzesPassed,
-          score,
-          isCurrentUser: currentUser?.id === userId,
-        });
-      }
-
-      results.sort((a, b) => b.score - a.score);
-      return results.map((entry, i) => ({ ...entry, rank: i + 1 }));
-    } catch {
-      return [];
-    }
+  useEffect(() => {
+    getLeaderboard()
+      .then(data => {
+        const scored = data.map(e => ({
+          ...e,
+          score: e.xp + e.completedLessons * 10 + e.passedQuizzes * 20 + e.completedChallenges * 30 + e.assessmentScore,
+        }));
+        scored.sort((a, b) => b.score - a.score);
+        setEntries(scored.map((e, i) => ({ ...e, rank: i + 1, isCurrentUser: currentUser?.id === e.userId })));
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, [currentUser?.id]);
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-3">
+          <Trophy className="w-7 h-7 text-gray-400" />
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Leaderboard</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Intern rankings by activity and performance</p>
+          </div>
+        </div>
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-12 text-center">
+          <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
+        </div>
+      </div>
+    );
+  }
 
   if (entries.length === 0) {
     return (
@@ -139,7 +93,7 @@ export default function Leaderboard() {
 
             return (
               <div
-                key={entry.name}
+                key={entry.userId}
                 className={`grid grid-cols-[48px_1fr_64px_80px_120px_80px] gap-2 items-center px-4 py-3 text-sm ${
                   entry.isCurrentUser
                     ? 'bg-blue-50 dark:bg-blue-900/20'
@@ -177,7 +131,7 @@ export default function Leaderboard() {
                   {entry.xp.toLocaleString()}
                 </span>
                 <span className="text-right text-gray-500 dark:text-gray-400 tabular-nums text-xs">
-                  {entry.lessonsCompleted}L / {entry.challengesCompleted}C / {entry.quizzesPassed}Q
+                  {entry.completedLessons}L / {entry.completedChallenges}C / {entry.passedQuizzes}Q
                 </span>
                 <span className="text-right text-gray-800 dark:text-white font-semibold tabular-nums">
                   {entry.score.toLocaleString()}
