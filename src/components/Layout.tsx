@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { getUserSettings, upsertUserSettings } from '../lib/db';
 import Sidebar from './Sidebar';
+import NotificationBell from './NotificationBell';
 
 export default function Layout() {
+  const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -15,9 +19,21 @@ export default function Layout() {
   const isModuleRoute = location.pathname.startsWith('/module/');
 
   useEffect(() => {
+    if (!user) return;
+    getUserSettings(user.id).then(settings => {
+      if (settings?.theme) {
+        setDarkMode(settings.theme === 'dark');
+      }
+    }).catch(() => {});
+  }, [user]);
+
+  useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
-  }, [darkMode]);
+    if (user) {
+      upsertUserSettings(user.id, { theme: darkMode ? 'dark' : 'light' }).catch(() => {});
+    }
+  }, [darkMode, user]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
@@ -47,6 +63,7 @@ export default function Layout() {
                 <span>🔒</span>
                 <span>Mentor</span>
               </Link>
+              <NotificationBell />
               <button
                 onClick={() => setDarkMode(p => !p)}
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
