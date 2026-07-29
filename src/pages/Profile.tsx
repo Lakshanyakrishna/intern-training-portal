@@ -1,19 +1,38 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useProgress } from '../hooks/useProgress';
+import { useAuth } from '../contexts/AuthContext';
 import { levels } from '../data/levels';
 import { badges as badgeDefs } from '../data/badges';
 import Badge from '../components/Badge';
 import { User } from '../components/Icons';
+import { getUserSettings, upsertUserSettings } from '../lib/db';
 
 export default function Profile() {
   const { progress, getEarnedBadges } = useProgress();
+  const { user } = useAuth();
   const earned = getEarnedBadges();
-  const [name, setName] = useState(localStorage.getItem('intern-name') || '');
+  const [name, setName] = useState(user?.name || '');
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    getUserSettings(user.id).then(settings => {
+      if (settings?.displayName) {
+        setName(settings.displayName);
+      }
+    }).catch(() => {});
+  }, [user]);
 
   const currentLevel = levels.find(l => l.level === progress.level) || levels[0];
 
-  const handleSaveName = () => {
-    localStorage.setItem('intern-name', name);
+  const handleSaveName = async () => {
+    if (user) {
+      setSaving(true);
+      try {
+        await upsertUserSettings(user.id, { displayName: name });
+      } catch { /* ignore */ }
+      setSaving(false);
+    }
   };
 
   return (
@@ -39,9 +58,10 @@ export default function Profile() {
             />
             <button
               onClick={handleSaveName}
-              className="px-4 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
+              disabled={saving}
+              className="px-4 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
             >
-              Save
+              {saving ? 'Saving...' : 'Save'}
             </button>
           </div>
         </div>
