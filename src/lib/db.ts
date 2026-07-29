@@ -5,11 +5,12 @@ import type { AuthUser } from '../types';
 
 export async function getUser(id: string): Promise<AuthUser | null> {
   const supabase = requireSupabase();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('users')
     .select('*')
     .eq('id', id)
-    .single();
+    .maybeSingle();
+  if (error) return null;
   return data as AuthUser | null;
 }
 
@@ -462,6 +463,7 @@ export interface DbApplication {
   reviewerId?: string;
   reviewedAt?: string;
   reviewerNotes?: string;
+  screeningStatus?: 'pending' | 'processing' | 'analyzed' | 'failed';
 }
 
 export async function submitApplication(data: {
@@ -520,6 +522,7 @@ export async function getApplications(): Promise<DbApplication[]> {
     reviewerId: r.reviewer_id as string | undefined,
     reviewedAt: r.reviewed_at as string | undefined,
     reviewerNotes: r.reviewer_notes as string | undefined,
+    screeningStatus: r.screening_status as DbApplication['screeningStatus'],
   }));
 }
 
@@ -550,6 +553,7 @@ export async function getApplicationByUserId(userId: string): Promise<DbApplicat
     reviewerId: data.reviewer_id,
     reviewedAt: data.reviewed_at,
     reviewerNotes: data.reviewer_notes,
+    screeningStatus: data.screening_status,
   };
 }
 
@@ -576,6 +580,7 @@ export async function getApplication(id: string): Promise<DbApplication | null> 
     reviewerId: data.reviewer_id,
     reviewedAt: data.reviewed_at,
     reviewerNotes: data.reviewer_notes,
+    screeningStatus: data.screening_status,
   };
 }
 
@@ -624,7 +629,6 @@ export async function uploadResumeFile(
       upsert: true,
     });
   if (uploadError) throw uploadError;
-  const { data: urlData } = supabase.storage.from('resumes').getPublicUrl(filePath);
   const { error: dbError } = await supabase.from('resume_files').insert({
     application_id: applicationId,
     file_path: filePath,
@@ -671,10 +675,11 @@ export async function getResumeFiles(applicationId: string): Promise<DbResumeFil
   }));
 }
 
-export function getResumeDownloadUrl(filePath: string): string {
+export async function getResumeDownloadUrl(filePath: string): Promise<string> {
   const supabase = requireSupabase();
-  const { data } = supabase.storage.from('resumes').getPublicUrl(filePath);
-  return data.publicUrl;
+  const { data, error } = await supabase.storage.from('resumes').createSignedUrl(filePath, 300);
+  if (error || !data) throw error || new Error('Failed to create signed URL');
+  return data.signedUrl;
 }
 
 export async function deleteResumeFile(id: string): Promise<void> {

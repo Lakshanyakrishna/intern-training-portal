@@ -60,10 +60,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
-        const profile = await ensureUserProfile(session.user);
-        setUser(profile);
-        if (profile) {
-          syncProgressFromDb(profile.id).catch(() => {});
+        try {
+          const profile = await ensureUserProfile(session.user);
+          setUser(profile);
+          if (profile) {
+            syncProgressFromDb(profile.id).catch(() => {});
+          }
+        } catch {
+          setUser(null);
         }
       }
       setLoading(false);
