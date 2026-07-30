@@ -9,6 +9,8 @@ import Login from './pages/public/Login';
 import SignUp from './pages/public/SignUp';
 import Opportunities from './pages/public/Opportunities';
 import OpportunityDetail from './pages/public/OpportunityDetail';
+import Team from './pages/public/Team';
+import Contact from './pages/public/Contact';
 import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 import ModulePage from './pages/ModulePage';
@@ -51,6 +53,8 @@ export default function App() {
             {/* Public routes */}
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
+            <Route path="/team" element={<Team />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/opportunities" element={<Opportunities />} />
             <Route path="/opportunities/:opportunityId" element={<OpportunityDetail />} />
             <Route path="/apply/:opportunityId" element={<Apply />} />
