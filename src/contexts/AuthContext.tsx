@@ -16,8 +16,8 @@ interface SignUpData {
 interface AuthContextType {
   user: AuthUser | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error?: string }>;
-  signUp: (data: SignUpData) => Promise<{ error?: string }>;
+  signIn: (email: string, password: string) => Promise<{ error?: string; user?: AuthUser }>;
+  signUp: (data: SignUpData) => Promise<{ error?: string; user?: AuthUser }>;
   signOut: () => void;
   completeOnboarding: () => void;
 }
@@ -31,7 +31,7 @@ async function ensureUserProfile(supabaseUser: { id: string; email?: string | nu
       id: supabaseUser.id,
       email: supabaseUser.email || '',
       name: supabaseUser.email?.split('@')[0] || 'User',
-      role: 'intern',
+      role: 'applicant',
       batch: DEFAULT_BATCH,
       joinedDate: new Date().toISOString().split('T')[0],
       onboardingComplete: false,
@@ -89,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signIn = useCallback(async (email: string, password: string): Promise<{ error?: string }> => {
+  const signIn = useCallback(async (email: string, password: string): Promise<{ error?: string; user?: AuthUser }> => {
     try {
       const sb = requireSupabase();
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
@@ -100,13 +100,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(profile);
         syncProgressFromDb(profile.id).catch(() => {});
       }
-      return {};
+      return { user: profile ?? undefined };
     } catch (err) {
       return { error: err instanceof Error ? err.message : 'An unexpected error occurred.' };
     }
   }, []);
 
-  const signUp = useCallback(async (data: SignUpData): Promise<{ error?: string }> => {
+  const signUp = useCallback(async (data: SignUpData): Promise<{ error?: string; user?: AuthUser }> => {
     if (data.password.length < 6) return { error: 'Password must be at least 6 characters.' };
 
     try {
@@ -118,12 +118,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) return { error: error.message };
       if (!authData.user) return { error: 'Sign up failed. No user returned.' };
 
+      // New accounts can only ever insert themselves as the lowest-privilege
+      // role (enforced at the database layer, see 018_fix_users_role_escalation.sql).
       const now = new Date().toISOString().split('T')[0];
       const profile: AuthUser = {
         id: authData.user.id,
         email: data.email,
         name: data.name,
-        role: 'intern',
+        role: 'applicant',
         college: data.college,
         yearOfStudy: data.yearOfStudy,
         batch: DEFAULT_BATCH,
@@ -136,12 +138,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         name: data.name,
       }).catch(() => {});
       await upsertUserSettings(authData.user.id, { theme: 'light', displayName: data.name });
-      await linkApplicationToUser(data.email, authData.user.id).catch(() => {});
 
-      setUser(profile);
-      syncProgressFromDb(profile.id).catch(() => {});
+      // Link any existing unlinked application matching this email (FR-006).
+      // If it's already 'accepted', a database trigger auto-promotes the
+      // just-created row to 'intern' -- the App Flow document describes
+      // exactly this case: "If accepted, they create an account and their
+      // existing application is linked to it." Re-fetch afterwards to pick
+      // up that promotion rather than trusting the client's own guess.
+      await linkApplicationToUser(data.email, authData.user.id).catch(() => null);
+      const finalProfile = (await getUser(profile.id)) ?? profile;
 
-      return {};
+      setUser(finalProfile);
+      syncProgressFromDb(finalProfile.id).catch(() => {});
+
+      return { user: finalProfile };
     } catch (err) {
       return { error: err instanceof Error ? err.message : 'An unexpected error occurred.' };
     }

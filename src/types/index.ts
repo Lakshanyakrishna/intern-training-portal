@@ -242,7 +242,7 @@ export interface MentorFeedbackEntry {
   module: string;
 }
 
-export type UserRole = 'intern' | 'mentor' | 'admin';
+export type UserRole = 'applicant' | 'intern' | 'mentor' | 'admin';
 
 export interface AuthUser {
   id: string;

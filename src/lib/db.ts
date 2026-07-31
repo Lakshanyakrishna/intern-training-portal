@@ -901,14 +901,20 @@ export async function getAnalysisVersions(applicationId: string): Promise<DbAnal
   }));
 }
 
-export async function linkApplicationToUser(email: string, userId: string): Promise<void> {
+export async function linkApplicationToUser(
+  email: string,
+  userId: string
+): Promise<{ status: DbApplication['status'] } | null> {
   const supabase = requireSupabase();
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('applications')
     .update({ user_id: userId })
     .eq('email', email)
-    .is('user_id', null);
+    .is('user_id', null)
+    .select('status')
+    .maybeSingle();
   if (error) throw error;
+  return data ? { status: data.status as DbApplication['status'] } : null;
 }
 
 // ─── Interviews (Phase C) ─────────────────────────────────────────
