@@ -47,7 +47,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <BrowserRouter basename="/intern-training-portal">
+        <BrowserRouter>
           <Routes>
 
             {/* Public routes */}
