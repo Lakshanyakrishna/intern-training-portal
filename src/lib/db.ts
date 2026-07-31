@@ -1356,12 +1356,16 @@ export async function updateProjectAllocation(
 
 // ─── Opportunities (Phase D.4) ────────────────────────────────────
 
+export const OPPORTUNITY_FORTES = ['Frontend', 'Backend', 'Agentic AI', 'Mobile Development', 'UI / UX Design'] as const;
+export type OpportunityForte = (typeof OPPORTUNITY_FORTES)[number];
+
 export interface DbOpportunity {
   id: string;
   title: string;
   description: string;
   category: 'internship' | 'training' | 'fellowship' | 'project';
   status: 'draft' | 'active' | 'closed';
+  forte?: OpportunityForte;
   startDate?: string;
   endDate?: string;
   slots?: number;
@@ -1390,6 +1394,7 @@ export async function getOpportunities(status?: string): Promise<DbOpportunity[]
     description: r.description as string,
     category: r.category as DbOpportunity['category'],
     status: r.status as DbOpportunity['status'],
+    forte: r.forte as DbOpportunity['forte'],
     startDate: r.start_date as string | undefined,
     endDate: r.end_date as string | undefined,
     slots: r.slots as number | undefined,
@@ -1408,6 +1413,7 @@ export async function getOpportunity(id: string): Promise<DbOpportunity | null> 
     description: data.description,
     category: data.category,
     status: data.status,
+    forte: data.forte,
     startDate: data.start_date,
     endDate: data.end_date,
     slots: data.slots,
@@ -1421,6 +1427,7 @@ export async function createOpportunity(data: {
   description: string;
   category?: string;
   status?: string;
+  forte?: string;
   startDate?: string;
   endDate?: string;
   slots?: number;
@@ -1432,6 +1439,7 @@ export async function createOpportunity(data: {
     description: data.description,
     category: data.category ?? 'internship',
     status: data.status ?? 'draft',
+    forte: data.forte || null,
     start_date: data.startDate ?? null,
     end_date: data.endDate ?? null,
     slots: data.slots ?? null,
@@ -1447,6 +1455,7 @@ export async function updateOpportunity(
     description?: string;
     category?: string;
     status?: string;
+    forte?: string;
     startDate?: string;
     endDate?: string;
     slots?: number;
@@ -1458,6 +1467,7 @@ export async function updateOpportunity(
   if (updates.description !== undefined) payload.description = updates.description;
   if (updates.category !== undefined) payload.category = updates.category;
   if (updates.status !== undefined) payload.status = updates.status;
+  if (updates.forte !== undefined) payload.forte = updates.forte || null;
   if (updates.startDate !== undefined) payload.start_date = updates.startDate;
   if (updates.endDate !== undefined) payload.end_date = updates.endDate;
   if (updates.slots !== undefined) payload.slots = updates.slots;
