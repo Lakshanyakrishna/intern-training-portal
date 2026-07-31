@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Beams from '../../components/Beams';
+import Ferrofluid from '../../components/Ferrofluid';
 import Header from '../../components/Header';
-import DecryptedText from '../../components/DecryptedText';
+import IntroLogo from '../../components/IntroLogo';
 import OptionWheel from '../../components/OptionWheel';
 import CircularGallery from '../../components/CircularGallery';
-import { getOpportunities } from '../../lib/db';
+import { getOpportunities, OPPORTUNITY_FORTES } from '../../lib/db';
 import type { DbOpportunity } from '../../lib/db';
 import feImg from '../../assets/forte-placeholders/fe.png';
 import beImg from '../../assets/forte-placeholders/be.png';
@@ -17,7 +17,7 @@ const STEEL = '#9AA1A3';
 const SILVER = '#C6CAC9';
 const SMOKE = '#F1F2EE';
 
-const FORTES = ['Frontend', 'Backend', 'Agentic AI', 'Mobile Development', 'UI / UX Design'];
+const FORTES = [...OPPORTUNITY_FORTES];
 
 const GALLERY_ITEMS = [
   { image: feImg, text: 'Frontend' },
@@ -38,32 +38,9 @@ const CATEGORY_LABEL: Record<DbOpportunity['category'], string> = {
   project: 'Project',
 };
 
-function ConfusedToConfident() {
-  const [word, setWord] = useState<'confused' | 'confident'>('confused');
-
-  useEffect(() => {
-    const t = setTimeout(() => setWord('confident'), 1900);
-    return () => clearTimeout(t);
-  }, []);
-
-  return (
-    <DecryptedText
-      key={word}
-      text={word}
-      animateOn="view"
-      sequential
-      revealDirection="start"
-      speed={35}
-      maxIterations={14}
-      className="text-[#F1F2EE]"
-      encryptedClassName="text-[#9AA1A3]"
-      parentClassName="text-[22px] font-semibold tracking-tight"
-    />
-  );
-}
-
 export default function Opportunities() {
-  const [selectedForte, setSelectedForte] = useState(FORTES[0]);
+  const [selectedForte, setSelectedForte] = useState<string>(FORTES[0]);
+  const [forteChosen, setForteChosen] = useState(false);
   const [opportunities, setOpportunities] = useState<DbOpportunity[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -75,24 +52,37 @@ export default function Opportunities() {
 
   const hasLive = opportunities.length > 0;
 
+  const forteCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const f of FORTES) counts[f] = 0;
+    for (const o of opportunities) {
+      if (o.forte) counts[o.forte] = (counts[o.forte] ?? 0) + 1;
+    }
+    return counts;
+  }, [opportunities]);
+
   return (
     <div className="relative min-h-screen bg-black text-white">
       <div className="fixed inset-0 pointer-events-none">
-        <Beams
-          beamWidth={2}
-          beamHeight={15}
-          beamNumber={12}
-          lightColor={STEEL}
-          speed={2}
-          noiseIntensity={1.75}
-          scale={0.2}
-          rotation={0}
+        <Ferrofluid
+          colors={['#9AA1A3', '#C6CAC9', '#F1F2EE']}
+          speed={0.5}
+          scale={1.6}
+          turbulence={1}
+          fluidity={0.15}
+          rimWidth={0.22}
+          sharpness={2.5}
+          shimmer={1.2}
+          glow={1.0}
+          flowDirection="down"
+          opacity={0.7}
+          mouseInteraction
+          mouseStrength={0.8}
+          mouseRadius={0.35}
         />
       </div>
 
-      <div className="fixed left-7 top-7 z-30">
-        <ConfusedToConfident />
-      </div>
+      <IntroLogo animate={false} />
       <Header />
 
       <main className="relative px-8 pt-40 pb-28">
@@ -186,7 +176,10 @@ export default function Opportunities() {
                     A preview of the tracks Lumora will open roles for first.
                   </p>
                   <p className="mt-8 text-[13px]" style={{ color: SILVER }}>
-                    {selectedForte} <span style={{ color: STEEL }}>· 0 open roles</span>
+                    {selectedForte}{' '}
+                    <span style={{ color: STEEL }}>
+                      · {forteCounts[selectedForte] ?? 0} open role{(forteCounts[selectedForte] ?? 0) !== 1 ? 's' : ''}
+                    </span>
                   </p>
                 </div>
                 <div>
@@ -204,7 +197,10 @@ export default function Opportunities() {
                       blur={2}
                       fade={0.3}
                       inset={0}
-                      onChange={(_, item) => setSelectedForte(item)}
+                      onChange={(_, item) => {
+                        setSelectedForte(item);
+                        setForteChosen(true);
+                      }}
                     />
                   </div>
                   <p className="mt-2 text-[11px] uppercase tracking-[0.2em]" style={{ color: STEEL }}>
@@ -213,24 +209,26 @@ export default function Opportunities() {
                 </div>
               </div>
 
-              {/* Circular gallery — highlights the forte selected in the wheel above without
-                  scrolling or rebuilding itself, so picking a forte never jumps the gallery */}
-              <div className="mt-24">
-                <div style={{ height: '360px', position: 'relative' }}>
-                  <CircularGallery
-                    items={GALLERY_ITEMS}
-                    bend={1.8}
-                    textColor={SILVER}
-                    borderRadius={0.03}
-                    scrollEase={0.03}
-                    font="500 22px -apple-system, Helvetica, Arial, sans-serif"
-                    highlightText={selectedForte}
-                  />
+              {/* Circular gallery — only appears once a forte has actually been picked, and
+                  highlights the selection without scrolling or rebuilding itself */}
+              {forteChosen && (
+                <div className="mt-24">
+                  <div style={{ height: '360px', position: 'relative' }}>
+                    <CircularGallery
+                      items={GALLERY_ITEMS}
+                      bend={0}
+                      textColor={SILVER}
+                      borderRadius={0.03}
+                      scrollEase={0.03}
+                      font="500 22px -apple-system, Helvetica, Arial, sans-serif"
+                      highlightText={selectedForte}
+                    />
+                  </div>
+                  <p className="mt-2 text-[11px] uppercase tracking-[0.2em]" style={{ color: STEEL }}>
+                    ↔ drag to explore
+                  </p>
                 </div>
-                <p className="mt-2 text-[11px] uppercase tracking-[0.2em]" style={{ color: STEEL }}>
-                  ↔ drag to explore
-                </p>
-              </div>
+              )}
             </>
           )}
           </>
