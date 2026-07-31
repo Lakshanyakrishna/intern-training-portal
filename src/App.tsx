@@ -62,14 +62,28 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
 
-            {/* Onboarding (authenticated) */}
+            {/* Onboarding (intern+ only -- training-specific, not relevant pre-acceptance) */}
             <Route path="/onboarding" element={
-              <ProtectedRoute><Onboarding /></ProtectedRoute>
+              <ProtectedRoute roles={['intern', 'mentor', 'admin']}><Onboarding /></ProtectedRoute>
             } />
 
-            {/* Main app (authenticated, with sidebar) */}
+            {/* Any authenticated user, regardless of lifecycle stage */}
             <Route element={
               <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }>
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/applicant/dashboard" element={<ApplicantDashboard />} />
+              <Route path="/notifications" element={<NotificationCenter />} />
+              <Route path="/notifications/settings" element={<NotificationSettings />} />
+            </Route>
+
+            {/* Training/project app -- intern+ only. An applicant who hasn't
+                been accepted yet has no training track assigned and is
+                redirected away rather than reaching these screens. */}
+            <Route element={
+              <ProtectedRoute roles={['intern', 'mentor', 'admin']}>
                 <Layout />
               </ProtectedRoute>
             }>
@@ -82,10 +96,6 @@ export default function App() {
               <Route path="/progress-center" element={<ProgressCenter />} />
               <Route path="/readiness-reviews" element={<ReadinessReviews />} />
               <Route path="/feedback" element={<Feedback />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/applicant/dashboard" element={<ApplicantDashboard />} />
-              <Route path="/notifications" element={<NotificationCenter />} />
-              <Route path="/notifications/settings" element={<NotificationSettings />} />
               <Route path="/portfolio" element={<InternPortfolio />} />
             </Route>
 

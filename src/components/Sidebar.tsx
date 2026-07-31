@@ -69,6 +69,7 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
   const { getModuleProgress } = useProgress();
   const { user, signOut } = useAuth();
   const isMentor = user?.role === 'mentor' || user?.role === 'admin';
+  const isApplicant = user?.role === 'applicant';
 
   return (
     <>
@@ -90,9 +91,17 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto py-2 space-y-0.5">
-          <NavItem to="/dashboard" label="Dashboard" end onClick={onClose} icon={<LayoutDashboard />} compact={compact} />
+          {!isApplicant && (
+            <NavItem to="/dashboard" label="Dashboard" end onClick={onClose} icon={<LayoutDashboard />} compact={compact} />
+          )}
 
-          {user?.role === 'admin' ? (
+          {isApplicant ? (
+            <>
+              <NavItem to="/applicant/dashboard" label="My Application" onClick={onClose} icon={<ClipboardCheck />} compact={compact} />
+              <NavItem to="/profile" label="Profile" onClick={onClose} icon={<User />} compact={compact} />
+              <NavItem to="/notifications/settings" label="Notification Settings" onClick={onClose} icon={<BarChart3 />} compact={compact} />
+            </>
+          ) : user?.role === 'admin' ? (
             <>
               <div className="pt-2 pb-1 px-3">
                 <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Admin</p>
@@ -139,7 +148,6 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
                 <NavItem to="/track/foundation" label="Training" onClick={onClose} icon={<BookOpen />} compact={compact} />
               ) : (
                 <>
-                  <NavItem to="/applicant/dashboard" label="My Application" onClick={onClose} icon={<ClipboardCheck />} compact={compact} />
                   <div className="pt-1">
                     <button
                       onClick={() => setProgramOpen(!programOpen)}
