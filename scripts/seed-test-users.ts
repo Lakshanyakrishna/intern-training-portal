@@ -27,7 +27,7 @@ const supabase = createClient(supabaseUrl, serviceKey, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
-type Role = 'intern' | 'mentor' | 'admin';
+type Role = 'applicant' | 'intern' | 'mentor' | 'admin';
 
 interface SeedUser {
   email: string;
@@ -46,7 +46,7 @@ const users: SeedUser[] = [
     email: 'applicant@test.com',
     password: 'Test1234!',
     name: 'Alice Applicant',
-    role: 'intern',
+    role: 'applicant',
     college: 'MIT',
     yearOfStudy: '3rd Year',
     batch: '',
@@ -105,10 +105,14 @@ async function seedUser(u: SeedUser): Promise<void> {
 
   let userId: string;
 
-  // Check if user exists in auth, or create
-  const { data: existing } = await supabase.auth.admin.getUserByEmail(u.email);
-  if (existing?.user) {
-    userId = existing.user.id;
+  // Check if user exists in auth, or create.
+  // auth.admin.getUserByEmail was removed from the SDK this project depends
+  // on (@supabase/supabase-js ^2.107.0) -- listUsers + filter is the current
+  // equivalent.
+  const { data: list } = await supabase.auth.admin.listUsers();
+  const existing = list?.users.find(u2 => u2.email === u.email);
+  if (existing) {
+    userId = existing.id;
     console.log(`  Auth user already exists: ${userId}`);
   } else {
     userId = await createAuthUser(u.email, u.password);
