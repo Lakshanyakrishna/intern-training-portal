@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { roleHomePath } from '../../utils/roleHome';
 
 export default function Login() {
   const { signIn } = useAuth();
@@ -19,7 +20,7 @@ export default function Login() {
     if (result.error) {
       setError(result.error);
     } else {
-      navigate('/dashboard');
+      navigate(roleHomePath(result.user?.role));
     }
   };
 

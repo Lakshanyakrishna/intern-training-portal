@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { ArrowRight } from '../../components/Icons';
+import { roleHomePath } from '../../utils/roleHome';
 
 export default function SignUp() {
   const { signUp } = useAuth();
@@ -42,7 +43,10 @@ export default function SignUp() {
     if (result.error) {
       setError(result.error);
     } else {
-      navigate('/onboarding');
+      // Onboarding is training-specific -- only relevant once promoted to
+      // intern. A still-'applicant' account (the common case) goes straight
+      // to their application-status view instead.
+      navigate(result.user?.role === 'intern' ? '/onboarding' : roleHomePath(result.user?.role));
     }
   };
 
