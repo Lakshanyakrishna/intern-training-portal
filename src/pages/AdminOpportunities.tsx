@@ -9,6 +9,7 @@ import {
   createOpportunityQuestion,
   deleteOpportunityQuestion,
 } from '../lib/db';
+import { OPPORTUNITY_FORTES } from '../lib/db';
 import type { DbOpportunity, DbOpportunityQuestion } from '../lib/db';
 
 const CATEGORIES: DbOpportunity['category'][] = ['internship', 'training', 'fellowship', 'project'];
@@ -39,6 +40,7 @@ const emptyForm = {
   description: '',
   category: 'internship' as DbOpportunity['category'],
   status: 'draft' as DbOpportunity['status'],
+  forte: '' as DbOpportunity['forte'] | '',
   startDate: '',
   endDate: '',
   slots: 0,
@@ -112,6 +114,7 @@ export default function AdminOpportunities() {
         description: form.description,
         category: form.category,
         status: form.status,
+        forte: form.forte || undefined,
         startDate: form.startDate || undefined,
         endDate: form.endDate || undefined,
         slots: form.slots || undefined,
@@ -224,6 +227,9 @@ export default function AdminOpportunities() {
                       </div>
                       <div className="flex items-center gap-3 mt-0.5">
                         <span className="text-xs text-gray-500 dark:text-gray-400">{CATEGORY_LABELS[opp.category]}</span>
+                        {opp.forte && (
+                          <span className="text-xs text-gray-500 dark:text-gray-400">{opp.forte}</span>
+                        )}
                         {opp.slots !== undefined && opp.slots !== null && (
                           <span className="text-xs text-gray-500 dark:text-gray-400">{opp.slots} slot{opp.slots !== 1 ? 's' : ''}</span>
                         )}
@@ -451,6 +457,19 @@ export default function AdminOpportunities() {
                     ))}
                   </select>
                 </div>
+              </div>
+              <div>
+                <label className={labelClass}>Forte (optional)</label>
+                <select
+                  value={form.forte}
+                  onChange={e => setForm(p => ({ ...p, forte: e.target.value as DbOpportunity['forte'] | '' }))}
+                  className={selectClass}
+                >
+                  <option value="">— None —</option>
+                  {OPPORTUNITY_FORTES.map(f => (
+                    <option key={f} value={f}>{f}</option>
+                  ))}
+                </select>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
