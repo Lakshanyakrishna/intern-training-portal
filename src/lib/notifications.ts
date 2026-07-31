@@ -23,6 +23,7 @@ export async function notifyEvent(
   if (!template) {
     await createNotification({
       recipientId,
+      eventType,
       title: eventType,
       message: eventType,
       metadata,
@@ -30,30 +31,32 @@ export async function notifyEvent(
     return;
   }
 
-  const title = renderTemplate(template.in_app_template ?? '', vars);
-  const message = renderTemplate(template.email_body ?? '', vars);
+  const title = renderTemplate(template.inAppTemplate ?? '', vars);
+  const message = renderTemplate(template.emailBody ?? '', vars);
 
   await createNotification({
     recipientId,
+    eventType,
     title,
     message,
     metadata,
   });
 
   const prefs = await getNotificationPreferences(recipientId);
-  if (!prefs?.email_enabled) return;
+  if (!prefs?.emailEnabled) return;
 
   const user: AuthUser | null = await getUser(recipientId);
   if (!user) return;
 
-  const emailLog = await createEmailLog({
+  const emailLogId = await createEmailLog({
     recipientId,
-    email: user.email,
+    recipientEmail: user.email,
+    eventType,
     subject: title,
     body: message,
   });
 
-  await sendEmail(user.email, title, message, emailLog.id);
+  await sendEmail(user.email, title, message, emailLogId);
 }
 
 export async function sendEmail(
@@ -94,7 +97,6 @@ export async function sendEmail(
       return;
     } catch {
       if (attempt < maxRetries - 1) {
-        await updateEmailLogStatus(emailLogId, 'retrying');
         await new Promise(resolve => setTimeout(resolve, 1000 * 2 ** attempt));
       } else {
         await updateEmailLogStatus(emailLogId, 'failed');

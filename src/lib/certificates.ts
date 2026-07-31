@@ -27,8 +27,7 @@ export async function generateInternshipCertificate(
   projectId?: string,
   mentorId?: string,
   opportunityName?: string,
-  projectName?: string,
-  mentorName?: string
+  projectName?: string
 ): Promise<string> {
   const certNumber = await issueInternshipCertificate({
     userId,
