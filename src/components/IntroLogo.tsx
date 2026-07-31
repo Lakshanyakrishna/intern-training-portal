@@ -1,18 +1,30 @@
 import { useEffect, useState } from 'react';
 import lumoraLogo from '../assets/lumora-logo.png';
+import DecryptedText from './DecryptedText';
 
 type Phase = 'enter' | 'confused' | 'confident' | 'settled';
 
 const TIMINGS: Record<Exclude<Phase, 'settled'>, number> = {
   enter: 300,
-  confused: 1100,
-  confident: 1300,
+  confused: 2000,
+  confident: 2200,
 };
 
-export default function IntroLogo() {
-  const [phase, setPhase] = useState<Phase>('enter');
+/** Total time from mount to the "settled" corner mark — Home uses this to hold off
+ * showing anything else until the intro has fully played and shrunk into place. */
+export const INTRO_TOTAL_MS = TIMINGS.enter + TIMINGS.confused + TIMINGS.confident;
+
+interface IntroLogoProps {
+  /** Play the confused→confident entrance sequence. Off shows the settled mark immediately —
+   * use that on every page except Home, where replaying the intro on each visit would be noise. */
+  animate?: boolean;
+}
+
+export default function IntroLogo({ animate = true }: IntroLogoProps) {
+  const [phase, setPhase] = useState<Phase>(animate ? 'enter' : 'settled');
 
   useEffect(() => {
+    if (!animate) return;
     const t1 = setTimeout(() => setPhase('confused'), TIMINGS.enter);
     const t2 = setTimeout(() => setPhase('confident'), TIMINGS.enter + TIMINGS.confused);
     const t3 = setTimeout(() => setPhase('settled'), TIMINGS.enter + TIMINGS.confused + TIMINGS.confident);
@@ -21,7 +33,7 @@ export default function IntroLogo() {
       clearTimeout(t2);
       clearTimeout(t3);
     };
-  }, []);
+  }, [animate]);
 
   const settled = phase === 'settled';
   const visible = phase !== 'enter';
@@ -62,34 +74,18 @@ export default function IntroLogo() {
             Lumora
           </span>
         ) : (
-          <span
-            className="font-semibold tracking-tight whitespace-nowrap"
-            style={{ color: '#F1F2EE', fontSize: '28px' }}
-          >
-            conf
-            <span className="relative inline-block" style={{ height: '1em', verticalAlign: 'top', overflow: 'hidden', width: '3.1ch' }}>
-              <span
-                className="absolute inset-0 transition-transform ease-[cubic-bezier(0.65,0,0.35,1)]"
-                style={{
-                  transitionDuration: '550ms',
-                  transform: phase === 'confident' ? 'translateY(-100%)' : 'translateY(0)',
-                  color: '#9AA1A3',
-                }}
-              >
-                used
-              </span>
-              <span
-                className="absolute inset-0 transition-transform ease-[cubic-bezier(0.65,0,0.35,1)]"
-                style={{
-                  transitionDuration: '550ms',
-                  transform: phase === 'confident' ? 'translateY(0)' : 'translateY(100%)',
-                  color: '#F1F2EE',
-                }}
-              >
-                ident
-              </span>
-            </span>
-          </span>
+          <DecryptedText
+            key={phase === 'confident' ? 'confident' : 'confused'}
+            text={phase === 'confident' ? 'confident' : 'confused'}
+            animateOn="view"
+            sequential
+            revealDirection="start"
+            speed={70}
+            maxIterations={14}
+            className="text-[#F1F2EE]"
+            encryptedClassName="text-[#9AA1A3]"
+            parentClassName="text-[28px] font-semibold tracking-tight whitespace-nowrap"
+          />
         )}
       </div>
     </div>

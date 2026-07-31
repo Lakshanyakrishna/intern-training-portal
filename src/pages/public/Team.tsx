@@ -1,4 +1,4 @@
-import Beams from '../../components/Beams';
+import Ferrofluid from '../../components/Ferrofluid';
 import IntroLogo from '../../components/IntroLogo';
 import Header from '../../components/Header';
 
@@ -6,19 +6,25 @@ export default function Team() {
   return (
     <div className="relative min-h-screen bg-black text-white">
       <div className="fixed inset-0 pointer-events-none">
-        <Beams
-          beamWidth={2}
-          beamHeight={15}
-          beamNumber={12}
-          lightColor="#9AA1A3"
-          speed={2}
-          noiseIntensity={1.75}
-          scale={0.2}
-          rotation={0}
+        <Ferrofluid
+          colors={['#9AA1A3', '#C6CAC9', '#F1F2EE']}
+          speed={0.5}
+          scale={1.6}
+          turbulence={1}
+          fluidity={0.15}
+          rimWidth={0.22}
+          sharpness={2.5}
+          shimmer={1.2}
+          glow={1.0}
+          flowDirection="down"
+          opacity={0.7}
+          mouseInteraction
+          mouseStrength={0.8}
+          mouseRadius={0.35}
         />
       </div>
 
-      <IntroLogo />
+      <IntroLogo animate={false} />
       <Header />
 
       <div className="relative flex min-h-screen items-center justify-center px-8 pt-24">
