@@ -7,6 +7,7 @@ import {
   upsertNotificationTemplate,
   updateEmailLogStatus,
 } from '../lib/db';
+import { sendEmail } from '../lib/notifications';
 import type { DbEmailLog, DbNotificationTemplate } from '../lib/db';
 
 type Tab = 'logs' | 'templates';
@@ -88,8 +89,14 @@ export default function AdminNotificationsDashboard() {
       setEmailLogs(prev =>
         prev.map(item => (item.id === log.id ? { ...item, status: 'pending' as const } : item))
       );
+      await sendEmail(log.id);
+      setEmailLogs(prev =>
+        prev.map(item => (item.id === log.id ? { ...item, status: 'sent' as const } : item))
+      );
     } catch {
-      // ignore
+      setEmailLogs(prev =>
+        prev.map(item => (item.id === log.id ? { ...item, status: 'failed' as const } : item))
+      );
     }
   }
 

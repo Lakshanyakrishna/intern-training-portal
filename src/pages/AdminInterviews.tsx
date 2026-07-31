@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { getApplications, getInterviews, createInterview, getInterviewEvaluation, upsertInterviewEvaluation, updateInterview } from '../lib/db';
+import { getApplications, getInterviews, createInterview, getInterviewEvaluation, upsertInterviewEvaluation, updateInterview, updateApplication } from '../lib/db';
 import { notifyEvent } from '../lib/notifications';
 import type { DbApplication, DbInterview, DbInterviewEvaluation } from '../lib/db';
 
@@ -174,9 +174,17 @@ export default function AdminInterviews() {
                           <>
                             <button onClick={() => startEvaluation(iv)} className="text-xs px-2.5 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors">Evaluate</button>
                             <button onClick={async () => {
+                              if (!user) return;
                               await updateInterview(iv.id, { status: 'completed' });
                               const evaluation = await getInterviewEvaluation(iv.id);
+                              // Every action recorded against a named person (AI-002/FR-065) --
+                              // the recorded evaluation drives the application's own status,
+                              // not just a separate notification, so completing an interview
+                              // actually moves the candidate through the pipeline instead of
+                              // leaving AdminApplications' status dropdown as the only real
+                              // decision point. 'maybe' makes no automatic decision.
                               if (evaluation?.recommendation === 'strong_accept' || evaluation?.recommendation === 'accept') {
+                                await updateApplication(iv.applicationId, { status: 'accepted', reviewerId: user.id });
                                 notifyEvent('interview_passed', iv.applicantId, {
                                   name: applications.find(a => a.id === iv.applicationId)?.name || 'Applicant',
                                   date: new Date(iv.scheduledAt).toLocaleDateString(),
@@ -185,6 +193,7 @@ export default function AdminInterviews() {
                                   opportunity: 'the program',
                                 }).catch(() => {});
                               } else if (evaluation?.recommendation === 'reject') {
+                                await updateApplication(iv.applicationId, { status: 'rejected', reviewerId: user.id });
                                 notifyEvent('interview_rejected', iv.applicantId, {
                                   name: applications.find(a => a.id === iv.applicationId)?.name || 'Applicant',
                                   date: new Date(iv.scheduledAt).toLocaleDateString(),

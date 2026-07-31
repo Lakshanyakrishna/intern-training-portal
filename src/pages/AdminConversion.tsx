@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { getApplications, updateApplication, getUser, updateUser } from '../lib/db';
+import { getApplications, getUser, updateUser } from '../lib/db';
 import { notifyEvent } from '../lib/notifications';
 import type { DbApplication } from '../lib/db';
 
 export default function AdminConversion() {
   const [applications, setApplications] = useState<DbApplication[]>([]);
+  const [convertedUserIds, setConvertedUserIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -13,6 +14,21 @@ export default function AdminConversion() {
     try {
       const apps = await getApplications();
       setApplications(apps);
+
+      // 'accepted' is the application's terminal status either way -- it
+      // never changes on conversion -- so the only way to tell an already-
+      // converted applicant apart from one still waiting is the linked
+      // user's actual role. Without this, this list re-lists every
+      // converted applicant forever (they never leave "accepted").
+      const acceptedUserIds = apps
+        .filter(a => a.status === 'accepted' && a.userId)
+        .map(a => a.userId as string);
+      const uniqueIds = [...new Set(acceptedUserIds)];
+      const users = await Promise.all(uniqueIds.map(id => getUser(id).catch(() => null)));
+      const converted = new Set(
+        uniqueIds.filter((_id, i) => users[i]?.role === 'intern' || users[i]?.role === 'mentor' || users[i]?.role === 'admin')
+      );
+      setConvertedUserIds(converted);
     } catch { /* ignore */ } finally {
       setLoading(false);
     }
@@ -34,7 +50,6 @@ export default function AdminConversion() {
       }
 
       await updateUser(app.userId, { role: 'intern', onboardingComplete: false });
-      await updateApplication(app.id, { status: 'accepted' });
       notifyEvent('training_started', app.userId, {
         name: app.name,
       }).catch(() => {});
@@ -45,7 +60,9 @@ export default function AdminConversion() {
     }
   }
 
-  const acceptedApps = applications.filter(a => a.status === 'accepted');
+  const acceptedApps = applications.filter(
+    a => a.status === 'accepted' && !(a.userId && convertedUserIds.has(a.userId))
+  );
   const pendingApps = applications.filter(a => a.status === 'shortlisted');
 
   return (
