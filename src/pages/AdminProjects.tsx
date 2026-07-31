@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { createProjectAllocation, getProjectAllocations, getAllUsers, updateProjectAllocation, updateProjectAllocationExtended, getProjectAllocationExtended } from '../lib/db';
+import { createProjectAllocation, getProjectAllocations, getAllUsers, updateProjectAllocation, updateProjectAllocationExtended } from '../lib/db';
 import { notifyEvent } from '../lib/notifications';
-import type { DbProjectAllocation, DbProjectAllocationExtended } from '../lib/db';
+import type { DbProjectAllocation } from '../lib/db';
 
 const STATUS_OPTIONS: DbProjectAllocation['status'][] = ['allocated', 'in-progress', 'completed'];
 

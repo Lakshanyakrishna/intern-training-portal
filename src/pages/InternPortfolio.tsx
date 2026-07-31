@@ -8,7 +8,6 @@ import {
   getInternshipOutcome,
   getProjectAllocationByIntern,
   getReadinessEvaluations,
-  getMentorAssignmentByIntern,
   getMentorFeedback,
 } from '../lib/db';
 import type {

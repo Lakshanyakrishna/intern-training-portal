@@ -29,7 +29,6 @@ export default function AdminScreeningReport() {
     })();
   }, []);
 
-  const analyzed = data.length;
   const total = data.length;
   const avgScore = data.length > 0
     ? Math.round(data.reduce((s, d) => s + (d.analysis.overallScore || 0), 0) / data.length)

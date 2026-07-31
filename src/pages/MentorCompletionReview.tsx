@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import {
   getMentorAssignments, getInternshipOutcome,
   updateMentorAssignmentCompletion, upsertInternshipOutcome,
-  getReadinessEvaluations, getProjectAllocationByIntern,
+  getProjectAllocationByIntern,
 } from '../lib/db';
 import { generateTrainingCertificate, generateInternshipCertificate } from '../lib/certificates';
 import type { DbMentorAssignment } from '../lib/db';
@@ -12,7 +12,6 @@ export default function MentorCompletionReview() {
   const { user } = useAuth();
   const [mentees, setMentees] = useState<DbMentorAssignment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedMentee, setSelectedMentee] = useState<string | null>(null);
   const [actionMsg, setActionMsg] = useState('');
 
   async function fetchMentees() {
@@ -63,6 +62,7 @@ export default function MentorCompletionReview() {
   }
 
   async function handleIssueInternshipCert(mInternId: string) {
+    if (!user) return;
     setActionMsg('Issuing internship certificate...');
     try {
       const project = await getProjectAllocationByIntern(mInternId);
