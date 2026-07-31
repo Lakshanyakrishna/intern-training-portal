@@ -1693,16 +1693,21 @@ export async function createEmailLog(data: {
   subject: string;
   body: string;
   recipientId?: string;
-}): Promise<void> {
+}): Promise<string> {
   const supabase = requireSupabase();
-  const { error } = await supabase.from('email_logs').insert({
-    recipient_id: data.recipientId ?? null,
-    recipient_email: data.recipientEmail,
-    event_type: data.eventType,
-    subject: data.subject,
-    body: data.body,
-  });
+  const { data: row, error } = await supabase
+    .from('email_logs')
+    .insert({
+      recipient_id: data.recipientId ?? null,
+      recipient_email: data.recipientEmail,
+      event_type: data.eventType,
+      subject: data.subject,
+      body: data.body,
+    })
+    .select('id')
+    .single();
   if (error) throw error;
+  return row.id;
 }
 
 export async function updateEmailLogStatus(
@@ -1806,8 +1811,7 @@ export async function upsertNotificationTemplate(
 }
 
 export async function getNotificationsByEventType(
-  eventType: string,
-  limit = 50
+  eventType: string
 ): Promise<{ count: number }> {
   const supabase = requireSupabase();
   const { count } = await supabase
@@ -2195,7 +2199,6 @@ export async function getCompletionStats(): Promise<{
   const { count: totalAccepted } = await supabase.from('applications').select('*', { count: 'exact', head: true }).eq('status', 'accepted');
   const { count: trainingCert } = await supabase.from('training_certificates').select('*', { count: 'exact', head: true });
   const { count: internshipCert } = await supabase.from('internship_certificates').select('*', { count: 'exact', head: true });
-  const { count: outcomesCompleted } = await supabase.from('internship_outcomes').select('*', { count: 'exact', head: true }).eq('internship_completed', true);
   const { count: outcomesTrainingDone } = await supabase.from('internship_outcomes').select('*', { count: 'exact', head: true }).eq('training_completed', true);
   const { count: projectsAssigned } = await supabase.from('project_allocations').select('*', { count: 'exact', head: true });
   const { count: projectsCompleted } = await supabase.from('project_allocations').select('*', { count: 'exact', head: true }).eq('status', 'completed');
