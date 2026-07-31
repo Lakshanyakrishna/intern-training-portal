@@ -4,8 +4,8 @@ import {
   getUser,
   createEmailLog,
   getNotificationPreferences,
-  updateEmailLogStatus,
 } from './db';
+import { requireSupabase } from './supabase';
 import type { AuthUser } from '../types';
 
 export function renderTemplate(template: string, vars: Record<string, string>): string {
@@ -56,51 +56,17 @@ export async function notifyEvent(
     body: message,
   });
 
-  await sendEmail(user.email, title, message, emailLogId);
+  await sendEmail(emailLogId);
 }
 
-export async function sendEmail(
-  to: string,
-  subject: string,
-  body: string,
-  emailLogId: string,
-): Promise<void> {
-  const provider = import.meta.env.VITE_EMAIL_PROVIDER ?? 'log';
-  const maxRetries = 3;
-
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    try {
-      if (provider === 'resend') {
-        const apiKey: string | undefined = import.meta.env.VITE_RESEND_API_KEY;
-        if (!apiKey) throw new Error('Resend API key not configured');
-
-        const res = await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            from: import.meta.env.VITE_EMAIL_FROM ?? 'noreply@intern-training.com',
-            to,
-            subject,
-            html: body,
-          }),
-        });
-
-        if (!res.ok) throw new Error(`Resend responded with ${res.status}`);
-      } else {
-        console.log(`[EMAIL] To: ${to} | Subject: ${subject} | Body: ${body}`);
-      }
-
-      await updateEmailLogStatus(emailLogId, 'sent');
-      return;
-    } catch {
-      if (attempt < maxRetries - 1) {
-        await new Promise(resolve => setTimeout(resolve, 1000 * 2 ** attempt));
-      } else {
-        await updateEmailLogStatus(emailLogId, 'failed');
-      }
-    }
-  }
+export async function sendEmail(emailLogId: string): Promise<void> {
+  const supabase = requireSupabase();
+  // The actual send (provider call, retries, secret key) happens entirely
+  // server-side in the send-email Edge Function. This client only ever
+  // passes a reference to an already-logged row -- never raw content or a
+  // provider credential.
+  const { error } = await supabase.functions.invoke('send-email', {
+    body: { emailLogId },
+  });
+  if (error) throw error;
 }
