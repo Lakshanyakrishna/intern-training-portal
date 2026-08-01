@@ -16,14 +16,14 @@ const skillModules = [
 
 function getSkillLevel(percent: number): { label: string; color: string; bg: string; bar: string } {
   if (percent === 0) return { label: 'Not Started', color: 'text-gray-500', bg: 'bg-gray-100 dark:bg-gray-700', bar: 'bg-gray-400' };
-  if (percent < 40) return { label: 'Learning', color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-100 dark:bg-blue-900/20', bar: 'bg-blue-500' };
+  if (percent < 40) return { label: 'Learning', color: 'text-accent', bg: 'bg-neutral-100 dark:bg-neutral-900/20', bar: 'bg-neutral-500' };
   if (percent < 80) return { label: 'Practicing', color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-100 dark:bg-amber-900/20', bar: 'bg-amber-500' };
   return { label: 'Complete', color: 'text-green-600 dark:text-green-400', bg: 'bg-green-100 dark:bg-green-900/20', bar: 'bg-green-500' };
 }
 
 const tracks = ['Foundation', 'Development', 'Project'];
 const trackColors: Record<string, string> = {
-  Foundation: 'text-blue-600 dark:text-blue-400',
+  Foundation: 'text-accent',
   Development: 'text-purple-600 dark:text-purple-400',
   Project: 'text-emerald-600 dark:text-emerald-400',
 };
@@ -52,7 +52,7 @@ export default function TrainingStatus() {
   const windowStatus = (() => {
     if (trainingDayCount < 18) return { label: 'Early Track', color: 'text-amber-700 dark:text-amber-300', bg: 'bg-amber-100 dark:bg-amber-900/30', note: 'Completing before day 18 requires mandatory mentor review' };
     if (trainingDayCount <= 30) return { label: 'On Track', color: 'text-green-700 dark:text-green-300', bg: 'bg-green-100 dark:bg-green-900/30', note: 'You are within the 18–30 day eligibility window' };
-    return { label: 'Extended', color: 'text-gray-600 dark:text-gray-400', bg: 'bg-gray-100 dark:bg-gray-800', note: 'Training completed beyond 30 days — certificate only' };
+    return { label: 'Extended', color: 'text-secondary', bg: 'bg-gray-100 dark:bg-gray-800', note: 'Training completed beyond 30 days — certificate only' };
   })();
 
   return (
@@ -60,21 +60,21 @@ export default function TrainingStatus() {
       <div className="flex items-center gap-3">
         <span className="text-4xl"><BarChart3 className="w-8 h-8 inline-block" /></span>
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Training Status</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Your skill progress across all training modules</p>
+          <h1 className="text-2xl font-bold text-primary">Training Status</h1>
+          <p className="text-sm text-secondary">Your skill progress across all training modules</p>
         </div>
       </div>
 
       {/* Training Timeline */}
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
-        <h2 className="font-semibold text-gray-800 dark:text-white mb-4">Training Timeline</h2>
+      <div className="bg-surface border border-line rounded-2xl p-6">
+        <h2 className="font-semibold text-primary mb-4">Training Timeline</h2>
         <div className="flex items-center gap-4 flex-wrap">
           <div className="text-center">
-            <p className="text-4xl font-bold text-gray-800 dark:text-white">{trainingDayCount}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Day of Training</p>
+            <p className="text-4xl font-bold text-primary">{trainingDayCount}</p>
+            <p className="text-xs text-secondary">Day of Training</p>
           </div>
           <div className="flex-1 min-w-48">
-            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
+            <div className="flex items-center justify-between text-xs text-secondary mb-1">
               <span>Day 1</span>
               <span className="text-green-600 dark:text-green-400">18 days</span>
               <span className="text-amber-600 dark:text-amber-400">30 days</span>
@@ -99,14 +99,14 @@ export default function TrainingStatus() {
       </div>
 
       {/* Module Progress Overview */}
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-5">
+      <div className="bg-surface border border-line rounded-2xl p-5">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold text-gray-800 dark:text-white">Overall Completion</h2>
+          <h2 className="font-semibold text-primary">Overall Completion</h2>
           <span className="text-sm font-bold text-gray-700 dark:text-gray-300">{completedCount}/{skillModules.length}</span>
         </div>
         <div className="bg-gray-200 dark:bg-gray-700 rounded-full h-3">
           <div
-            className="bg-gradient-to-r from-blue-500 via-purple-500 to-emerald-500 h-3 rounded-full transition-all duration-700"
+            className="bg-gradient-to-r from-neutral-500 via-purple-500 to-emerald-500 h-3 rounded-full transition-all duration-700"
             style={{ width: `${(completedCount / skillModules.length) * 100}%` }}
           />
         </div>
@@ -119,14 +119,14 @@ export default function TrainingStatus() {
 
       {/* Mentor Feedback (visible to intern) */}
       {progress.mentorFeedback.length > 0 && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-5">
-          <h2 className="font-semibold text-blue-800 dark:text-blue-200 mb-3">Mentor Feedback</h2>
+        <div className="bg-neutral-50 dark:bg-neutral-900/20 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5">
+          <h2 className="font-semibold text-neutral-800 dark:text-neutral-200 mb-3">Mentor Feedback</h2>
           <div className="space-y-3">
             {progress.mentorFeedback.map((fb, i) => (
-              <div key={i} className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-blue-100 dark:border-blue-800">
+              <div key={i} className="bg-surface rounded-xl p-4 border border-neutral-100 dark:border-neutral-800">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs text-gray-400 dark:text-gray-500">{fb.date} · {fb.module}</span>
-                  <span className="text-xs font-bold text-blue-600 dark:text-blue-400">{fb.score}/10</span>
+                  <span className="text-xs font-bold text-accent">{fb.score}/10</span>
                 </div>
                 <p className="text-sm text-gray-700 dark:text-gray-300">{fb.note}</p>
               </div>
@@ -148,15 +148,15 @@ export default function TrainingStatus() {
                 <Link
                   key={sm.moduleId}
                   to={`/module/${sm.moduleId}`}
-                  className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
+                  className="block bg-surface border border-line rounded-xl p-4 hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
                 >
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-xl">{iconModules[sm.icon]}</span>
-                    <span className="flex-1 font-medium text-gray-800 dark:text-white text-sm">{sm.skill}</span>
+                    <span className="flex-1 font-medium text-primary text-sm">{sm.skill}</span>
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${level.bg} ${level.color}`}>
                       {level.label}
                     </span>
-                    <span className="text-xs font-bold text-gray-600 dark:text-gray-400">{mp.percent}%</span>
+                    <span className="text-xs font-bold text-secondary">{mp.percent}%</span>
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div
@@ -177,7 +177,7 @@ export default function TrainingStatus() {
         <h2 className="text-lg font-semibold mt-2">
           {completedCount >= skillModules.length ? 'Modules Complete — Proceed to Capstone' : 'Keep Going'}
         </h2>
-        <p className="text-sm text-blue-200 mt-1 max-w-sm mx-auto">
+        <p className="text-sm text-neutral-200 mt-1 max-w-sm mx-auto">
           {completedCount >= skillModules.length
             ? 'Complete the Capstone project and submit for mentor review to become project eligible.'
             : `${skillModules.length - completedCount} module${skillModules.length - completedCount !== 1 ? 's' : ''} remaining. Complete all modules to unlock the Capstone.`}
