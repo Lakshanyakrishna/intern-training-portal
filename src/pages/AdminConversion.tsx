@@ -68,8 +68,8 @@ export default function AdminConversion() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Intern Conversion</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Convert selected applicants to active interns.</p>
+        <h1 className="text-2xl font-bold text-primary">Intern Conversion</h1>
+        <p className="text-sm text-secondary mt-1">Convert selected applicants to active interns.</p>
       </div>
 
       {message && (
@@ -84,15 +84,15 @@ export default function AdminConversion() {
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-6 h-6 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
         <>
           {/* Accepted - ready to convert */}
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
-              <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Accepted — Ready to Convert</h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{acceptedApps.length} applicant{acceptedApps.length !== 1 ? 's' : ''}</p>
+          <div className="bg-surface border border-line rounded-xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-line bg-surface-alt">
+              <h2 className="text-sm font-semibold text-primary">Accepted — Ready to Convert</h2>
+              <p className="text-xs text-secondary">{acceptedApps.length} applicant{acceptedApps.length !== 1 ? 's' : ''}</p>
             </div>
             {acceptedApps.length === 0 ? (
               <div className="text-center py-8 text-sm text-gray-400 dark:text-gray-500">No accepted applications waiting for conversion.</div>
@@ -101,13 +101,13 @@ export default function AdminConversion() {
                 {acceptedApps.map(app => (
                   <div key={app.id} className="flex items-center justify-between px-4 py-3">
                     <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{app.name}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{app.email}{app.userId ? '' : ' (no account yet)'}</p>
+                      <p className="text-sm font-medium text-primary">{app.name}</p>
+                      <p className="text-xs text-secondary">{app.email}{app.userId ? '' : ' (no account yet)'}</p>
                     </div>
                     <button
                       onClick={() => handleConvert(app)}
                       disabled={!app.userId}
-                      className="text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="text-xs px-3 py-1.5 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       {app.userId ? 'Convert to Intern' : 'Needs Account'}
                     </button>
@@ -118,10 +118,10 @@ export default function AdminConversion() {
           </div>
 
           {/* Shortlisted - waiting for interview/decision */}
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
-              <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Shortlisted — Pending Decision</h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{pendingApps.length} applicant{pendingApps.length !== 1 ? 's' : ''}</p>
+          <div className="bg-surface border border-line rounded-xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-line bg-surface-alt">
+              <h2 className="text-sm font-semibold text-primary">Shortlisted — Pending Decision</h2>
+              <p className="text-xs text-secondary">{pendingApps.length} applicant{pendingApps.length !== 1 ? 's' : ''}</p>
             </div>
             {pendingApps.length === 0 ? (
               <div className="text-center py-8 text-sm text-gray-400 dark:text-gray-500">No shortlisted applicants.</div>
@@ -130,8 +130,8 @@ export default function AdminConversion() {
                 {pendingApps.map(app => (
                   <div key={app.id} className="flex items-center justify-between px-4 py-3">
                     <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{app.name}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{app.email}</p>
+                      <p className="text-sm font-medium text-primary">{app.name}</p>
+                      <p className="text-xs text-secondary">{app.email}</p>
                     </div>
                     <span className="text-xs text-purple-600 dark:text-purple-400 font-medium">Awaiting Interview / Decision</span>
                   </div>
