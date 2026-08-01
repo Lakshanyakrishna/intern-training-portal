@@ -175,7 +175,7 @@ export default function AdminOpportunities() {
     } catch { /* ignore */ }
   }
 
-  const inputClass = 'w-full px-3.5 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors';
+  const inputClass = 'w-full px-3.5 py-2.5 rounded-lg border border-line bg-surface text-sm text-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent transition-colors';
   const labelClass = 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5';
   const selectClass = inputClass;
 
@@ -183,12 +183,12 @@ export default function AdminOpportunities() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Opportunities</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage internship, training, fellowship, and project opportunities.</p>
+          <h1 className="text-2xl font-bold text-primary">Opportunities</h1>
+          <p className="text-sm text-secondary mt-1">Manage internship, training, fellowship, and project opportunities.</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
+          className="text-xs px-3 py-1.5 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover transition-colors"
         >
           Create Opportunity
         </button>
@@ -202,14 +202,14 @@ export default function AdminOpportunities() {
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-5 h-5 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : opportunities.length === 0 ? (
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-8 text-center">
+        <div className="bg-surface border border-line rounded-xl p-8 text-center">
           <p className="text-sm text-gray-400 dark:text-gray-500">No opportunities yet. Create one to get started.</p>
         </div>
       ) : (
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+        <div className="bg-surface border border-line rounded-xl overflow-hidden">
           <div className="divide-y divide-gray-100 dark:divide-gray-700">
             {opportunities.map(opp => (
               <div key={opp.id}>
@@ -220,20 +220,20 @@ export default function AdminOpportunities() {
                       className="text-left w-full"
                     >
                       <div className="flex items-center gap-2">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{opp.title}</p>
+                        <p className="text-sm font-medium text-primary truncate">{opp.title}</p>
                         <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full shrink-0 ${STATUS_LABELS[opp.status].color}`}>
                           {STATUS_LABELS[opp.status].label}
                         </span>
                       </div>
                       <div className="flex items-center gap-3 mt-0.5">
-                        <span className="text-xs text-gray-500 dark:text-gray-400">{CATEGORY_LABELS[opp.category]}</span>
+                        <span className="text-xs text-secondary">{CATEGORY_LABELS[opp.category]}</span>
                         {opp.forte && (
-                          <span className="text-xs text-gray-500 dark:text-gray-400">{opp.forte}</span>
+                          <span className="text-xs text-secondary">{opp.forte}</span>
                         )}
                         {opp.slots !== undefined && opp.slots !== null && (
-                          <span className="text-xs text-gray-500 dark:text-gray-400">{opp.slots} slot{opp.slots !== 1 ? 's' : ''}</span>
+                          <span className="text-xs text-secondary">{opp.slots} slot{opp.slots !== 1 ? 's' : ''}</span>
                         )}
-                        <span className="text-xs text-gray-500 dark:text-gray-400">{new Date(opp.createdAt).toLocaleDateString()}</span>
+                        <span className="text-xs text-secondary">{new Date(opp.createdAt).toLocaleDateString()}</span>
                       </div>
                     </button>
                   </div>
@@ -241,7 +241,7 @@ export default function AdminOpportunities() {
                     <select
                       value={opp.status}
                       onChange={e => handleStatusChange(opp.id, e.target.value as DbOpportunity['status'])}
-                      className="text-xs px-2 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="text-xs px-2 py-1.5 rounded-lg border border-line bg-surface text-primary"
                       onClick={e => e.stopPropagation()}
                     >
                       {STATUSES.map(s => (
@@ -258,7 +258,7 @@ export default function AdminOpportunities() {
                         </button>
                         <button
                           onClick={e => { e.stopPropagation(); setDeleteConfirmId(null); }}
-                          className="text-xs px-2 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          className="text-xs px-2 py-1.5 rounded-lg border border-line text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                         >
                           Cancel
                         </button>
@@ -274,41 +274,41 @@ export default function AdminOpportunities() {
                   </div>
                 </div>
                 {expandedId === opp.id && (
-                  <div className="px-4 pb-4 pl-8 border-t border-gray-100 dark:border-gray-700 pt-3">
+                  <div className="px-4 pb-4 pl-8 border-t border-line pt-3">
                     <div className="mb-3">
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Description</p>
+                      <p className="text-xs text-secondary mb-1">Description</p>
                       <p className="text-sm text-gray-700 dark:text-gray-300">{opp.description}</p>
                     </div>
                     {(opp.startDate || opp.endDate) && (
-                      <div className="flex items-center gap-4 mb-3 text-xs text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center gap-4 mb-3 text-xs text-secondary">
                         {opp.startDate && <span>Start: {new Date(opp.startDate).toLocaleDateString()}</span>}
                         {opp.endDate && <span>End: {new Date(opp.endDate).toLocaleDateString()}</span>}
                       </div>
                     )}
-                    <div className="border-t border-gray-100 dark:border-gray-700 pt-3">
+                    <div className="border-t border-line pt-3">
                       <div className="flex items-center justify-between mb-2">
-                        <h3 className="text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Application Questions</h3>
+                        <h3 className="text-xs font-semibold text-primary uppercase tracking-wider">Application Questions</h3>
                       </div>
                       {loadingQuestions ? (
                         <div className="flex items-center justify-center py-4">
-                          <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                          <div className="w-4 h-4 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
                         </div>
                       ) : (
                         <div className="space-y-2">
                           {(questions[opp.id] || []).map(q => (
-                            <div key={q.id} className="flex items-start justify-between gap-2 bg-gray-50 dark:bg-gray-900/30 rounded-lg px-3 py-2">
+                            <div key={q.id} className="flex items-start justify-between gap-2 bg-surface-alt rounded-lg px-3 py-2">
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
-                                  <p className="text-sm text-gray-900 dark:text-white">{q.question}</p>
-                                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+                                  <p className="text-sm text-primary">{q.question}</p>
+                                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-secondary">
                                     {QUESTION_TYPE_LABELS[q.type]}
                                   </span>
                                   {q.required && (
-                                    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">Required</span>
+                                    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-900/30 text-accent">Required</span>
                                   )}
                                 </div>
                                 {q.type === 'select' && q.options && q.options.length > 0 && (
-                                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Options: {q.options.join(', ')}</p>
+                                  <p className="text-xs text-secondary mt-0.5">Options: {q.options.join(', ')}</p>
                                 )}
                                 <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">Order: {q.sortOrder}</p>
                               </div>
@@ -325,7 +325,7 @@ export default function AdminOpportunities() {
                           )}
                         </div>
                       )}
-                      <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                      <div className="mt-3 pt-3 border-t border-line">
                         <h4 className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Add Question</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div className="sm:col-span-2">
@@ -353,17 +353,17 @@ export default function AdminOpportunities() {
                                 type="checkbox"
                                 checked={questionForm.required}
                                 onChange={e => setQuestionForm(p => ({ ...p, required: e.target.checked }))}
-                                className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                                className="rounded border-line text-neutral-600 focus:ring-accent"
                               />
                               Required
                             </label>
                             <div className="flex items-center gap-2">
-                              <label className="text-xs text-gray-500 dark:text-gray-400">Order:</label>
+                              <label className="text-xs text-secondary">Order:</label>
                               <input
                                 type="number"
                                 value={questionForm.sortOrder}
                                 onChange={e => setQuestionForm(p => ({ ...p, sortOrder: parseInt(e.target.value) || 0 }))}
-                                className="w-16 px-2 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-16 px-2 py-1.5 rounded-lg border border-line bg-surface text-sm text-primary focus:outline-none focus:ring-2 focus:ring-accent"
                               />
                             </div>
                           </div>
@@ -382,7 +382,7 @@ export default function AdminOpportunities() {
                         <button
                           onClick={() => handleAddQuestion(opp.id)}
                           disabled={addingQuestion || !questionForm.question.trim()}
-                          className="mt-2 text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          className="mt-2 text-xs px-3 py-1.5 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                           {addingQuestion ? 'Adding...' : 'Add Question'}
                         </button>
@@ -398,9 +398,9 @@ export default function AdminOpportunities() {
 
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-surface border border-line rounded-xl p-6 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Create Opportunity</h2>
+              <h2 className="text-lg font-semibold text-primary">Create Opportunity</h2>
               <button
                 onClick={() => setShowCreateModal(false)}
                 className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
@@ -506,14 +506,14 @@ export default function AdminOpportunities() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
+                  className="flex-1 py-2.5 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
                 >
                   {submitting ? 'Creating...' : 'Create Opportunity'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm"
+                  className="px-4 py-2.5 border border-line text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm"
                 >
                   Cancel
                 </button>
