@@ -119,8 +119,8 @@ export default function Capstone() {
     return (
       <div className="max-w-2xl mx-auto text-center py-12 space-y-4">
         <span className="text-6xl"><Trophy className="w-12 h-12 inline-block" /></span>
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Capstone Complete!</h1>
-        <p className="text-gray-500 dark:text-gray-400">You have demonstrated all the skills needed to work on client projects.</p>
+        <h1 className="text-2xl font-bold text-primary">Capstone Complete!</h1>
+        <p className="text-secondary">You have demonstrated all the skills needed to work on client projects.</p>
         <div className="bg-gradient-to-r from-yellow-400 to-orange-400 rounded-2xl p-6 text-white mt-6">
           <h3 className="text-lg font-bold mt-2">Congratulations!</h3>
           <p className="text-yellow-100 text-sm mt-1">You are now Project Ready!</p>
@@ -160,8 +160,8 @@ export default function Capstone() {
     <div className="max-w-3xl mx-auto space-y-6">
       <div className="text-center">
         <span className="text-5xl"><Trophy className="w-10 h-10 inline-block" /></span>
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white mt-3">Final Capstone</h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-1">Complete all steps to demonstrate your readiness for client projects.</p>
+        <h1 className="text-2xl font-bold text-primary mt-3">Final Capstone</h1>
+        <p className="text-secondary mt-1">Complete all steps to demonstrate your readiness for client projects.</p>
       </div>
 
       <ProgressBar percent={Math.round(((currentStep + (submitted && selected !== undefined ? 1 : 0)) / capstoneSteps.length) * 100)} />
@@ -172,7 +172,7 @@ export default function Capstone() {
             i < currentStep || (i === currentStep && submitted)
               ? 'bg-green-500 text-white'
               : i === currentStep
-              ? 'bg-blue-500 text-white ring-2 ring-blue-300'
+              ? 'bg-neutral-500 text-white ring-2 ring-neutral-300'
               : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
           }`}>
             {i < currentStep || (i === currentStep && submitted) ? '✓' : i + 1}
@@ -180,14 +180,14 @@ export default function Capstone() {
         ))}
       </div>
 
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-4">
-        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-          <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-xs font-medium">Step {currentStep + 1}/{capstoneSteps.length}</span>
+      <div className="bg-surface border border-line rounded-xl p-6 space-y-4">
+        <div className="flex items-center gap-2 text-sm text-secondary">
+          <span className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-900/30 text-neutral-700 dark:text-neutral-300 rounded text-xs font-medium">Step {currentStep + 1}/{capstoneSteps.length}</span>
           <span>{step.title}</span>
         </div>
-        <p className="text-gray-600 dark:text-gray-400 text-sm">{step.description}</p>
-        <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
-          <p className="font-medium text-gray-800 dark:text-white text-sm">{step.task}</p>
+        <p className="text-secondary text-sm">{step.description}</p>
+        <div className="bg-surface-alt rounded-lg p-4">
+          <p className="font-medium text-primary text-sm">{step.task}</p>
         </div>
         <div className="space-y-2">
           {step.options.map((opt, idx) => {
@@ -204,8 +204,8 @@ export default function Capstone() {
                     : isWrong
                     ? 'bg-red-50 dark:bg-red-900/20 border-red-400 text-red-800 dark:text-red-200'
                     : selected === idx
-                    ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-400 text-blue-700 dark:text-blue-300'
-                    : 'border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-300 dark:hover:border-blue-600'
+                    ? 'bg-neutral-50 dark:bg-neutral-900/30 border-neutral-400 text-neutral-700 dark:text-neutral-300'
+                    : 'border-line text-gray-700 dark:text-gray-300 hover:border-neutral-300 dark:hover:border-neutral-600'
                 }`}
               >
                 {opt}
@@ -214,9 +214,9 @@ export default function Capstone() {
           })}
         </div>
         {submitted && (
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-            <p className="text-sm font-medium text-blue-700 dark:text-blue-300">Explanation:</p>
-            <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">{step.explanation}</p>
+          <div className="bg-neutral-50 dark:bg-neutral-900/20 rounded-lg p-4">
+            <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Explanation:</p>
+            <p className="text-sm text-accent mt-1">{step.explanation}</p>
           </div>
         )}
       </div>
@@ -225,13 +225,13 @@ export default function Capstone() {
         <button
           onClick={() => setCurrentStep(p => Math.max(0, p - 1))}
           disabled={currentStep === 0}
-          className="px-4 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-800"
+          className="px-4 py-2 text-sm rounded-lg border border-line text-secondary disabled:opacity-40 hover:bg-gray-50 dark:hover:bg-gray-800"
         >
           Previous
         </button>
         {submitted ? (
           currentStep < capstoneSteps.length - 1 ? (
-            <button onClick={handleNext} className="px-6 py-2 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+            <button onClick={handleNext} className="px-6 py-2 text-sm rounded-lg bg-accent text-white hover:bg-accent-hover">
               Next Step
             </button>
           ) : (
@@ -249,7 +249,7 @@ export default function Capstone() {
           <button
             onClick={() => handleSubmit()}
             disabled={selected === undefined}
-            className="px-6 py-2 text-sm rounded-lg bg-blue-600 text-white disabled:opacity-40 hover:bg-blue-700"
+            className="px-6 py-2 text-sm rounded-lg bg-accent text-white disabled:opacity-40 hover:bg-accent-hover"
           >
             Check Answer
           </button>
