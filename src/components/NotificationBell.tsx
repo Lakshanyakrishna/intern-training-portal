@@ -100,7 +100,7 @@ export default function NotificationBell() {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(prev => !prev)}
-        className="relative p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400"
+        className="relative p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-secondary"
         aria-label="Notifications"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -115,9 +115,9 @@ export default function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg z-50">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-700/50">
-            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Notifications</span>
+        <div className="absolute right-0 top-full mt-2 w-80 bg-surface border border-line rounded-xl shadow-lg z-50">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-line/50">
+            <span className="text-sm font-semibold text-primary">Notifications</span>
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllRead}
@@ -130,7 +130,7 @@ export default function NotificationBell() {
 
           <div className="max-h-96 overflow-y-auto">
             {notifications.length === 0 ? (
-              <div className="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+              <div className="px-4 py-8 text-center text-sm text-secondary">
                 No notifications
               </div>
             ) : (
@@ -138,13 +138,13 @@ export default function NotificationBell() {
                 <div
                   key={n.id}
                   onClick={() => handleNotificationClick(n)}
-                  className="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer border-b border-gray-100 dark:border-gray-700/50"
+                  className="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer border-b border-line/50"
                 >
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm ${n.isRead ? 'text-gray-700 dark:text-gray-300' : 'font-semibold text-gray-900 dark:text-gray-100'}`}>
+                    <p className={`text-sm ${n.isRead ? 'text-gray-700 dark:text-gray-300' : 'font-semibold text-primary'}`}>
                       {n.title}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
+                    <p className="text-xs text-secondary truncate mt-0.5">
                       {n.message}
                     </p>
                     <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
@@ -159,7 +159,7 @@ export default function NotificationBell() {
           <Link
             to="/notifications"
             onClick={() => setOpen(false)}
-            className="block px-4 py-3 text-center text-sm text-indigo-600 dark:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-b-xl border-t border-gray-100 dark:border-gray-700/50"
+            className="block px-4 py-3 text-center text-sm text-indigo-600 dark:text-indigo-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-b-xl border-t border-line/50"
           >
             View all
           </Link>
