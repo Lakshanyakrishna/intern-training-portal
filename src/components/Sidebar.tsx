@@ -53,8 +53,8 @@ function NavItem({
       className={({ isActive }) =>
         `flex items-center ${compact ? 'justify-center px-0 py-2.5' : 'gap-3 px-3 py-2'} text-sm transition-colors border-l-2 ${
           isActive
-            ? 'border-blue-500 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white font-medium'
-            : 'border-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200'
+            ? 'border-neutral-500 bg-gray-100 dark:bg-gray-800 text-primary font-medium'
+            : 'border-transparent text-secondary hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200'
         }`
       }
     >
@@ -74,17 +74,17 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
   return (
     <>
       {open && <div className="fixed inset-0 bg-black/50 z-20 lg:hidden" onClick={onClose} />}
-      <aside className={`fixed top-0 left-0 z-30 h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transform transition-all duration-300 ease-in-out lg:translate-x-0 flex flex-col ${
+      <aside className={`fixed top-0 left-0 z-30 h-full bg-surface border-r border-line transform transition-all duration-300 ease-in-out lg:translate-x-0 flex flex-col ${
         compact ? 'w-16' : 'w-60'
       } ${open ? 'translate-x-0' : '-translate-x-full'}`}>
         {/* Brand */}
-        <div className={`${compact ? 'justify-center' : 'px-4'} h-14 flex items-center border-b border-gray-200 dark:border-gray-700 shrink-0`}>
+        <div className={`${compact ? 'justify-center' : 'px-4'} h-14 flex items-center border-b border-line shrink-0`}>
           {compact ? (
-            <span className="text-sm font-bold text-blue-600">IR</span>
+            <span className="text-sm font-bold text-neutral-600">IR</span>
           ) : (
             <div>
-              <h1 className="text-sm font-semibold text-gray-900 dark:text-white leading-tight">Intern Readiness</h1>
-              <p className="text-[11px] text-gray-500 dark:text-gray-400">Project Allocation System</p>
+              <h1 className="text-sm font-semibold text-primary leading-tight">Intern Readiness</h1>
+              <p className="text-[11px] text-secondary">Project Allocation System</p>
             </div>
           )}
         </div>
@@ -151,7 +151,7 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
                   <div className="pt-1">
                     <button
                       onClick={() => setProgramOpen(!programOpen)}
-                      className="flex items-center justify-between w-full px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+                      className="flex items-center justify-between w-full px-3 py-2 text-sm text-secondary hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
                     >
                       <span className="flex items-center gap-3">
                         <BookOpen className="w-5 h-5" />
@@ -172,8 +172,8 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
                             className={({ isActive }) =>
                               `flex items-center gap-3 px-3 py-2 text-sm transition-colors border-l-2 ${
                                 isActive
-                                  ? 'border-blue-500 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white font-medium'
-                                  : 'border-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-700 dark:hover:text-gray-300'
+                                  ? 'border-neutral-500 bg-gray-100 dark:bg-gray-800 text-primary font-medium'
+                                  : 'border-transparent text-secondary hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-700 dark:hover:text-gray-300'
                               }`
                             }
                           >
@@ -188,7 +188,7 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
                 </>
               )}
 
-              <NavItem to="/progress-center" label="Achievements" onClick={onClose} icon={<Award />} compact={compact} />
+              <NavItem to="/progress-center" label="Progress" onClick={onClose} icon={<Award />} compact={compact} />
               <NavItem to="/leaderboard" label="Leaderboard" onClick={onClose} icon={<Trophy />} compact={compact} />
               <NavItem to="/readiness-reviews" label="Mentor Feedback" onClick={onClose} icon={<MessageSquare />} compact={compact} />
               <NavItem to="/portfolio" label="My Portfolio" onClick={onClose} icon={<Award />} compact={compact} />
@@ -199,19 +199,19 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
 
         {/* User info + sign out */}
         {!compact && user && (
-          <div className="border-t border-gray-200 dark:border-gray-700 p-3">
+          <div className="border-t border-line p-3">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-7 h-7 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-xs font-bold text-blue-600 dark:text-blue-400 shrink-0">
+              <div className="w-7 h-7 rounded-full bg-neutral-100 dark:bg-neutral-900/30 flex items-center justify-center text-xs font-bold text-accent shrink-0">
                 {user.name.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{user.name}</p>
+                <p className="text-xs font-medium text-primary truncate">{user.name}</p>
                 <p className="text-[11px] text-gray-400 dark:text-gray-500 capitalize">{user.role}</p>
               </div>
             </div>
             <button
               onClick={signOut}
-              className="flex items-center gap-2 w-full px-2 py-1.5 text-xs text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              className="flex items-center gap-2 w-full px-2 py-1.5 text-xs text-secondary hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
               Sign Out
