@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { submitApplication, uploadResumeFile, getApplicationByUserId, getOpportunity, getOpportunityQuestions } from '../../lib/db';
 import { useAuth } from '../../contexts/AuthContext';
 import { notifyEvent } from '../../lib/notifications';
+import { roleHomePath } from '../../utils/roleHome';
 import type { DbOpportunity, DbOpportunityQuestion } from '../../lib/db';
 
 interface FormData {
@@ -164,9 +165,9 @@ export default function Apply() {
             <div className="flex items-center gap-3">
               <Link to="/about" className="text-xs text-secondary hover:text-gray-700 dark:hover:text-gray-200 transition-colors">About</Link>
               {opportunity && (
-                <Link to="/opportunities" className="text-xs text-secondary hover:text-gray-700 dark:hover:text-gray-200 transition-colors">Opportunities</Link>
+                <Link to={user ? '/applicant/opportunities' : '/opportunities'} className="text-xs text-secondary hover:text-gray-700 dark:hover:text-gray-200 transition-colors">Opportunities</Link>
               )}
-              <Link to={user ? '/dashboard' : '/login'} className="text-xs px-3 py-1.5 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover transition-colors">
+              <Link to={user ? roleHomePath(user.role) : '/login'} className="text-xs px-3 py-1.5 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover transition-colors">
                 {user ? 'Dashboard' : 'Sign In'}
               </Link>
             </div>
@@ -195,7 +196,7 @@ export default function Apply() {
                   Create Account
                 </Link>
               )}
-              <Link to={user ? '/dashboard' : '/'} className="px-6 py-2.5 border border-line text-secondary font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm">
+              <Link to={user ? roleHomePath(user.role) : '/'} className="px-6 py-2.5 border border-line text-secondary font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm">
                 {user ? 'Go to Dashboard' : 'Back to Home'}
               </Link>
             </div>
@@ -215,8 +216,8 @@ export default function Apply() {
           <Link to="/" className="text-sm font-bold text-primary">Intern Readiness Program</Link>
           <div className="flex items-center gap-3">
             <Link to="/about" className="text-xs text-secondary hover:text-gray-700 dark:hover:text-gray-200 transition-colors">About</Link>
-            <Link to="/opportunities" className="text-xs text-secondary hover:text-gray-700 dark:hover:text-gray-200 transition-colors">Opportunities</Link>
-            <Link to={user ? '/dashboard' : '/login'} className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <Link to={user ? '/applicant/opportunities' : '/opportunities'} className="text-xs text-secondary hover:text-gray-700 dark:hover:text-gray-200 transition-colors">Opportunities</Link>
+            <Link to={user ? roleHomePath(user.role) : '/login'} className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
               {user ? 'Dashboard' : 'Login'}
             </Link>
           </div>

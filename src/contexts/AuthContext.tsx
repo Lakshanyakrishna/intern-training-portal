@@ -138,12 +138,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // concurrently with the rest of this function -- both race to insert
       // the same row. Whichever loses gets a 23505 duplicate-key conflict;
       // that's expected here, not a real failure, so tolerate it the same
-      // way ensureUserProfile already does.
+      // way ensureUserProfile already does. But if the listener's fallback
+      // insert won, the row it created has a generic email-derived name
+      // (see ensureUserProfile above), not what was actually typed into
+      // this form -- reconcile it explicitly rather than leaving whichever
+      // insert happened to win as the silent source of truth.
       try {
         await createUser(profile);
       } catch (err) {
         const code = (err as { code?: string })?.code;
         if (code !== '23505') throw err;
+        await updateUser(profile.id, { name: data.name, college: data.college, yearOfStudy: data.yearOfStudy }).catch(() => {});
       }
       notifyEvent('account_created', profile.id, {
         name: data.name,
