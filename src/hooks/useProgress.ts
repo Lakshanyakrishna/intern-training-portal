@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import type { UserProgress, PracticeSubmission, ChallengeWorkspace } from '../types';
 import { loadProgress, saveProgress } from '../utils/storage';
 import { levels } from '../data/levels';
-import { badges } from '../data/badges';
 import { modules } from '../data/modules';
 
 export function useProgress() {
@@ -173,52 +172,6 @@ export function useProgress() {
     return { percent: Math.round((completed / total) * 100), completed, total };
   }, [progress]);
 
-  const getEarnedBadges = useCallback(() => {
-    const earned: string[] = [];
-    for (const badge of badges) {
-      switch (badge.requirement.type) {
-        case 'challenge':
-          if (progress.completedChallenges.length >= badge.requirement.value) earned.push(badge.id);
-          break;
-        case 'module-challenges': {
-          const gitModule = modules.find(m => m.id === 'git');
-          if (gitModule && progress.moduleProgress['git']?.challenges.length >= gitModule.challenges.length) earned.push(badge.id);
-          break;
-        }
-        case 'module': {
-          const mod = modules[badge.requirement.value];
-          if (mod && progress.moduleProgress[mod.id]?.quizPassed) earned.push(badge.id);
-          break;
-        }
-        case 'streak':
-          if (progress.streak >= badge.requirement.value) earned.push(badge.id);
-          break;
-        case 'capstone':
-          if (progress.completedChallenges.includes('capstone')) earned.push(badge.id);
-          break;
-        case 'quiz':
-          if (progress.passedQuizzes.length >= badge.requirement.value) earned.push(badge.id);
-          break;
-        case 'level':
-          if (progress.level >= badge.requirement.value) earned.push(badge.id);
-          break;
-        case 'mentor':
-          if (progress.mentorChecklist.submitted) earned.push(badge.id);
-          break;
-        case 'debug':
-          if (progress.completedDebugScenarios.length >= badge.requirement.value) earned.push(badge.id);
-          break;
-        case 'client':
-          if (progress.clientProjectProgress.length >= badge.requirement.value) earned.push(badge.id);
-          break;
-        case 'review':
-          if (progress.reviewRequestsCompleted.length >= badge.requirement.value) earned.push(badge.id);
-          break;
-      }
-    }
-    return earned;
-  }, [progress]);
-
   const updateMentorChecklist = useCallback((checklist: UserProgress['mentorChecklist']) => {
     setProgress(prev => ({ ...prev, mentorChecklist: checklist }));
   }, []);
@@ -370,7 +323,6 @@ export function useProgress() {
     completeChallenge,
     passQuiz,
     getModuleProgress,
-    getEarnedBadges,
     updateMentorChecklist,
     completeDebugScenario,
     advanceClientProject,

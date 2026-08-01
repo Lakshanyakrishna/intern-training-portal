@@ -104,14 +104,6 @@ export interface Practice {
   hints: string[];
 }
 
-export interface Badge {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  requirement: { type: string; value: number };
-}
-
 export interface DebugScenario {
   id: string;
   title: string;
