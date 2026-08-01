@@ -133,7 +133,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         onboardingComplete: false,
       };
 
-      await createUser(profile);
+      // sb.auth.signUp() establishes a session before this line runs, which
+      // fires the onAuthStateChange listener above (ensureUserProfile)
+      // concurrently with the rest of this function -- both race to insert
+      // the same row. Whichever loses gets a 23505 duplicate-key conflict;
+      // that's expected here, not a real failure, so tolerate it the same
+      // way ensureUserProfile already does.
+      try {
+        await createUser(profile);
+      } catch (err) {
+        const code = (err as { code?: string })?.code;
+        if (code !== '23505') throw err;
+      }
       notifyEvent('account_created', profile.id, {
         name: data.name,
       }).catch(() => {});
