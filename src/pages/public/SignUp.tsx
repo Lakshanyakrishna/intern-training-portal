@@ -51,16 +51,16 @@ export default function SignUp() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create Your Account</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          <h1 className="text-2xl font-bold text-primary">Create Your Account</h1>
+          <p className="text-sm text-secondary mt-1">
             Join the Intern Readiness Program and begin your training journey.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="bg-surface border border-line rounded-xl p-6 space-y-4">
           {error && (
             <div className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-lg px-3 py-2">{error}</div>
           )}
@@ -72,7 +72,7 @@ export default function SignUp() {
               required
               value={name}
               onChange={e => setName(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2.5 rounded-lg border border-line bg-surface text-primary text-sm focus:ring-2 focus:ring-accent focus:border-transparent outline-none"
               placeholder="John Doe"
             />
           </div>
@@ -84,7 +84,7 @@ export default function SignUp() {
               required
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2.5 rounded-lg border border-line bg-surface text-primary text-sm focus:ring-2 focus:ring-accent focus:border-transparent outline-none"
               placeholder="you@example.com"
             />
           </div>
@@ -96,7 +96,7 @@ export default function SignUp() {
               required
               value={password}
               onChange={e => setPassword(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2.5 rounded-lg border border-line bg-surface text-primary text-sm focus:ring-2 focus:ring-accent focus:border-transparent outline-none"
               placeholder="At least 6 characters"
             />
           </div>
@@ -108,7 +108,7 @@ export default function SignUp() {
               required
               value={confirmPassword}
               onChange={e => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2.5 rounded-lg border border-line bg-surface text-primary text-sm focus:ring-2 focus:ring-accent focus:border-transparent outline-none"
               placeholder="Re-enter your password"
             />
           </div>
@@ -116,7 +116,7 @@ export default function SignUp() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-2.5 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors text-sm inline-flex items-center justify-center gap-2"
+            className="w-full py-2.5 rounded-xl bg-accent text-white font-medium hover:bg-accent-hover disabled:opacity-50 transition-colors text-sm inline-flex items-center justify-center gap-2"
           >
             {submitting ? 'Creating account...' : 'Create Account'}
             {!submitting && <ArrowRight className="w-4 h-4" />}
@@ -124,7 +124,7 @@ export default function SignUp() {
 
           <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
             Already have an account?{' '}
-            <Link to="/login" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">Sign In</Link>
+            <Link to="/login" className="text-accent hover:underline font-medium">Sign In</Link>
           </p>
         </form>
       </div>
