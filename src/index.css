@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* Tailwind v4 defaults dark: to the OS prefers-color-scheme media query.
+   This app toggles dark mode via a .dark class on <html> (see Layout.tsx),
+   so every dark: utility must follow that class instead -- without this,
+   the many components still using literal dark:bg-gray-900-style classes
+   silently follow the OS setting while the token-based ones below follow
+   the in-app toggle, producing two disagreeing dark modes at once. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Semantic design tokens, named by role (not by raw shade), so adding a
    theme later means redefining these values in one place -- never touching
    component code. Light values are the Editorial Brutalism palette; dark
@@ -8,15 +16,29 @@
    plain selectors below it just override the CSS variable's runtime value,
    which every generated utility already reads from. */
 @theme {
+  /* Content area: tinted page background, cards pop up to white (elevated),
+     nested elements within a card recess to a visible gray (inset) -- three
+     readable steps instead of everything sitting in one narrow gray band. */
   --color-background: #F1F2EE;
-  --color-surface: #C6CAC9;
-  --color-surface-alt: #9AA1A3;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #C6CAC9;
   --color-line: #858D91;
   --color-text-secondary: #6D777C;
   --color-text-primary: #1A1A1A;
   --color-accent: #111111;
   --color-accent-hover: #2E2E2E;
   --color-accent-text: #FFFFFF;
+
+  /* Sidebar: deliberately constant, not theme-toggled -- stays dark in both
+     light and dark mode so the authenticated app's chrome matches the dark
+     "Lumora" identity already used on the public marketing pages, instead
+     of the two looking like unrelated products. */
+  --color-sidebar-bg: #111111;
+  --color-sidebar-surface: #1E1E1E;
+  --color-sidebar-text: #F1F2EE;
+  --color-sidebar-text-secondary: #9AA1A3;
+  --color-sidebar-line: #2A2A2A;
+  --color-sidebar-accent: #FFFFFF;
 }
 
 html.dark {
