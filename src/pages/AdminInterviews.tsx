@@ -121,31 +121,31 @@ export default function AdminInterviews() {
 
   const shortlistedApps = applications.filter(a => a.status === 'shortlisted' && a.userId);
 
-  const inputClass = 'w-full px-3.5 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors';
+  const inputClass = 'w-full px-3.5 py-2.5 rounded-lg border border-line bg-surface text-sm text-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent transition-colors';
   const labelClass = 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5';
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Interviews</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Schedule and evaluate interviews.</p>
+          <h1 className="text-2xl font-bold text-primary">Interviews</h1>
+          <p className="text-sm text-secondary mt-1">Schedule and evaluate interviews.</p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => { setTab('list'); refresh(); }} className={`text-xs px-3 py-1.5 rounded-lg font-medium ${tab === 'list' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'}`}>All Interviews</button>
-          <button onClick={() => setTab('schedule')} className={`text-xs px-3 py-1.5 rounded-lg font-medium ${tab === 'schedule' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'}`}>Schedule New</button>
+          <button onClick={() => { setTab('list'); refresh(); }} className={`text-xs px-3 py-1.5 rounded-lg font-medium ${tab === 'list' ? 'bg-accent text-white' : 'bg-gray-100 dark:bg-gray-800 text-secondary'}`}>All Interviews</button>
+          <button onClick={() => setTab('schedule')} className={`text-xs px-3 py-1.5 rounded-lg font-medium ${tab === 'schedule' ? 'bg-accent text-white' : 'bg-gray-100 dark:bg-gray-800 text-secondary'}`}>Schedule New</button>
         </div>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-16">
-          <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-6 h-6 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
         <>
           {/* List tab */}
           {tab === 'list' && (
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+            <div className="bg-surface border border-line rounded-xl overflow-hidden">
               {interviews.length === 0 ? (
                 <div className="text-center py-12 text-sm text-gray-400 dark:text-gray-500">No interviews scheduled yet.</div>
               ) : (
@@ -153,12 +153,12 @@ export default function AdminInterviews() {
                   {interviews.map(iv => (
                     <div key={iv.id} className="flex items-center justify-between p-4">
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        <p className="text-sm font-medium text-primary">
                           {new Date(iv.scheduledAt).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
                           {' at '}
                           {new Date(iv.scheduledAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        <p className="text-xs text-secondary mt-0.5">
                           {iv.durationMinutes} min
                           {iv.interviewers.length > 0 && ` \u2022 ${iv.interviewers.join(', ')}`}
                           {iv.meetLink && ` \u2022 ${iv.meetLink}`}
@@ -166,13 +166,13 @@ export default function AdminInterviews() {
                       </div>
                       <div className="flex items-center gap-3">
                         <span className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${
-                          iv.status === 'scheduled' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
+                          iv.status === 'scheduled' ? 'bg-neutral-100 text-neutral-700 dark:bg-neutral-900/30 dark:text-neutral-300' :
                           iv.status === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
                           'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
                         }`}>{iv.status}</span>
                         {iv.status === 'scheduled' && (
                           <>
-                            <button onClick={() => startEvaluation(iv)} className="text-xs px-2.5 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors">Evaluate</button>
+                            <button onClick={() => startEvaluation(iv)} className="text-xs px-2.5 py-1.5 rounded-lg bg-accent text-white hover:bg-accent-hover transition-colors">Evaluate</button>
                             <button onClick={async () => {
                               if (!user) return;
                               await updateInterview(iv.id, { status: 'completed' });
@@ -216,8 +216,8 @@ export default function AdminInterviews() {
 
           {/* Schedule tab */}
           {tab === 'schedule' && (
-            <form onSubmit={handleSchedule} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 max-w-xl space-y-5">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Schedule Interview</h2>
+            <form onSubmit={handleSchedule} className="bg-surface border border-line rounded-xl p-6 max-w-xl space-y-5">
+              <h2 className="text-lg font-semibold text-primary">Schedule Interview</h2>
 
               <div>
                 <label className={labelClass}>Applicant *</label>
@@ -250,7 +250,7 @@ export default function AdminInterviews() {
                 <input type="text" value={interviewers} onChange={e => setInterviewers(e.target.value)} className={inputClass} placeholder="John, Jane" />
               </div>
 
-              <button type="submit" className="w-full py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors text-sm">
+              <button type="submit" className="w-full py-2.5 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors text-sm">
                 Schedule Interview
               </button>
             </form>
@@ -258,8 +258,8 @@ export default function AdminInterviews() {
 
           {/* Evaluate tab */}
           {tab === 'evaluate' && (
-            <form onSubmit={handleEvaluate} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 max-w-xl space-y-5">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Interview Evaluation</h2>
+            <form onSubmit={handleEvaluate} className="bg-surface border border-line rounded-xl p-6 max-w-xl space-y-5">
+              <h2 className="text-lg font-semibold text-primary">Interview Evaluation</h2>
 
               <div className="grid grid-cols-2 gap-4">
                 {(['technicalScore', 'communicationScore', 'problemSolvingScore', 'overallScore'] as const).map(field => (
@@ -299,7 +299,7 @@ export default function AdminInterviews() {
                 </select>
               </div>
 
-              <button type="submit" className="w-full py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors text-sm">
+              <button type="submit" className="w-full py-2.5 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors text-sm">
                 Save Evaluation
               </button>
             </form>
