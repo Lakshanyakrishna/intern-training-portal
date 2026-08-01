@@ -13,10 +13,10 @@ export default function LessonCard({ lesson, completed, onComplete }: LessonCard
 
   const borderClass = completed
     ? 'border-green-200 dark:border-green-800'
-    : 'border-gray-200 dark:border-gray-700';
+    : 'border-line';
   const bgClass = completed
     ? 'bg-green-50 dark:bg-green-900/20'
-    : 'bg-white dark:bg-gray-800';
+    : 'bg-surface';
 
   return (
     <div className={`${bgClass} ${borderClass} border rounded-lg overflow-hidden`}>
@@ -26,10 +26,10 @@ export default function LessonCard({ lesson, completed, onComplete }: LessonCard
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{lesson.title}</h3>
+            <h3 className="text-sm font-semibold text-primary">{lesson.title}</h3>
             {completed && <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />}
           </div>
-          {lesson.why && <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5 truncate">{lesson.why}</p>}
+          {lesson.why && <p className="text-xs text-accent mt-0.5 truncate">{lesson.why}</p>}
         </div>
         <svg
           className={`w-4 h-4 text-gray-400 ml-2 shrink-0 transition-transform ${expanded ? 'rotate-180' : ''}`}
@@ -40,7 +40,7 @@ export default function LessonCard({ lesson, completed, onComplete }: LessonCard
       </button>
       {expanded && (
         <div className="px-4 pb-4 space-y-3 border-t border-inherit pt-3">
-          <div className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-line">
+          <div className="text-sm text-secondary leading-relaxed whitespace-pre-line">
             {lesson.content}
           </div>
           {lesson.code && (
@@ -49,7 +49,7 @@ export default function LessonCard({ lesson, completed, onComplete }: LessonCard
             </pre>
           )}
           {lesson.why && (
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 text-xs text-blue-700 dark:text-blue-300">
+            <div className="bg-neutral-50 dark:bg-neutral-900/20 rounded-lg p-3 text-xs text-neutral-700 dark:text-neutral-300">
               <span className="font-semibold">Why this matters: </span>
               {lesson.why}
             </div>
@@ -57,7 +57,7 @@ export default function LessonCard({ lesson, completed, onComplete }: LessonCard
           {!completed && (
             <button
               onClick={() => { onComplete(); }}
-              className="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors font-medium"
+              className="px-4 py-2 text-sm rounded-lg bg-accent text-white hover:bg-accent-hover transition-colors font-medium"
             >
               Mark Complete
             </button>
