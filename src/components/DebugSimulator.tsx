@@ -17,7 +17,7 @@ export default function DebugSimulator({ scenarios, completedScenarios, onComple
 
   if (!scenario) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 text-center">
+      <div className="bg-surface rounded-xl p-6 border border-line text-center">
         <p className="text-green-600 dark:text-green-400 font-medium">All scenarios completed!</p>
       </div>
     );
@@ -44,19 +44,19 @@ export default function DebugSimulator({ scenarios, completedScenarios, onComple
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+      <div className="flex items-center justify-between text-sm text-secondary">
         <span className="font-medium">{scenario.title}</span>
         <span>{completedCount}/{totalCount} scenarios</span>
       </div>
 
-      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-4">
-        <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-1">Client Report</p>
+      <div className="bg-neutral-50 dark:bg-neutral-900/20 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4">
+        <p className="text-xs font-semibold text-accent mb-1">Client Report</p>
         <p className="text-sm text-gray-700 dark:text-gray-300">{scenario.clientReport}</p>
       </div>
 
-      <div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4">
-        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">Context</p>
-        <p className="text-sm text-gray-600 dark:text-gray-400">{scenario.context}</p>
+      <div className="bg-surface-alt rounded-xl p-4">
+        <p className="text-xs font-semibold text-secondary mb-1">Context</p>
+        <p className="text-sm text-secondary">{scenario.context}</p>
       </div>
 
       {!showResult ? (
@@ -65,10 +65,10 @@ export default function DebugSimulator({ scenarios, completedScenarios, onComple
             <button
               key={action.id}
               onClick={() => handleAction(action.id)}
-              className="text-left p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-400 dark:hover:border-blue-500 transition-colors"
+              className="text-left p-3 rounded-xl border border-line bg-surface hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors"
             >
-              <span className="text-sm font-medium text-gray-800 dark:text-white">{action.label}</span>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{action.description}</p>
+              <span className="text-sm font-medium text-primary">{action.label}</span>
+              <p className="text-xs text-secondary mt-0.5">{action.description}</p>
             </button>
           ))}
         </div>
@@ -82,17 +82,17 @@ export default function DebugSimulator({ scenarios, completedScenarios, onComple
             <p className={`text-sm font-medium mb-1 ${isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
               {isCorrect ? '✓ Correct!' : '✗ Not quite right'}
             </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-secondary">
               {scenario.actions.find(a => a.id === selectedAction)?.outcome}
             </p>
           </div>
-          <div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-3">
-            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">Explanation</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">{scenario.explanation}</p>
+          <div className="bg-surface-alt rounded-xl p-3">
+            <p className="text-xs font-semibold text-secondary mb-1">Explanation</p>
+            <p className="text-sm text-secondary">{scenario.explanation}</p>
           </div>
           <button
             onClick={handleNext}
-            className="w-full py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
+            className="w-full py-2.5 rounded-xl bg-accent text-white text-sm font-medium hover:bg-accent-hover transition-colors"
           >
             Next Scenario
           </button>
