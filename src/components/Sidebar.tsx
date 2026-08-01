@@ -30,6 +30,9 @@ const trackIcons: Record<string, React.ReactNode> = {
   final: <Flag className="w-4 h-4" />,
 };
 
+// The sidebar is always dark (see --color-sidebar-* in index.css), regardless
+// of the app's own light/dark toggle, so its own classes never need a dark:
+// variant -- they'd be fighting a background that never changes.
 function NavItem({
   to,
   label,
@@ -53,8 +56,8 @@ function NavItem({
       className={({ isActive }) =>
         `flex items-center ${compact ? 'justify-center px-0 py-2.5' : 'gap-3 px-3 py-2'} text-sm transition-colors border-l-2 ${
           isActive
-            ? 'border-neutral-500 bg-gray-100 dark:bg-gray-800 text-primary font-medium'
-            : 'border-transparent text-secondary hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-200'
+            ? 'border-sidebar-accent bg-sidebar-surface text-sidebar-text font-medium'
+            : 'border-transparent text-sidebar-text-secondary hover:bg-sidebar-surface hover:text-sidebar-text'
         }`
       }
     >
@@ -74,17 +77,17 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
   return (
     <>
       {open && <div className="fixed inset-0 bg-black/50 z-20 lg:hidden" onClick={onClose} />}
-      <aside className={`fixed top-0 left-0 z-30 h-full bg-surface border-r border-line transform transition-all duration-300 ease-in-out lg:translate-x-0 flex flex-col ${
+      <aside className={`fixed top-0 left-0 z-30 h-full bg-sidebar-bg border-r border-sidebar-line transform transition-all duration-300 ease-in-out lg:translate-x-0 flex flex-col ${
         compact ? 'w-16' : 'w-60'
       } ${open ? 'translate-x-0' : '-translate-x-full'}`}>
         {/* Brand */}
-        <div className={`${compact ? 'justify-center' : 'px-4'} h-14 flex items-center border-b border-line shrink-0`}>
+        <div className={`${compact ? 'justify-center' : 'px-4'} h-14 flex items-center border-b border-sidebar-line shrink-0`}>
           {compact ? (
-            <span className="text-sm font-bold text-neutral-600">IR</span>
+            <span className="text-sm font-bold text-sidebar-accent">IR</span>
           ) : (
             <div>
-              <h1 className="text-sm font-semibold text-primary leading-tight">Intern Readiness</h1>
-              <p className="text-[11px] text-secondary">Project Allocation System</p>
+              <h1 className="text-sm font-semibold text-sidebar-text leading-tight">Intern Readiness</h1>
+              <p className="text-[11px] text-sidebar-text-secondary">Project Allocation System</p>
             </div>
           )}
         </div>
@@ -98,13 +101,14 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
           {isApplicant ? (
             <>
               <NavItem to="/applicant/dashboard" label="My Application" onClick={onClose} icon={<ClipboardCheck />} compact={compact} />
+              <NavItem to="/applicant/opportunities" label="Browse Opportunities" onClick={onClose} icon={<Grid />} compact={compact} />
               <NavItem to="/profile" label="Profile" onClick={onClose} icon={<User />} compact={compact} />
               <NavItem to="/notifications/settings" label="Notification Settings" onClick={onClose} icon={<BarChart3 />} compact={compact} />
             </>
           ) : user?.role === 'admin' ? (
             <>
               <div className="pt-2 pb-1 px-3">
-                <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Admin</p>
+                <p className="text-[11px] font-semibold text-sidebar-text-secondary uppercase tracking-wider">Admin</p>
               </div>
               <NavItem to="/admin/applications" label="Applications" onClick={onClose} icon={<ClipboardCheck />} compact={compact} />
               <NavItem to="/admin/interviews" label="Interviews" onClick={onClose} icon={<Grid />} compact={compact} />
@@ -117,7 +121,7 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
               <NavItem to="/admin/completion-report" label="Completion Report" onClick={onClose} icon={<BarChart3 />} compact={compact} />
 
               <div className="pt-3 pb-1 px-3">
-                <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Mentor</p>
+                <p className="text-[11px] font-semibold text-sidebar-text-secondary uppercase tracking-wider">Mentor</p>
               </div>
               <NavItem to="/mentor" label="Mentor Dashboard" onClick={onClose} icon={<BarChart3 />} compact={compact} />
               <NavItem to="/mentor/evaluate" label="Readiness Eval" onClick={onClose} icon={<Target />} compact={compact} />
@@ -130,7 +134,7 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
           ) : isMentor ? (
             <>
               <div className="pt-2 pb-1 px-3">
-                <p className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Mentor</p>
+                <p className="text-[11px] font-semibold text-sidebar-text-secondary uppercase tracking-wider">Mentor</p>
               </div>
               <NavItem to="/mentor" label="Dashboard" onClick={onClose} icon={<BarChart3 />} compact={compact} />
               <NavItem to="/mentor/evaluate" label="Readiness Eval" onClick={onClose} icon={<Target />} compact={compact} />
@@ -151,7 +155,7 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
                   <div className="pt-1">
                     <button
                       onClick={() => setProgramOpen(!programOpen)}
-                      className="flex items-center justify-between w-full px-3 py-2 text-sm text-secondary hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+                      className="flex items-center justify-between w-full px-3 py-2 text-sm text-sidebar-text-secondary hover:text-sidebar-text transition-colors"
                     >
                       <span className="flex items-center gap-3">
                         <BookOpen className="w-5 h-5" />
@@ -172,14 +176,14 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
                             className={({ isActive }) =>
                               `flex items-center gap-3 px-3 py-2 text-sm transition-colors border-l-2 ${
                                 isActive
-                                  ? 'border-neutral-500 bg-gray-100 dark:bg-gray-800 text-primary font-medium'
-                                  : 'border-transparent text-secondary hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-gray-700 dark:hover:text-gray-300'
+                                  ? 'border-sidebar-accent bg-sidebar-surface text-sidebar-text font-medium'
+                                  : 'border-transparent text-sidebar-text-secondary hover:bg-sidebar-surface hover:text-sidebar-text'
                               }`
                             }
                           >
                             <span className="w-4 h-4 shrink-0 text-current">{trackIcons[track.id]}</span>
                             <span className="flex-1 truncate">{track.name}</span>
-                            <span className="text-xs text-gray-400 dark:text-gray-500 tabular-nums">{trackProg.completed}/{trackProg.total}</span>
+                            <span className="text-xs text-sidebar-text-secondary tabular-nums">{trackProg.completed}/{trackProg.total}</span>
                           </NavLink>
                         );
                       })}
@@ -199,19 +203,19 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
 
         {/* User info + sign out */}
         {!compact && user && (
-          <div className="border-t border-line p-3">
+          <div className="border-t border-sidebar-line p-3">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-7 h-7 rounded-full bg-neutral-100 dark:bg-neutral-900/30 flex items-center justify-center text-xs font-bold text-accent shrink-0">
+              <div className="w-7 h-7 rounded-full bg-sidebar-surface flex items-center justify-center text-xs font-bold text-sidebar-accent shrink-0">
                 {user.name.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-medium text-primary truncate">{user.name}</p>
-                <p className="text-[11px] text-gray-400 dark:text-gray-500 capitalize">{user.role}</p>
+                <p className="text-xs font-medium text-sidebar-text truncate">{user.name}</p>
+                <p className="text-[11px] text-sidebar-text-secondary capitalize">{user.role}</p>
               </div>
             </div>
             <button
               onClick={signOut}
-              className="flex items-center gap-2 w-full px-2 py-1.5 text-xs text-secondary hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              className="flex items-center gap-2 w-full px-2 py-1.5 text-xs text-sidebar-text-secondary hover:text-red-400 hover:bg-sidebar-surface rounded-lg transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
               Sign Out
