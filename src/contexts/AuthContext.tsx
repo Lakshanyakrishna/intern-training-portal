@@ -20,6 +20,7 @@ interface AuthContextType {
   signUp: (data: SignUpData) => Promise<{ error?: string; user?: AuthUser }>;
   signOut: () => void;
   completeOnboarding: () => void;
+  refreshUser: () => Promise<void>;
 }
 
 const DEFAULT_BATCH = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
@@ -191,8 +192,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(updated);
   }, [user]);
 
+  // Re-fetches the current user from the DB and replaces the context copy.
+  // Needed for the profile page (github/linkedin/portfolio/phone/major) --
+  // without this, a save would only be visible after a full reload, and
+  // the Apply flow (which reads profile fields off this same `user` object
+  // to skip re-asking for them) would keep working from stale data.
+  const refreshUser = useCallback(async () => {
+    if (!user) return;
+    const fresh = await getUser(user.id);
+    if (fresh) setUser(fresh);
+  }, [user]);
+
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, completeOnboarding }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, completeOnboarding, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
