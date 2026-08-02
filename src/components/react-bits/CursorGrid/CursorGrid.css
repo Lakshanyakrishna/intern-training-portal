@@ -1,0 +1,16 @@
+.cursor-grid {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0; /* Ensures it sits behind content */
+  pointer-events: none; /* Let pointer events pass to container, or we track them on container */
+}
+
+.cursor-grid__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}

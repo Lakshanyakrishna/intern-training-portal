@@ -1,4 +1,5 @@
-import { NavLink, Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import PillNav from './react-bits/PillNav/PillNav';
 
 const navLinks = [
   { to: '/', label: 'Home' },
@@ -9,34 +10,24 @@ const navLinks = [
 ];
 
 export default function Header() {
+  const location = useLocation();
+
   return (
     <header className="fixed inset-x-0 top-0 z-20 border-b border-white/5 bg-black/30 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-7">
         <div className="w-40" aria-hidden="true" />
 
-        <nav className="hidden items-center gap-10 md:flex">
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              end={link.to === '/'}
-              className={({ isActive }) =>
-                `relative pb-2 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors ${
-                  isActive ? 'text-[#F1F2EE]' : 'text-[#9AA1A3] hover:text-[#C6CAC9]'
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  {link.label}
-                  {isActive && (
-                    <span className="absolute -bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-[#F1F2EE]" />
-                  )}
-                </>
-              )}
-            </NavLink>
-          ))}
-        </nav>
+        <div className="hidden items-center justify-center flex-1 md:flex px-8">
+          <PillNav
+            items={navLinks.map(l => ({ href: l.to, label: l.label }))}
+            activeHref={location.pathname}
+            baseColor="#F1F2EE"
+            pillColor="transparent"
+            pillTextColor="#9AA1A3"
+            hoveredPillTextColor="#000000"
+            initialLoadAnimation={true}
+          />
+        </div>
 
         <div className="flex items-center gap-5">
           <Link

@@ -1,0 +1,9 @@
+.scroll-reveal {
+  display: inline-block;
+  width: 100%;
+}
+
+.scroll-reveal-word {
+  display: inline-block;
+  white-space: pre;
+}
