@@ -100,8 +100,7 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
 
           {isApplicant ? (
             <>
-              <NavItem to="/applicant/dashboard" label="My Application" onClick={onClose} icon={<ClipboardCheck />} compact={compact} />
-              <NavItem to="/applicant/opportunities" label="Browse Opportunities" onClick={onClose} icon={<Grid />} compact={compact} />
+              <NavItem to="/applicant" label="My Journey" onClick={onClose} icon={<ClipboardCheck />} compact={compact} />
               <NavItem to="/profile" label="Profile" onClick={onClose} icon={<User />} compact={compact} />
               <NavItem to="/notifications/settings" label="Notification Settings" onClick={onClose} icon={<BarChart3 />} compact={compact} />
             </>

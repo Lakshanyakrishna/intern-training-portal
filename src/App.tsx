@@ -26,8 +26,7 @@ import MentorDashboard from './pages/MentorDashboard';
 import InternManagement from './pages/InternManagement';
 import MentorReviews from './pages/MentorReviews';
 import ProjectReadiness from './pages/ProjectReadiness';
-import ApplicantDashboard from './pages/ApplicantDashboard';
-import ApplicantOpportunities from './pages/ApplicantOpportunities';
+import ApplicantExperience from './applicant/ApplicantExperience';
 import AdminApplications from './pages/AdminApplications';
 import AdminInterviews from './pages/AdminInterviews';
 import AdminConversion from './pages/AdminConversion';
@@ -68,6 +67,13 @@ export default function App() {
               <ProtectedRoute roles={['intern', 'mentor', 'admin']}><Onboarding /></ProtectedRoute>
             } />
 
+            {/* Applicant Experience -- deliberately outside <Layout>: no
+                sidebar, no admin-portal chrome. A single stage-driven page
+                that owns its own minimal header. */}
+            <Route path="/applicant" element={
+              <ProtectedRoute><ApplicantExperience /></ProtectedRoute>
+            } />
+
             {/* Any authenticated user, regardless of lifecycle stage */}
             <Route element={
               <ProtectedRoute>
@@ -75,8 +81,6 @@ export default function App() {
               </ProtectedRoute>
             }>
               <Route path="/profile" element={<Profile />} />
-              <Route path="/applicant/dashboard" element={<ApplicantDashboard />} />
-              <Route path="/applicant/opportunities" element={<ApplicantOpportunities />} />
               <Route path="/notifications" element={<NotificationCenter />} />
               <Route path="/notifications/settings" element={<NotificationSettings />} />
             </Route>

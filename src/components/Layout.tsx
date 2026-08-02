@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { getUserSettings, upsertUserSettings } from '../lib/db';
+import { roleHomePath } from '../utils/roleHome';
 import Sidebar from './Sidebar';
 import NotificationBell from './NotificationBell';
 
@@ -51,18 +52,20 @@ export default function Layout() {
             </button>
             <div className="lg:hidden font-semibold text-sm text-primary">Intern Readiness Program</div>
             <div className="hidden lg:block">
-              <Link to="/dashboard" className="text-sm font-semibold text-primary hover:text-accent transition-colors">
+              <Link to={roleHomePath(user?.role)} className="text-sm font-semibold text-primary hover:text-accent transition-colors">
                 Intern Readiness Program
               </Link>
             </div>
             <div className="flex items-center gap-2 ml-auto">
-              <Link
-                to="/mentor"
-                className="hidden sm:flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-surface-alt transition-colors"
-              >
-                <span>🔒</span>
-                <span>Mentor</span>
-              </Link>
+              {(user?.role === 'mentor' || user?.role === 'admin') && (
+                <Link
+                  to="/mentor"
+                  className="hidden sm:flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-surface-alt transition-colors"
+                >
+                  <span>🔒</span>
+                  <span>Mentor</span>
+                </Link>
+              )}
               <NotificationBell />
               <button
                 onClick={() => setDarkMode(p => !p)}

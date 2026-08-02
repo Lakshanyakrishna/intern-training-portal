@@ -77,8 +77,8 @@ function ApplicantProfile() {
           <h2 className="text-sm font-semibold text-primary">Application status</h2>
           <p className="text-xs text-secondary mt-0.5">Track where things stand from your dashboard.</p>
         </div>
-        <Link to="/applicant/dashboard" className="text-sm font-medium text-accent hover:underline shrink-0">
-          My Application →
+        <Link to="/applicant" className="text-sm font-medium text-accent hover:underline shrink-0">
+          My Journey →
         </Link>
       </div>
     </div>

@@ -165,7 +165,7 @@ export default function Apply() {
             <div className="flex items-center gap-3">
               <Link to="/about" className="text-xs text-secondary hover:text-gray-700 dark:hover:text-gray-200 transition-colors">About</Link>
               {opportunity && (
-                <Link to={user ? '/applicant/opportunities' : '/opportunities'} className="text-xs text-secondary hover:text-gray-700 dark:hover:text-gray-200 transition-colors">Opportunities</Link>
+                <Link to={user ? '/applicant' : '/opportunities'} className="text-xs text-secondary hover:text-gray-700 dark:hover:text-gray-200 transition-colors">Opportunities</Link>
               )}
               <Link to={user ? roleHomePath(user.role) : '/login'} className="text-xs px-3 py-1.5 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover transition-colors">
                 {user ? 'Dashboard' : 'Sign In'}
@@ -216,7 +216,7 @@ export default function Apply() {
           <Link to="/" className="text-sm font-bold text-primary">Intern Readiness Program</Link>
           <div className="flex items-center gap-3">
             <Link to="/about" className="text-xs text-secondary hover:text-gray-700 dark:hover:text-gray-200 transition-colors">About</Link>
-            <Link to={user ? '/applicant/opportunities' : '/opportunities'} className="text-xs text-secondary hover:text-gray-700 dark:hover:text-gray-200 transition-colors">Opportunities</Link>
+            <Link to={user ? '/applicant' : '/opportunities'} className="text-xs text-secondary hover:text-gray-700 dark:hover:text-gray-200 transition-colors">Opportunities</Link>
             <Link to={user ? roleHomePath(user.role) : '/login'} className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
               {user ? 'Dashboard' : 'Login'}
             </Link>
