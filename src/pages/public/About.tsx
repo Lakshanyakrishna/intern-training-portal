@@ -1,9 +1,16 @@
 // @ts-nocheck
+import { useState } from 'react';
+import Dither from '../../components/Dither';
 import { Link } from 'react-router-dom';
+import Lightfall from '../../components/Lightfall';
+import OrbitBadges from '../../components/react-bits/OrbitBadges/OrbitBadges';
+import CountUp from '../../components/CountUp';
+import ElectricBorder from '../../components/react-bits/ElectricBorder/ElectricBorder';
 import Ferrofluid from '../../components/Ferrofluid';
 import Header from '../../components/Header';
 import IntroLogo from '../../components/IntroLogo';
 import SplitText from '../../components/SplitText';
+import Radar from '../../components/Radar';
 import BlurText from '../../components/react-bits/BlurText/BlurText';
 import AnimatedContent from '../../components/AnimatedContent';
 import ScrollReveal from '../../components/ScrollReveal';
@@ -49,10 +56,10 @@ const WHAT_YOULL_GAIN = [
 
 // TODO: replace with real, approved numbers before launch
 const STATS = [
-  { value: '500+', label: 'Interns Trained' },
-  { value: '12+', label: 'Domain Tracks' },
-  { value: '150+', label: 'Mentor Experts' },
-  { value: '200+', label: 'Mentor-Reviewed Capstones' },
+  { to: 500, suffix: '+', label: 'Interns Trained' },
+  { to: 12, suffix: '+', label: 'Domain Tracks' },
+  { to: 150, suffix: '+', label: 'Mentor Experts' },
+  { to: 200, suffix: '+', label: 'Mentor-Reviewed Capstones' },
 ];
 
 // TODO: replace with real placement companies before launch
@@ -79,7 +86,7 @@ function ComingSoonLink({ label }: { label: string }) {
 }
 
 export default function About() {
-
+  const [orbitPaused, setOrbitPaused] = useState(false);
   return (
     <div className="relative min-h-screen bg-[#0A0A0B] text-white overflow-hidden font-sans">
       <div className="fixed inset-0 pointer-events-none">
@@ -188,16 +195,23 @@ export default function About() {
                 <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0A0A0B] border border-white/20 items-center justify-center z-10">
                   <ArrowRight className="w-4 h-4 text-gray-300" />
                 </div>
-                <div className="bg-[#111114] border border-[#C6CAC9]/20 rounded-2xl p-6">
-                  <h3 className="text-lg font-semibold text-[#F1F2EE] mb-4">After Lumora</h3>
-                  <ul className="space-y-3">
-                    {['Has shipped real, mentor-reviewed work', 'Collaborates and communicates like a pro', "Walks into interviews with proof, not just promises"].map((t) => (
-                      <li key={t} className="flex items-start gap-2 text-sm text-gray-300">
-                        <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#C6CAC9]" /> {t}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <ElectricBorder
+                  color="#C6CAC9"
+                  speed={1}
+                  chaos={0.08}
+                  borderRadius={16}
+                >
+                  <div className="bg-[#111114] rounded-2xl p-6">
+                    <h3 className="text-lg font-semibold text-[#F1F2EE] mb-4">After Lumora</h3>
+                    <ul className="space-y-3">
+                      {['Has shipped real, mentor-reviewed work', 'Collaborates and communicates like a pro', "Walks into interviews with proof, not just promises"].map((t) => (
+                        <li key={t} className="flex items-start gap-2 text-sm text-gray-300">
+                          <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#C6CAC9]" /> {t}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </ElectricBorder>
               </div>
             </section>
           </AnimatedContent>
@@ -213,15 +227,36 @@ export default function About() {
                 <div className="hidden md:block absolute top-5 left-[12.5%] right-[12.5%] h-px border-t border-dashed border-white/15" />
                 <ScrollRevealGroup className="grid md:grid-cols-4 gap-6" staggerDelay={0.1}>
                   {HOW_IT_WORKS.map((step) => (
-                    <div key={step.num} className="relative bg-[#111114] border border-white/10 rounded-2xl p-6 flex flex-col">
-                      <div className="flex justify-between items-center mb-4">
-                        <div className="w-9 h-9 rounded-full bg-[#6D777C] flex items-center justify-center text-sm font-bold text-[#F1F2EE] shrink-0">
-                          {step.num}
-                        </div>
-                        <step.icon className="w-5 h-5 text-gray-500" />
+                    <div key={step.num} className="relative bg-[#111114] border border-white/10 rounded-2xl p-6 flex flex-col overflow-hidden h-full">
+                      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+                        <Radar
+                          speed={0.6}
+                          scale={0.6}
+                          ringCount={8}
+                          spokeCount={8}
+                          ringThickness={0.04}
+                          spokeThickness={0.008}
+                          sweepSpeed={0.8}
+                          sweepWidth={2.5}
+                          sweepLobes={1}
+                          color="#6b6f76"
+                          backgroundColor="#000000"
+                          falloff={2.2}
+                          brightness={0.5}
+                          enableMouseInteraction={true}
+                          mouseInfluence={0.08}
+                        />
                       </div>
-                      <h3 className="font-semibold mb-2">{step.title}</h3>
-                      <p className="text-xs text-gray-400 leading-relaxed">{step.desc}</p>
+                      <div style={{ position: 'relative', zIndex: 1 }} className="flex flex-col h-full">
+                        <div className="flex justify-between items-center mb-4">
+                          <div className="w-9 h-9 rounded-full bg-[#6D777C] flex items-center justify-center text-sm font-bold text-[#F1F2EE] shrink-0">
+                            {step.num}
+                          </div>
+                          <step.icon className="w-5 h-5 text-gray-500" />
+                        </div>
+                        <h3 className="font-semibold mb-2">{step.title}</h3>
+                        <p className="text-xs text-gray-400 leading-relaxed">{step.desc}</p>
+                      </div>
                     </div>
                   ))}
                 </ScrollRevealGroup>
@@ -255,17 +290,36 @@ export default function About() {
         {/* WHAT YOU'LL GAIN */}
         <ScrollReveal delay={0.1}>
           <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
-            <section>
-              <p className="text-[#9AA1A3] font-semibold tracking-wider text-sm mb-6 uppercase">What You'll Gain</p>
-              <div className="bg-[#111114] border border-white/10 rounded-2xl p-6 grid md:grid-cols-2 gap-x-8 gap-y-4">
-                {WHAT_YOULL_GAIN.map((item) => (
-                  <div key={item} className="flex items-center gap-3 text-sm text-gray-300 border-b border-white/5 pb-3 last:border-0 last:pb-0">
-                    <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-                      <Check className="w-3 h-3 text-[#C6CAC9]" />
-                    </span>
-                    {item}
-                  </div>
-                ))}
+            <section
+              className="flex justify-center"
+              onMouseEnter={() => setOrbitPaused(true)}
+              onMouseLeave={() => setOrbitPaused(false)}
+            >
+              <div style={{ maxWidth: 900, width: '100%' }}>
+                <OrbitBadges
+                  items={WHAT_YOULL_GAIN.map((item, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-2 bg-[#111114] border border-white/10 rounded-full px-4 py-2 text-xs text-gray-300 whitespace-nowrap shadow-lg"
+                    >
+                      <Check className="w-3.5 h-3.5 text-[#C6CAC9] shrink-0" /> {item}
+                    </div>
+                  ))}
+                  baseWidth={900}
+                  radiusX={380}
+                  radiusY={260}
+                  itemWidth={240}
+                  itemHeight={44}
+                  duration={40}
+                  responsive={true}
+                  paused={orbitPaused}
+                  centerContent={
+                    <div className="text-center px-4">
+                      <p className="text-[#9AA1A3] font-semibold tracking-wider text-xs uppercase mb-2">What You'll Gain</p>
+                      <h3 className="text-2xl font-bold">Everything you walk away with</h3>
+                    </div>
+                  }
+                />
               </div>
             </section>
           </AnimatedContent>
@@ -278,7 +332,10 @@ export default function About() {
               {STATS.map((s) => (
                 <div key={s.label} className="p-6 text-center">
                   {/* TODO: real numbers */}
-                  <p className="text-3xl font-bold mb-1">{s.value}</p>
+                  <p className="text-3xl font-bold mb-1">
+                    <CountUp from={0} to={s.to} duration={1.5} separator="," />
+                    {s.suffix}
+                  </p>
                   <p className="text-xs text-gray-500">{s.label}</p>
                 </div>
               ))}
@@ -307,16 +364,37 @@ export default function About() {
             <section>
               <p className="text-[#9AA1A3] font-semibold tracking-wider text-sm mb-6 uppercase">Real Results</p>
               {/* TODO: replace with a real intern photo + story */}
-              <div className="bg-[#111114] border border-white/10 rounded-2xl p-8 flex flex-col md:flex-row items-center gap-6">
-                <div className="w-20 h-20 rounded-full bg-[#6D777C] flex items-center justify-center text-xl font-bold text-[#F1F2EE] shrink-0">
-                  {TESTIMONIAL.name.split(' ').map((n) => n[0]).join('')}
+              <div className="bg-[#111114] border border-white/10 rounded-2xl p-8 relative overflow-hidden">
+                <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+                  <Lightfall
+                    colors={['#4A6CF7', '#2A3FCC', '#7FA0FF']}
+                    backgroundColor="#0A1440"
+                    speed={0.6}
+                    streakCount={4}
+                    streakWidth={0.8}
+                    streakLength={1.2}
+                    glow={0.8}
+                    density={0.5}
+                    twinkle={0.6}
+                    zoom={3}
+                    backgroundGlow={0.6}
+                    opacity={0.9}
+                    mouseInteraction={true}
+                    mouseStrength={0.4}
+                    mouseRadius={0.8}
+                  />
                 </div>
-                <div>
-                  <Quote className="w-6 h-6 text-[#6D777C] mb-3" />
-                  <p className="text-lg text-gray-200 leading-relaxed mb-4">"{TESTIMONIAL.quote}"</p>
-                  <p className="text-sm text-gray-400">
-                    <span className="font-semibold text-gray-200">{TESTIMONIAL.name}</span><br />{TESTIMONIAL.role}
-                  </p>
+                <div className="flex flex-col md:flex-row items-center gap-6" style={{ position: 'relative', zIndex: 1 }}>
+                  <div className="w-20 h-20 rounded-full bg-[#6D777C] flex items-center justify-center text-xl font-bold text-[#F1F2EE] shrink-0">
+                    {TESTIMONIAL.name.split(' ').map((n) => n[0]).join('')}
+                  </div>
+                  <div>
+                    <Quote className="w-6 h-6 text-[#6D777C] mb-3" />
+                    <p className="text-lg text-gray-200 leading-relaxed mb-4">"{TESTIMONIAL.quote}"</p>
+                    <p className="text-sm text-gray-400">
+                      <span className="font-semibold text-gray-200">{TESTIMONIAL.name}</span><br />{TESTIMONIAL.role}
+                    </p>
+                  </div>
                 </div>
               </div>
               <div className="flex justify-end mt-4">
@@ -331,16 +409,30 @@ export default function About() {
         <ScrollReveal delay={0.1}>
           <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
             <section className="relative overflow-hidden bg-[#111114] border border-white/10 rounded-2xl p-12 text-center">
-              <h2 className="text-3xl sm:text-4xl font-bold mb-3">Your future self is already proud of you for starting.</h2>
-              <p className="text-gray-400 mb-8">Join Lumora and turn your potential into professional impact.</p>
-              <ClickSpark sparkColor="#fff" sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
-                <Link
-                  to="/signup"
-                  className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-semibold hover:scale-105 transition-transform"
-                >
-                  Get Started <ArrowRight className="w-4 h-4" />
-                </Link>
-              </ClickSpark>
+              <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+                <Dither
+                  waveColor={[0.15, 0.15, 0.17]}
+                  disableAnimation={false}
+                  enableMouseInteraction={true}
+                  mouseRadius={0.3}
+                  colorNum={4}
+                  waveAmplitude={0.25}
+                  waveFrequency={3}
+                  waveSpeed={0.04}
+                />
+              </div>
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <h2 className="text-3xl sm:text-4xl font-bold mb-3">Your future self is already proud of you for starting.</h2>
+                <p className="text-gray-400 mb-8">Join Lumora and turn your potential into professional impact.</p>
+                <ClickSpark sparkColor="#fff" sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
+                  <Link
+                    to="/signup"
+                    className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-semibold hover:scale-105 transition-transform"
+                  >
+                    Get Started <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </ClickSpark>
+              </div>
             </section>
           </AnimatedContent>
         </ScrollReveal>
