@@ -60,11 +60,24 @@ export interface ActivityItem {
   timestamp: string;
 }
 
+export type NotificationKind = 'interview' | 'application' | 'progress';
+
 export interface NotificationItem {
   id: string;
   title: string;
   timestamp: string;
   read: boolean;
+  kind: NotificationKind;
+}
+
+export type QuickStatIcon = 'briefcase' | 'users' | 'clock' | 'award';
+
+export interface QuickStat {
+  id: string;
+  icon: QuickStatIcon;
+  value: string;
+  label: string;
+  linkLabel: string;
 }
 
 export interface JourneyStepDef {

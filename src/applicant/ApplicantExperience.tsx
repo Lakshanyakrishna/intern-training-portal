@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { getUserSettings, upsertUserSettings, getApplicationByUserId, acceptOffer } from '../lib/db';
-import { Sun, Moon, XCircle } from '../components/Icons';
+import { Sun, Moon, XCircle, ChevronDown, LogOut } from '../components/Icons';
+import NotificationBell from '../components/NotificationBell';
 import lumoraLogo from '../assets/lumora-logo.png';
 import DotGrid from './components/DotGrid';
 import JourneyTracker from './components/JourneyTracker';
@@ -11,11 +12,13 @@ import StageContent from './components/StageContent';
 import ActivityFeed from './components/ActivityFeed';
 import NotificationPreview from './components/NotificationPreview';
 import HelpPanel from './components/HelpPanel';
+import QuickStats from './components/QuickStats';
 import { MOCK_OPPORTUNITIES } from './mock/opportunities';
 import { applicationForStage } from './mock/application';
 import { MOCK_INTERVIEW_SLOTS, MOCK_SCHEDULED_INTERVIEW } from './mock/interviews';
 import { activityForStage } from './mock/activity';
 import { MOCK_NOTIFICATIONS } from './mock/notifications';
+import { MOCK_QUICK_STATS } from './mock/stats';
 import type { JourneyActions, ScheduledInterview, Stage } from './types';
 
 const STAGE_LABELS: Record<Stage, string> = {
@@ -45,6 +48,60 @@ const STAGE_MOMENT: Record<Stage, string> = {
 
 function SkeletonBlock({ className }: { className: string }) {
   return <div className={`animate-pulse bg-surface-alt rounded-2xl ${className}`} />;
+}
+
+function UserMenu({ name, darkMode, onToggleTheme, onSignOut }: {
+  name: string | undefined;
+  darkMode: boolean;
+  onToggleTheme: () => void;
+  onSignOut: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(p => !p)}
+        className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-lg hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        aria-label="Account menu"
+        aria-expanded={open}
+      >
+        <span className="w-7 h-7 rounded-full bg-surface-alt flex items-center justify-center text-xs font-bold text-primary shrink-0">
+          {name?.charAt(0).toUpperCase() ?? '?'}
+        </span>
+        <span className="text-xs text-secondary hidden sm:inline">{name}</span>
+        <ChevronDown className={`w-3.5 h-3.5 text-secondary transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="absolute right-0 top-full mt-2 w-48 bg-surface border border-line rounded-xl shadow-lg shadow-black/5 py-1.5 z-50 animate-[slideUp_0.15s_ease-out]">
+          <button
+            onClick={() => { onToggleTheme(); setOpen(false); }}
+            className="flex items-center gap-2.5 w-full px-3.5 py-2 text-sm text-primary hover:bg-surface-alt transition-colors text-left"
+          >
+            {darkMode ? <Sun className="w-4 h-4 text-secondary" /> : <Moon className="w-4 h-4 text-secondary" />}
+            {darkMode ? 'Light mode' : 'Dark mode'}
+          </button>
+          <button
+            onClick={() => { setOpen(false); onSignOut(); }}
+            className="flex items-center gap-2.5 w-full px-3.5 py-2 text-sm text-primary hover:bg-surface-alt transition-colors text-left"
+          >
+            <LogOut className="w-4 h-4 text-secondary" />
+            Sign Out
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 // The single hook-shaped piece of state + business logic for this whole
@@ -151,22 +208,9 @@ export default function ApplicantExperience() {
           <img src={lumoraLogo} alt="" className="w-5 h-5 invert dark:invert-0" />
           <span className="text-sm font-bold text-primary tracking-tight">Lumora <span className="text-secondary font-normal">· Internship Program</span></span>
         </div>
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => setDarkMode(p => !p)}
-            className="p-2 rounded-lg text-secondary hover:text-primary hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
-            title="Toggle theme"
-            aria-label={darkMode ? 'Switch to light theme' : 'Switch to dark theme'}
-          >
-            {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
-          <span className="text-xs text-secondary hidden sm:inline px-2">{user?.name}</span>
-          <button
-            onClick={signOut}
-            className="text-xs font-medium text-secondary hover:text-primary transition-colors px-2 py-2 rounded-lg hover:bg-surface-alt focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
-          >
-            Sign Out
-          </button>
+        <div className="flex items-center gap-2">
+          <NotificationBell />
+          <UserMenu name={user?.name} darkMode={darkMode} onToggleTheme={() => setDarkMode(p => !p)} onSignOut={signOut} />
         </div>
       </header>
 
@@ -223,6 +267,7 @@ export default function ApplicantExperience() {
               <div className="space-y-6">
                 <NotificationPreview notifications={MOCK_NOTIFICATIONS} />
                 <ActivityFeed items={activityForStage(stage)} />
+                <QuickStats stats={MOCK_QUICK_STATS} />
                 <HelpPanel />
               </div>
             </div>

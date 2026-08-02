@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Send, FileText, Video, Users, GraduationCap, CheckCircle, MessageSquare } from '../../components/Icons';
 import EmptyState from './EmptyState';
 import type { ActivityIcon, ActivityItem } from '../types';
@@ -14,7 +15,12 @@ const ICONS: Record<ActivityIcon, typeof Send> = {
 export default function ActivityFeed({ items }: { items: ActivityItem[] }) {
   return (
     <div className="bg-surface border border-line rounded-2xl shadow-sm shadow-black/[0.03] p-5">
-      <h3 className="text-sm font-semibold text-primary mb-1">Activity</h3>
+      <div className="flex items-center justify-between mb-1">
+        <h3 className="text-sm font-semibold text-primary">Activity</h3>
+        <Link to="/notifications" className="text-xs font-medium text-secondary hover:text-primary transition-colors">
+          View all
+        </Link>
+      </div>
       <p className="text-xs text-secondary mb-4">A running record of what's happened so far.</p>
 
       {items.length === 0 ? (
