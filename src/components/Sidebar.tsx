@@ -113,6 +113,7 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
               <NavItem to="/admin/interviews" label="Interviews" onClick={onClose} icon={<Grid />} compact={compact} />
               <NavItem to="/admin/opportunities" label="Opportunities" onClick={onClose} icon={<Flag />} compact={compact} />
               <NavItem to="/admin/conversion" label="Conversion" onClick={onClose} icon={<Flag />} compact={compact} />
+              <NavItem to="/admin/tracks" label="Training Tracks" onClick={onClose} icon={<Layers />} compact={compact} />
               <NavItem to="/admin/mentors" label="Mentor Assign" onClick={onClose} icon={<Users />} compact={compact} />
               <NavItem to="/admin/projects" label="Projects" onClick={onClose} icon={<Briefcase />} compact={compact} />
               <NavItem to="/admin/notifications" label="Notifications" onClick={onClose} icon={<BarChart3 />} compact={compact} />

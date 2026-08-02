@@ -31,6 +31,7 @@ import AdminApplications from './pages/AdminApplications';
 import AdminInterviews from './pages/AdminInterviews';
 import AdminConversion from './pages/AdminConversion';
 import AdminMentors from './pages/AdminMentors';
+import AdminTracks from './pages/AdminTracks';
 import AdminProjects from './pages/AdminProjects';
 import AdminOpportunities from './pages/AdminOpportunities';
 import ReadinessEvaluation from './pages/ReadinessEvaluation';
@@ -115,6 +116,7 @@ export default function App() {
               <Route path="/admin/interviews" element={<AdminInterviews />} />
               <Route path="/admin/conversion" element={<AdminConversion />} />
               <Route path="/admin/mentors" element={<AdminMentors />} />
+              <Route path="/admin/tracks" element={<AdminTracks />} />
               <Route path="/admin/projects" element={<AdminProjects />} />
               <Route path="/admin/opportunities" element={<AdminOpportunities />} />
               <Route path="/admin/notifications" element={<AdminNotificationsDashboard />} />
