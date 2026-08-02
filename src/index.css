@@ -28,6 +28,21 @@ html.dark {
   color-scheme: dark;
 }
 
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.faq-heading {
+  font-size: inherit;  /* match existing heading's exact size */
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.text-type__cursor {
+  color: #ffffff;
+  opacity: 0.6;
+}
+
 * {
   box-sizing: border-box;
 }

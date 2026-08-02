@@ -24,34 +24,34 @@ const ScrollReveal = ({
     const words = el.querySelectorAll('.scroll-reveal-word');
     if (!words.length) return;
 
-    gsap.set(words, {
-      opacity: baseOpacity,
-      rotation: baseRotation,
-      filter: enableBlur ? `blur(${blurStrength}px)` : 'none',
-      y: 20,
-    });
-
-    const tl = gsap.to(words, {
-      opacity: 1,
-      rotation: 0,
-      filter: 'blur(0px)',
-      y: 0,
-      duration: 1,
-      ease: 'power2.out',
-      stagger: 0.05,
-      scrollTrigger: {
-        trigger: el,
-        start: 'top 90%',
-        toggleActions: 'play none none reverse',
+    const tl = gsap.fromTo(
+      words,
+      {
+        opacity: baseOpacity,
+        rotation: baseRotation,
+        filter: enableBlur ? `blur(${blurStrength}px)` : 'none',
+        y: 20,
       },
-    });
+      {
+        opacity: 1,
+        rotation: 0,
+        filter: 'blur(0px)',
+        y: 0,
+        duration: 1,
+        ease: 'power2.out',
+        stagger: 0.05,
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 85%',
+          toggleActions: 'play none none reverse',
+        },
+      }
+    );
 
     return () => {
-      ScrollTrigger.getAll().forEach((trigger) => {
-        if (trigger.trigger === el) {
-          trigger.kill();
-        }
-      });
+      if (tl.scrollTrigger) {
+        tl.scrollTrigger.kill();
+      }
       tl.kill();
     };
   }, [baseOpacity, enableBlur, baseRotation, blurStrength]);
@@ -73,9 +73,13 @@ const ScrollReveal = ({
     });
   };
 
+  const textContent = typeof children === 'string' ? children : 
+                      Array.isArray(children) ? children.join('') : 
+                      String(children);
+
   return (
     <div ref={containerRef} className={`scroll-reveal ${containerClassName}`}>
-      {typeof children === 'string' ? splitText(children) : children}
+      {splitText(textContent)}
     </div>
   );
 };

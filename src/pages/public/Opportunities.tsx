@@ -7,11 +7,11 @@ import Ferrofluid from '../../components/Ferrofluid';
 import Header from '../../components/Header';
 import IntroLogo from '../../components/IntroLogo';
 import SplitText from '../../components/SplitText';
-import BlurText from '../../components/BlurText';
+
 import Magnet from '../../components/Magnet';
 import SpotlightCard from '../../components/SpotlightCard';
 import ClickSpark from '../../components/ClickSpark';
-import MagicBento from '../../components/MagicBento';
+import { ParticleCard, GlobalSpotlight } from '../../components/react-bits/ParticleCard/ParticleCard';
 import StarBorder from '../../components/StarBorder';
 import TiltedCard from '../../components/TiltedCard';
 import ElectricBorder from '../../components/react-bits/ElectricBorder/ElectricBorder';
@@ -21,22 +21,34 @@ import GlitchText from '../../components/react-bits/GlitchText/GlitchText';
 import HoverSplashCard from '../../components/react-bits/HoverSplashCard/HoverSplashCard';
 import CursorGrid from '../../components/react-bits/CursorGrid/CursorGrid';
 import PixelTransition from '../../components/react-bits/PixelTransition/PixelTransition';
+import ShapeGrid from '../../components/react-bits/ShapeGrid/ShapeGrid';
+import Orb from '../../components/react-bits/Orb/Orb';
+import CurvedInput from '../../components/react-bits/CurvedInput/CurvedInput';
+import Ribbons from '../../components/react-bits/Ribbons/Ribbons';
+import TextType from '../../components/TextType';
+import BlurText from '../../components/react-bits/BlurText/BlurText';
+import Dock from '../../components/Dock';
+import VariableProximity from '../../components/react-bits/VariableProximity/VariableProximity';
+import TrueFocus from '../../components/react-bits/TrueFocus/TrueFocus';
 
+import ScrollVelocity from '../../components/react-bits/ScrollVelocity/ScrollVelocity';
+import Galaxy from '../../components/react-bits/Galaxy/Galaxy';
+import Shuffle from '../../components/react-bits/Shuffle/ShuffleText';
 import CountUp from '../../components/CountUp';
 import AnimatedContent from '../../components/AnimatedContent';
-import Stepper from '../../components/Stepper';
 import GlareHover from '../../components/GlareHover';
 import AnimatedList from '../../components/AnimatedList';
-import GooeyNav from '../../components/react-bits/GooeyNav/GooeyNav';
+
 import MultiSelectGooeyNav from '../../components/react-bits/GooeyNav/MultiSelectGooeyNav';
 import FadeContent from '../../components/FadeContent';
 import {
   ChevronDown, Bookmark, GitCompare, Share, MapPin, DollarSign,
-  Clock, Zap, CheckCircle2, ChevronUp, ChevronRight, Terminal,
+  Clock, Zap, ChevronUp, ChevronRight, Terminal,
   Layout, Database, Smartphone, PenTool, Brain, Search, Briefcase,
-  Code, Heart, MessageSquare, Lightbulb, Puzzle, ShieldCheck, Users,
-  Mail, Star
+  Code, Heart, MessageSquare, ShieldCheck, Users,
+  Mail, Star, ArrowRight, X, User
 } from 'lucide-react';
+
 import DecryptedText from '../../components/DecryptedText';
 
 const BROWSE_BY_FORTE = [
@@ -123,11 +135,29 @@ const FAQS = [
   { q: 'Can final year students apply?', a: 'Absolutely, final year students are welcome to apply.' }
 ];
 
+const hexToRgbString = (hex: string) => {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `${r}, ${g}, ${b}`;
+};
+
 export default function Opportunities() {
+  const particleGridRef = useRef<HTMLDivElement>(null);
+  const stepsContainerRef = useRef<HTMLDivElement>(null);
   const [activeCategory, setActiveCategory] = useState('All');
   const [activeFilters, setActiveFilters] = useState<number[]>([]);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const handleNotifySignup = (email: string) => {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+    console.log('User signed up for notifications with:', email);
+    alert(`Thanks! We'll notify ${email} when we post new opportunities.`);
+  };
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -182,6 +212,7 @@ export default function Opportunities() {
             <div className="text-gray-400 text-lg mb-8 leading-relaxed max-w-xl">
               <BlurText text="No live opportunities yet. This page goes live the moment an admin posts the first one — screened, structured, ready to apply to." delay={50} />
             </div>
+            {/*
             <div className="flex flex-wrap items-center gap-6 text-sm text-gray-300">
               <AnimatedContent distance={20} direction="vertical" reverse={false}  delay={0.5}>
                 <span className="flex items-center gap-2"><Users className="w-4 h-4" /> Open to students & recent grads</span>
@@ -192,6 +223,33 @@ export default function Opportunities() {
               <AnimatedContent distance={20} direction="vertical" reverse={false}  delay={0.9}>
                 <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4" /> Transparent process</span>
               </AnimatedContent>
+            </div>
+            */}
+            
+            <div className="mt-2 mb-8">
+              <Dock 
+                items={[
+                  { 
+                    icon: <Users size={18} />, 
+                    label: 'Open to students & recent grads', 
+                    onClick: () => {} 
+                  },
+                  { 
+                    icon: <MapPin size={18} />, 
+                    label: 'Remote-friendly', 
+                    onClick: () => {} 
+                  },
+                  { 
+                    icon: <ShieldCheck size={18} />, 
+                    label: 'Transparent process', 
+                    onClick: () => {} 
+                  }
+                ]}
+                panelHeight={56}
+                baseItemSize={40}
+                magnification={56}
+                distance={150}
+              />
             </div>
           </div>
           <div className="flex flex-col items-start lg:items-end gap-3">
@@ -207,7 +265,25 @@ export default function Opportunities() {
 
         {/* STATS BAR */}
         <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
-        <section className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <section style={{ position: 'relative' }}>
+          <div style={{ 
+            position: 'absolute', 
+            inset: 0, 
+            zIndex: 0,
+            pointerEvents: 'none'
+          }}>
+            <Ribbons
+              colors={['#4A9EFF']}
+              baseThickness={20}
+              speedMultiplier={0.5}
+              maxAge={400}
+              pointCount={40}
+              enableFade={true}
+              enableShaderEffect={false}
+              backgroundColor={[0, 0, 0, 0]}
+            />
+          </div>
+          <div style={{ position: 'relative', zIndex: 1 }} className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {[
             { icon: Briefcase, to: 6, suffix: '', title: '6', sub: 'Domains open for hiring' },
             { icon: Clock, title: 'Cohort 01', sub: 'Launching soon' },
@@ -236,10 +312,22 @@ export default function Opportunities() {
                 colors={['#3B82F6', '#60A5FA', '#93C5FD']}
               >
                 <HoverSplashCard className="w-full h-full">
-                  <div className="flex flex-col gap-2 p-5 h-full">
-                    <stat.icon className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <h3 className="text-lg font-semibold flex items-center">
+                  <div className="w-full h-full" style={{ position: 'relative', overflow: 'hidden', borderRadius: 'inherit' }}>
+                    <div style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.4 }}>
+                      <ShapeGrid
+                        direction="diagonal"
+                        speed={0.3}
+                        squareSize={16}
+                        shape="square"
+                        borderColor="rgba(255,255,255,0.06)"
+                        hoverFillColor="rgba(255,255,255,0.03)"
+                        hoverTrailAmount={0}
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2 p-5 h-full relative z-10 pointer-events-none">
+                      <stat.icon className="w-5 h-5 text-gray-400" />
+                      <div>
+                        <h3 className="text-lg font-semibold flex items-center pointer-events-auto">
                       <GlitchText
                         text={stat.to !== undefined ? `${stat.to}${stat.suffix}` : stat.title}
                         speed={0.6}
@@ -275,10 +363,12 @@ export default function Opportunities() {
                     <p className="text-xs text-gray-500">{stat.sub}</p>
                     </div>
                   </div>
+                  </div>
                 </HoverSplashCard>
               </BorderGlow>
             </AnimatedContent>
           ))}
+          </div>
         </section>
         </AnimatedContent>
 
@@ -295,26 +385,20 @@ export default function Opportunities() {
                   </div>
                 </GlareHover>
               </div>
-              <div className="flex flex-nowrap gap-2 relative min-h-[40px] flex-1 z-10 w-full overflow-hidden">
-                <GooeyNav
-                  items={[
-                    { label: 'All', href: '#' },
-                    { label: 'Frontend', href: '#' },
-                    { label: 'Backend', href: '#' },
-                    { label: 'UI/UX', href: '#' },
-                    { label: 'Agentic AI', href: '#' },
-                    { label: 'Mobile', href: '#' },
-                    { label: 'Data & Analytics', href: '#' }
-                  ]}
-                  initialActiveIndex={0}
-                  particleCount={6}
-                  particleDistances={[30, 10]}
-                  particleR={16}
-                  animationTime={400}
-                  timeVariance={150}
-                  colors={[1, 2, 3, 1, 2, 3, 1]}
-                  onChange={(index, label) => setActiveCategory(label)}
-                />
+              <div className="flex flex-wrap gap-2 flex-1 w-full">
+                {['All', 'Frontend', 'Backend', 'UI/UX', 'Agentic AI', 'Mobile', 'Data & Analytics'].map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                      activeCategory === cat
+                        ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                        : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10 hover:text-gray-200'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
               </div>
             </div>
             <div className="flex items-center gap-4 shrink-0">
@@ -366,10 +450,59 @@ export default function Opportunities() {
         <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
         <section className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-64 shrink-0">
-            <h2 className="text-xl font-semibold mb-2">0 Opportunities Available</h2>
-            <p className="text-sm text-gray-500 leading-relaxed">
-              We'll notify you when new opportunities are posted.
-            </p>
+            <style>{`
+              .opportunities-heading {
+                font-size: 1.25rem !important; /* text-xl */
+                font-weight: 600 !important;
+                text-transform: none !important;
+                font-family: inherit !important;
+                line-height: 1.75rem !important;
+                color: #ffffff !important;
+                margin-bottom: 0.5rem !important;
+                display: block !important;
+              }
+              
+              /* Ensure the TrueFocus component inherits the heading's typography */
+              .truefocus-heading-wrapper {
+                 margin-bottom: 0.5rem;
+              }
+              .truefocus-heading-wrapper .focus-container {
+                 justify-content: flex-start; /* Align left to match static text */
+                 gap: 0.25em; /* Tighter gap for this heading style */
+              }
+            `}</style>
+            
+            {/* 
+            <Shuffle
+              text="0 Opportunities Available"
+              tag="h2"
+              shuffleDirection="right"
+              duration={0.35}
+              animationMode="evenodd"
+              shuffleTimes={1}
+              ease="power3.out"
+              stagger={0.03}
+              triggerOnce={true}
+              triggerOnHover={false}
+              respectReducedMotion={true}
+              textAlign="left"
+              className="opportunities-heading"
+            />
+            */}
+            
+            <div className="opportunities-heading truefocus-heading-wrapper">
+              <TrueFocus 
+                sentence="0 Opportunities Available"
+                manualMode={false}
+                blurAmount={4}
+                borderColor="#ffffff"
+                glowColor="rgba(255, 255, 255, 0.4)"
+                animationDuration={0.6}
+                pauseBetweenAnimations={1.2}
+              />
+            </div>
+            
+            <p className="text-gray-400 text-sm">We'll notify you when new opportunities are posted.</p>
           </div>
           <ElectricBorder
             color="#3b82f6"
@@ -441,7 +574,7 @@ export default function Opportunities() {
                 animateOpacity
                 className="w-full h-full"
               >
-                <div className="relative p-5 h-full rounded-xl bg-[#111114] border border-white/10 flex flex-col justify-between group hover:border-white/20 transition-colors overflow-hidden">
+                <div className="relative h-full rounded-xl bg-[#111114] border border-white/10 group hover:border-white/20 transition-colors overflow-hidden">
                   <CursorGrid
                     className="absolute inset-0 z-0 pointer-events-none"
                     cellSize={40}
@@ -458,9 +591,20 @@ export default function Opportunities() {
                     clickPulse={true}
                     pulseSpeed={500}
                   />
-                  <div className="relative z-10 flex flex-col justify-between h-full">
+                  <div className="relative z-10 flex flex-col justify-between h-full p-5">
                     <div className="flex justify-between items-start mb-4">
-                      <div className="p-2 bg-white/5 rounded-lg"><Terminal className="w-5 h-5 text-gray-400" /></div>
+                      <div className="relative w-10 h-10 flex items-center justify-center rounded-lg bg-[#111114] overflow-hidden">
+                        <div style={{ position: 'absolute', width: '40px', height: '40px', inset: 0, zIndex: 0 }}>
+                          <Orb
+                            hue={r.t === 'Frontend Developer' ? 260 : r.t === 'Backend Developer' ? 200 : 320}
+                            hoverIntensity={0.15}
+                            rotateOnHover={true}
+                            forceHoverState={false}
+                            backgroundColor="#111114"
+                          />
+                        </div>
+                        <Terminal className="w-5 h-5 text-gray-400 relative z-10" />
+                      </div>
                       <span className="text-[10px] uppercase bg-white/10 px-2 py-0.5 rounded-full text-gray-400">Coming Soon</span>
                     </div>
                     <div>
@@ -484,7 +628,17 @@ export default function Opportunities() {
         <section>
           <div className="flex justify-between items-end mb-6">
             <div>
-              <h2 className="text-xl font-semibold">Browse by forte</h2>
+              {/* <h2 className="text-xl font-semibold">Browse by forte</h2> */}
+              <div role="heading" aria-level={2}>
+                <BlurText
+                  text="Browse by forte"
+                  delay={120}
+                  animateBy="words"
+                  direction="top"
+                  stepDuration={0.35}
+                  className="text-xl font-semibold"
+                />
+              </div>
               <p className="text-sm text-gray-500 mt-1">The tracks Lumora is hiring for first.</p>
             </div>
             <div className="flex items-center gap-4">
@@ -502,118 +656,63 @@ export default function Opportunities() {
             </div>
           </div>
           <div className="relative group">
-            <div ref={scrollRef} className="flex overflow-x-auto overflow-y-hidden gap-6 pb-6 pt-2 px-2 -mx-2 scroll-smooth" style={{ scrollbarWidth: 'none', scrollBehavior: 'smooth', msOverflowStyle: 'none' }}>
+            <div ref={scrollRef} className="overflow-x-auto overflow-y-hidden pb-6 pt-2 px-2 -mx-2 scroll-smooth no-scrollbar" style={{ scrollbarWidth: 'none', scrollBehavior: 'smooth', msOverflowStyle: 'none' }}>
               <style>{`.no-scrollbar::-webkit-scrollbar { display: none; }`}</style>
-              <div className="flex gap-6 min-w-max no-scrollbar">
-                <MagicBento className="flex gap-6 !p-0 !m-0 !bg-transparent border-none w-auto">
+              <div className="flex gap-6 w-max" ref={particleGridRef}>
+                <GlobalSpotlight gridRef={particleGridRef} enabled={true} spotlightRadius={250} />
                   {BROWSE_BY_FORTE.map((f, i) => (
-                    <div key={i} className="flex flex-col h-full z-10 relative shrink-0 w-[340px] snap-start">
-                <div className="flex justify-between items-start mb-6">
-                  <GlareHover width="48px" height="48px" background="transparent" borderColor="transparent" className="rounded-xl overflow-hidden">
-                    <div className="p-3 rounded-xl w-full h-full flex items-center justify-center" style={{ backgroundColor: `${f.color}15`, color: f.color }}>
-                      <f.icon className="w-6 h-6" />
-                    </div>
-                  </GlareHover>
-                  <div className="flex items-center gap-3">
-                    <span className="text-[10px] uppercase bg-white/5 px-2 py-0.5 rounded-full text-gray-400 border border-white/10">Coming Soon</span>
-                    <Heart className="w-4 h-4 text-gray-600 hover:text-red-500 cursor-pointer" />
-                  </div>
-                </div>
-                <h3 className="text-xl font-semibold mb-2">{f.title}</h3>
-                <p className="text-xs text-gray-400 mb-6 h-8">{f.desc}</p>
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {f.chips.map(chip => (
-                    <span key={chip} className="px-2 py-1 bg-white/5 border border-white/10 rounded text-[11px] text-gray-300">{chip}</span>
+                    <ParticleCard
+                      key={i}
+                      className="flex flex-col z-10 relative shrink-0 w-[340px] snap-start magic-bento-card--border-glow bg-[#111114] border border-white/10 rounded-2xl p-6 min-h-[500px]"
+                      style={{ '--glow-color-rgb': hexToRgbString(f.color) } as React.CSSProperties}
+                      glowColor={hexToRgbString(f.color)}
+                      enableTilt={false}
+                      enableMagnetism={true}
+                      clickEffect={false}
+                      particleCount={8}
+                    >
+
+                        <div className="flex justify-between items-start mb-6">
+                          <GlareHover width="48px" height="48px" background="transparent" borderColor="transparent" className="rounded-xl overflow-hidden">
+                            <div className="p-3 rounded-xl w-full h-full flex items-center justify-center" style={{ backgroundColor: `${f.color}15`, color: f.color }}>
+                              <f.icon className="w-6 h-6" />
+                            </div>
+                          </GlareHover>
+                          <div className="flex items-center gap-3">
+                            <span className="text-[10px] uppercase bg-white/5 px-2 py-0.5 rounded-full text-gray-400 border border-white/10">Coming Soon</span>
+                            <Heart className="w-4 h-4 text-gray-600 hover:text-red-500 cursor-pointer" />
+                          </div>
+                        </div>
+                        <h3 className="text-xl font-semibold mb-2">{f.title}</h3>
+                        <p className="text-xs text-gray-400 mb-6 h-8">{f.desc}</p>
+                        <div className="flex flex-wrap gap-2 mb-6">
+                          {f.chips.map(chip => (
+                            <span key={chip} className="px-2 py-1 bg-white/5 border border-white/10 rounded text-[11px] text-gray-300">{chip}</span>
+                          ))}
+                        </div>
+                        <div className="flex gap-4 text-xs text-gray-500 mb-6 border-b border-white/5 pb-6">
+                          <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {f.remote}</span>
+                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {f.duration}</span>
+                          <span className="flex items-center gap-1"><DollarSign className="w-3 h-3" /> {f.paid}</span>
+                        </div>
+                        <div className="flex justify-between items-center mb-6 mt-auto">
+                          <span className="text-xs font-semibold px-2 py-1 rounded" style={{ backgroundColor: `${f.color}15`, color: f.color }}>{f.level}</span>
+                          <span className="text-xs flex items-center gap-1 text-gray-500"><Users className="w-3 h-3" /> {f.applicants} Applicants</span>
+                        </div>
+                        <StarBorder as="div" color={f.color} speed="5s" className="w-full p-0">
+                          <button className="w-full py-2.5 rounded-lg border text-sm font-semibold flex justify-center items-center gap-2 hover:bg-white/5 transition-colors" style={{ borderColor: `${f.color}50`, color: f.color }}>
+                            View Details <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </StarBorder>
+                    </ParticleCard>
                   ))}
-                </div>
-                <div className="flex gap-4 text-xs text-gray-500 mb-6 border-b border-white/5 pb-6">
-                  <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {f.remote}</span>
-                  <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {f.duration}</span>
-                  <span className="flex items-center gap-1"><DollarSign className="w-3 h-3" /> {f.paid}</span>
-                </div>
-                <div className="flex justify-between items-center mb-6">
-                  <span className="text-xs font-semibold px-2 py-1 rounded" style={{ backgroundColor: `${f.color}15`, color: f.color }}>{f.level}</span>
-                  <span className="text-xs flex items-center gap-1 text-gray-500"><Users className="w-3 h-3" /> {f.applicants} Applicants</span>
-                </div>
-                <StarBorder as="div" color={f.color} speed="5s" className="w-full p-0">
-                  <button className="w-full py-2.5 rounded-lg border text-sm font-semibold flex justify-center items-center gap-2 hover:bg-white/5 transition-colors" style={{ borderColor: `${f.color}50`, color: f.color }}>
-                    View Details <ChevronRight className="w-4 h-4" />
-                  </button>
-                    </StarBorder>
-                  </div>
-                ))}
-                </MagicBento>
               </div>
             </div>
           </div>
         </section>
         </AnimatedContent>
 
-        {/* PROGRESS & WHAT WE LOOK FOR */}
-        <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
-        <section className="grid lg:grid-cols-[1fr_2.5fr] gap-12 lg:gap-20 bg-[#111114] p-8 lg:p-12 rounded-3xl border border-white/10">
-          <div>
-            <h2 className="text-lg font-semibold mb-2">Portal Progress</h2>
-            <p className="text-sm text-gray-400 mb-8">We're working hard to bring you the best opportunities.</p>
-            <style>{`.step-connector { display: none !important; }`}</style>
-            <Stepper
-              className="!aspect-auto !p-0"
-              initialStep={3}
-              stepContainerClassName="space-y-6 relative before:absolute before:top-3 before:bottom-3 before:ml-2.5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:w-0.5 before:bg-gradient-to-b before:from-green-500 before:via-blue-500 before:to-gray-800 flex-col !items-start !justify-start w-full !p-0"
-              stepCircleContainerClassName="!border-none !p-0 !m-0 !bg-transparent w-full flex-col"
-              contentClassName="hidden"
-              footerClassName="hidden"
-              disableStepIndicators={true}
-              renderStepIndicator={({ step, currentStep }: any) => {
-                const isCompleted = step < currentStep;
-                const isActive = step === currentStep;
-                const labels = ['Domains Finalized', 'Career Portal Ready', 'Opportunities Publishing', 'Applications Open'];
-                const statusText = isCompleted ? 'Completed' : isActive ? 'In progress' : 'Upcoming';
-                return (
-                  <div className="relative flex items-center gap-4 w-full bg-[#111114] py-1">
-                    <div className={`h-6 w-6 rounded-full flex items-center justify-center shrink-0 z-10 transition-colors duration-500 ${isCompleted ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.4)]' : isActive ? 'bg-blue-500 border-4 border-[#111114] shadow-[0_0_10px_rgba(59,130,246,0.4)]' : 'bg-gray-800 border-2 border-gray-700'}`}>
-                      {isCompleted && <CheckCircle2 className="w-4 h-4 text-white" />}
-                    </div>
-                    <div>
-                      <p className={`text-sm font-medium transition-colors duration-500 ${isActive ? 'text-blue-400' : isCompleted ? 'text-white' : 'text-gray-500'}`}>{labels[step - 1]}</p>
-                      <p className={`text-xs transition-colors duration-500 ${isCompleted ? 'text-green-500' : isActive ? 'text-blue-500' : 'text-gray-600'}`}>{statusText}</p>
-                    </div>
-                  </div>
-                );
-              }}
-            >
-              <div /><div /><div /><div />
-            </Stepper>
-            <div className="mt-12">
-              <p className="text-xs text-gray-500 mb-1">Expected launch in</p>
-              <p className="text-4xl font-bold text-blue-400 flex items-baseline gap-1">
-                <CountUp from={0} to={18} duration={2} />
-                <span className="text-xl text-gray-400 font-normal">Days</span>
-              </p>
-            </div>
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold mb-8">What We Look For</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-              {[
-                { icon: Lightbulb, title: 'Curiosity & willingness to learn', desc: 'You love exploring new things and ask questions.', color: 'text-yellow-500' },
-                { icon: Puzzle, title: 'Strong problem-solving', desc: 'You break problems down and find smart solutions.', color: 'text-purple-500' },
-                { icon: MessageSquare, title: 'Good communication', desc: 'You express ideas clearly and listen actively.', color: 'text-green-500' },
-                { icon: ShieldCheck, title: 'Ownership & accountability', desc: 'You take initiative and own your work.', color: 'text-orange-500' },
-                { icon: Users, title: 'Team collaboration', desc: 'You enjoy working together and lifting others up.', color: 'text-blue-500' }
-              ].map((w, i) => (
-                <AnimatedContent key={i} delay={i * 0.1} distance={40} direction="vertical" animateOpacity>
-                  <div>
-                    <w.icon className={`w-8 h-8 mb-4 ${w.color}`} />
-                    <h3 className="font-semibold text-sm mb-2">{w.title}</h3>
-                    <p className="text-xs text-gray-400 leading-relaxed">{w.desc}</p>
-                  </div>
-                </AnimatedContent>
-              ))}
-            </div>
-          </div>
-        </section>
-        </AnimatedContent>
+
 
         {/* MENTORS */}
         <section className="flex flex-col lg:flex-row gap-4">
@@ -653,7 +752,25 @@ export default function Opportunities() {
           <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2} delay={0.1} className="w-full lg:w-72 shrink-0 h-full">
           <div className="w-full lg:w-72 bg-[#111114] p-6 rounded-2xl border border-white/10 flex flex-col justify-between shrink-0">
             <div>
-              <h4 className="text-xs text-gray-400 uppercase tracking-wider mb-4">What Our Interns Say</h4>
+              <style>{`
+                .parallax .scroller .testimonial-ticker-text {
+                  font-size: 12px !important;
+                  line-height: 24px !important;
+                  font-weight: 600 !important;
+                  letter-spacing: 0.05em !important;
+                  text-transform: uppercase !important;
+                  color: #8b8b9e !important;
+                  display: inline-block;
+                }
+              `}</style>
+              <div style={{ height: '24px', overflow: 'hidden' }} className="mb-4">
+                <ScrollVelocity
+                  texts={['WHAT OUR INTERNS SAY']}
+                  velocity={15}
+                  numCopies={4}
+                  className="testimonial-ticker-text"
+                />
+              </div>
               <DecryptedText
                 text='"Lumora gave me real projects, amazing mentors, and the confidence to build for the real world."'
                 speed={80}
@@ -680,15 +797,18 @@ export default function Opportunities() {
         {/* FAQ */}
         <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
         <section>
-          <ScrollReveal
-            baseOpacity={0}
-            enableBlur={true}
-            baseRotation={3}
-            blurStrength={6}
-            containerClassName="faq-heading text-2xl font-semibold mb-8"
-          >
-            Frequently Asked Questions
-          </ScrollReveal>
+          <TextType
+            text={["Frequently Asked Questions"]}
+            as="h2"
+            typingSpeed={40}
+            initialDelay={0}
+            loop={false}
+            showCursor={true}
+            hideCursorWhileTyping={false}
+            cursorCharacter="|"
+            startOnVisible={true}
+            className="faq-heading text-2xl font-semibold mb-8"
+          />
           <div className="grid md:grid-cols-2 gap-4 lg:gap-8">
             <AnimatedList delay={100} className="space-y-4" showGradients={false}>
               {FAQS.slice(0,3).map((faq, i) => (
@@ -699,7 +819,7 @@ export default function Opportunities() {
                   </button>
                   <div className={`grid transition-all duration-300 ease-in-out ${openFaq === i ? 'grid-rows-[1fr] opacity-100 mt-3' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden">
-                      <p className="text-xs text-gray-400 leading-relaxed">
+                      <div className="text-xs text-gray-400 leading-relaxed">
                         <ScrollReveal
                           baseOpacity={0}
                           enableBlur={true}
@@ -709,7 +829,7 @@ export default function Opportunities() {
                         >
                           {faq.a}
                         </ScrollReveal>
-                      </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -724,7 +844,7 @@ export default function Opportunities() {
                   </button>
                   <div className={`grid transition-all duration-300 ease-in-out ${openFaq === i+3 ? 'grid-rows-[1fr] opacity-100 mt-3' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden">
-                      <p className="text-xs text-gray-400 leading-relaxed">
+                      <div className="text-xs text-gray-400 leading-relaxed">
                         <ScrollReveal
                           baseOpacity={0}
                           enableBlur={true}
@@ -734,7 +854,7 @@ export default function Opportunities() {
                         >
                           {faq.a}
                         </ScrollReveal>
-                      </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -746,10 +866,25 @@ export default function Opportunities() {
 
         {/* HOW IT WORKS */}
         <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
-        <section className="flex flex-col lg:flex-row justify-between items-center gap-12 border-t border-white/10 pt-16 mt-20">
-          <div className="flex-1 flex flex-col gap-6 w-full">
+        <section className="relative overflow-hidden flex flex-col lg:flex-row justify-between items-center gap-12 border-t border-white/10 pt-16 pb-16 mt-20">
+          <div style={{ position: 'absolute', inset: 0, zIndex: 0, width: '100%', height: '100%', maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)' }}>
+            <Galaxy 
+              density={1.2}
+              glowIntensity={0.4}
+              twinkleIntensity={0.3}
+              starSpeed={0.5}
+              saturation={0}
+            />
+          </div>
+          <div className="relative z-10 flex-1 flex flex-col gap-6 w-full px-6 lg:px-0">
             <h3 className="font-semibold text-2xl">How it works</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full" ref={stepsContainerRef}>
+              <style>{`
+                .step-title-proximity {
+                  font-size: inherit;
+                  color: #ffffff;
+                }
+              `}</style>
               {[
                 { num: '01', t: 'Apply', sub: 'Submit your application in minutes.', color: 'text-blue-500' },
                 { num: '02', t: 'Screen', sub: 'We review and shortlist the best matches.', color: 'text-pink-500' },
@@ -760,17 +895,46 @@ export default function Opportunities() {
                   <div className={`text-2xl font-light mb-2 ${step.color}`}>
                     {step.num}
                   </div>
-                  <h4 className="font-medium text-sm mb-1">{step.t}</h4>
+                  <h4 className="font-medium text-sm mb-1">
+                    <VariableProximity
+                      label={step.t}
+                      fromFontVariationSettings="'wght' 600"
+                      toFontVariationSettings="'wght' 900"
+                      containerRef={stepsContainerRef}
+                      radius={80}
+                      falloff="gaussian"
+                      className="step-title-proximity"
+                    />
+                  </h4>
                   <p className="text-[11px] text-gray-500">{step.sub}</p>
                 </div>
               ))}
             </div>
           </div>
-          <div className="shrink-0 bg-[#111114] p-6 rounded-2xl border border-white/10 flex flex-col items-center text-center gap-4 w-full lg:w-64">
+          <div className="relative z-10 shrink-0 bg-[#111114] p-6 rounded-2xl border border-white/10 flex flex-col items-center text-center gap-4 w-full lg:w-[420px] mx-6 lg:mx-0">
             <p className="text-sm text-gray-400">Not ready to apply?<br/>Get notified when we post.</p>
-            <button className="bg-white text-black px-6 py-2.5 rounded-full text-xs font-semibold flex items-center gap-2 hover:scale-105 transition-transform w-full justify-center">
-              Get notified <ChevronRight className="w-3 h-3" />
-            </button>
+            <div style={{ width: '100%' }}>
+              <CurvedInput
+                placeholder="Enter your email"
+                buttonText="Notify Me"
+                theme="dark"
+                type="email"
+                bend={0}
+                height={52}
+                width="100%"
+                cornerRadius={26}
+                fontSize={13}
+                shadowSize="none"
+                backgroundColor="#1a1a1a"
+                borderColor="#333333"
+                buttonColor="#ffffff"
+                buttonTextColor="#000000"
+                iconColor="#3B82F6"
+                textColor="#ffffff"
+                placeholderColor="#888888"
+                onSubmit={handleNotifySignup}
+              />
+            </div>
           </div>
         </section>
         </AnimatedContent>
