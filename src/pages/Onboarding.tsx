@@ -1,10 +1,18 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { getInternTrackAssignment } from '../lib/db';
 import { BookOpen, ArrowRight } from '../components/Icons';
 
 export default function Onboarding() {
-  const { completeOnboarding } = useAuth();
+  const { user, completeOnboarding } = useAuth();
   const navigate = useNavigate();
+  const [trackName, setTrackName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    getInternTrackAssignment(user.id).then(a => setTrackName(a?.trackName ?? null)).catch(() => {});
+  }, [user]);
 
   const handleStart = () => {
     completeOnboarding();
@@ -29,7 +37,9 @@ export default function Onboarding() {
           </p>
 
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-8">
-            Your first step is to begin the Foundation Track.
+            {trackName
+              ? `You've been assigned to ${trackName}. Your first step is to begin it.`
+              : 'Your first step is to begin the Foundation Track.'}
           </p>
 
           <button
