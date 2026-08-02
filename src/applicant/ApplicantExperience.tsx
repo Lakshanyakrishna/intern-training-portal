@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { getUserSettings, upsertUserSettings } from '../lib/db';
+import { getUserSettings, upsertUserSettings, getApplicationByUserId, acceptOffer } from '../lib/db';
 import { Sun, Moon, XCircle } from '../components/Icons';
 import lumoraLogo from '../assets/lumora-logo.png';
 import DotGrid from './components/DotGrid';
@@ -51,17 +51,31 @@ function SkeletonBlock({ className }: { className: string }) {
 // experience. Every Stage component downstream is pure; all mock-state
 // mutation happens here so that swapping mock data for real API calls
 // later means rewriting this function only, not any component.
-function useApplicantJourney() {
+//
+// One deliberate exception to "pure mock": onAcceptOffer is wired to the
+// real accept_offer() RPC (022_offer_acceptance.sql) against whatever real
+// application this user actually has, fetched quietly in the background.
+// The rest of the journey (stage, opportunities, interview slots) stays
+// mock -- this is the one write that has a real, safe, narrowly-scoped
+// backend path already, and the whole point of the "Selected" stage
+// existing is to give the applicant genuine say over becoming an intern.
+function useApplicantJourney(userId: string | undefined) {
   const [loading, setLoading] = useState(true);
   const [stage, setStage] = useState<Stage>('no_application');
   const [opportunityTitle, setOpportunityTitle] = useState(MOCK_OPPORTUNITIES[0]?.title ?? '');
   const [scheduledInterview, setScheduledInterview] = useState<ScheduledInterview>(MOCK_SCHEDULED_INTERVIEW);
+  const [realApplicationId, setRealApplicationId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 500);
     return () => clearTimeout(t);
   }, []);
+
+  useEffect(() => {
+    if (!userId) return;
+    getApplicationByUserId(userId).then(app => setRealApplicationId(app?.id ?? null)).catch(() => {});
+  }, [userId]);
 
   const application = { ...applicationForStage(stage), opportunityTitle };
 
@@ -82,7 +96,18 @@ function useApplicantJourney() {
     },
     onRescheduleInterview: () => setStage('interview_scheduling'),
     onCancelInterview: () => setStage('application_submitted'),
-    onAcceptOffer: () => { /* [Placeholder] would call the accept-offer endpoint */ },
+    onAcceptOffer: () => {
+      if (!realApplicationId) return;
+      // Best-effort: this route's `stage` is local mock state, so previewing
+      // "Selected" via the dev switcher won't line up with a real accepted
+      // application for most accounts -- the RPC correctly rejects that
+      // (022_offer_acceptance.sql), and the mock journey still advances
+      // regardless. Only a genuinely accepted application actually gets
+      // written.
+      acceptOffer(realApplicationId).catch(err => {
+        console.warn('accept_offer: no real write applied (expected unless this application is actually accepted)', err);
+      });
+    },
     onBeginTraining: () => { /* [Placeholder] would promote the account and redirect to /dashboard */ },
     onUpdateProfile: () => navigate('/profile'),
   };
@@ -98,7 +123,7 @@ export default function ApplicantExperience() {
       (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
   });
   const [devPanelOpen, setDevPanelOpen] = useState(false);
-  const { loading, stage, setStage, application, scheduledInterview, actions } = useApplicantJourney();
+  const { loading, stage, setStage, application, scheduledInterview, actions } = useApplicantJourney(user?.id);
 
   useEffect(() => {
     if (!user) return;
