@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { getUserSettings, upsertUserSettings } from '../lib/db';
 import { Sun, Moon, XCircle } from '../components/Icons';
+import lumoraLogo from '../assets/lumora-logo.png';
 import JourneyTracker from './components/JourneyTracker';
 import CurrentMission from './components/CurrentMission';
 import StageContent from './components/StageContent';
@@ -25,6 +26,20 @@ const STAGE_LABELS: Record<Stage, string> = {
   interview_completed: 'Interview completed',
   selected: 'Selected',
   rejected: 'Rejected',
+};
+
+// One honest, stage-aware line for the hero -- the personality of the page
+// should track what's actually true right now, not read the same on day
+// one as it does after an interview is booked.
+const STAGE_MOMENT: Record<Stage, string> = {
+  no_application: "Let's find where you fit.",
+  application_submitted: "We've got it — sit tight, we'll be in touch.",
+  resume_screening: 'Your resume is in good hands right now.',
+  interview_scheduling: "You're shortlisted. Pick a time that works.",
+  interview_scheduled: 'Almost there — get ready.',
+  interview_completed: 'Thanks for the conversation.',
+  selected: 'Welcome to the team.',
+  rejected: "Onward — there's more where this came from.",
 };
 
 function SkeletonBlock({ className }: { className: string }) {
@@ -100,7 +115,10 @@ export default function ApplicantExperience() {
   return (
     <div className="min-h-screen bg-background text-primary">
       <header className="sticky top-0 z-30 bg-surface/80 backdrop-blur border-b border-line px-4 sm:px-6 h-14 flex items-center justify-between">
-        <span className="text-sm font-semibold text-primary tracking-tight">Lumora <span className="text-secondary font-normal">· Internship Program</span></span>
+        <div className="flex items-center gap-2">
+          <img src={lumoraLogo} alt="" className="w-5 h-5 invert dark:invert-0" />
+          <span className="text-sm font-bold text-primary tracking-tight">Lumora <span className="text-secondary font-normal">· Internship Program</span></span>
+        </div>
         <div className="flex items-center gap-1">
           <button
             onClick={() => setDarkMode(p => !p)}
@@ -120,11 +138,24 @@ export default function ApplicantExperience() {
       </header>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-secondary mb-1.5">
+        <div className="relative overflow-hidden rounded-2xl bg-sidebar-bg text-sidebar-text px-6 py-8 sm:px-10 sm:py-10 shadow-lg shadow-black/10">
+          <img
+            src={lumoraLogo}
+            alt=""
+            className="absolute -right-10 -top-10 w-64 h-64 opacity-[0.08] pointer-events-none select-none"
+          />
+          <div className="relative flex items-center gap-2 mb-5">
+            <img src={lumoraLogo} alt="" className="w-5 h-5" />
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-sidebar-text-secondary">
+              Lumora · Internship Program
+            </span>
+          </div>
+          <h1 className="relative text-3xl sm:text-4xl font-extrabold tracking-tight leading-[1.1]">
             {user?.name ? `Welcome back, ${user.name.split(' ')[0]}` : 'Welcome back'}
+          </h1>
+          <p className="relative text-sm sm:text-base text-sidebar-text-secondary mt-2.5 max-w-md">
+            {STAGE_MOMENT[stage]}
           </p>
-          <h1 className="text-2xl sm:text-3xl font-bold text-primary tracking-tight">Your journey</h1>
         </div>
 
         {loading ? (
