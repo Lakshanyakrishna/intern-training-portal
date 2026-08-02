@@ -7,7 +7,7 @@ import type { ReactNode } from 'react';
 // component already renders its own card chrome internally.
 export default function CurrentMission({ children }: { children: ReactNode }) {
   return (
-    <section aria-label="Current mission" className="animate-[fadeIn_0.25s_ease-out]">
+    <section aria-label="Current mission" aria-live="polite" className="animate-[fadeIn_0.25s_ease-out]">
       {children}
     </section>
   );

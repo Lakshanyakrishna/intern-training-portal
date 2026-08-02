@@ -34,7 +34,7 @@ export default function InterviewSchedulingStage({
                   <button
                     key={slot.id}
                     onClick={() => setSelected(slot)}
-                    className={`px-3.5 py-2 rounded-lg border text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface ${
+                    className={`px-3.5 py-2 min-h-[44px] rounded-lg border text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface ${
                       isSelected ? 'bg-accent text-accent-text border-accent shadow-sm' : 'border-line text-primary hover:bg-surface-alt'
                     }`}
                   >

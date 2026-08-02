@@ -81,7 +81,7 @@ export default function InterviewScheduledStage({
               <button
                 key={item}
                 onClick={() => toggle(item)}
-                className="flex items-center gap-2 text-left text-sm py-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                className="flex items-center gap-2 text-left text-sm py-2.5 -mx-1 px-1 rounded-lg hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent min-h-[44px]"
               >
                 {done ? <CheckCircle className="w-4 h-4 text-accent shrink-0" /> : <Circle className="w-4 h-4 text-secondary shrink-0" />}
                 <span className={done ? 'text-primary' : 'text-secondary'}>{item}</span>

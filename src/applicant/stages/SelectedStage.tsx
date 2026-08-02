@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Sparkles, Users, Calendar, Clock } from '../../components/Icons';
+import ClickSpark from '../components/ClickSpark';
 
 export default function SelectedStage({
   mentor,
@@ -52,21 +53,28 @@ export default function SelectedStage({
         </div>
 
         <div className="mt-5 pt-5 border-t border-sidebar-line">
-          {!accepted ? (
-            <button
-              onClick={() => { setAccepted(true); onAcceptOffer(); }}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-sidebar-accent text-sidebar-bg text-sm font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-accent focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar-bg"
-            >
-              Accept Internship Offer
-            </button>
-          ) : (
-            <button
-              onClick={onBeginTraining}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-sidebar-accent text-sidebar-bg text-sm font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-accent focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar-bg"
-            >
-              Begin Training
-            </button>
-          )}
+          {/* One persistent ClickSpark wrapping both button states, not just
+              the "not accepted" branch -- the button itself swaps to "Begin
+              Training" on the very click that triggers the spark, so if the
+              canvas were scoped to just the first branch it would unmount
+              (and cut the animation short) at the exact moment it fires. */}
+          <ClickSpark sparkColor="#F1F2EE" sparkCount={10} sparkRadius={20} duration={450} className="w-full sm:w-auto">
+            {!accepted ? (
+              <button
+                onClick={() => { setAccepted(true); onAcceptOffer(); }}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-sidebar-accent text-sidebar-bg text-sm font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-accent focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar-bg"
+              >
+                Accept Internship Offer
+              </button>
+            ) : (
+              <button
+                onClick={onBeginTraining}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-sidebar-accent text-sidebar-bg text-sm font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-accent focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar-bg"
+              >
+                Begin Training
+              </button>
+            )}
+          </ClickSpark>
         </div>
       </div>
     </div>

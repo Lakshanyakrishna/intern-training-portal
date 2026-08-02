@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { getUserSettings, upsertUserSettings } from '../lib/db';
 import { Sun, Moon, XCircle } from '../components/Icons';
 import lumoraLogo from '../assets/lumora-logo.png';
+import DotGrid from './components/DotGrid';
 import JourneyTracker from './components/JourneyTracker';
 import CurrentMission from './components/CurrentMission';
 import StageContent from './components/StageContent';
@@ -114,6 +115,12 @@ export default function ApplicantExperience() {
 
   return (
     <div className="min-h-screen bg-background text-primary">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-3 focus:py-2 focus:rounded-lg focus:bg-accent focus:text-accent-text focus:text-sm focus:font-medium"
+      >
+        Skip to main content
+      </a>
       <header className="sticky top-0 z-30 bg-surface/80 backdrop-blur border-b border-line px-4 sm:px-6 h-14 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <img src={lumoraLogo} alt="" className="w-5 h-5 invert dark:invert-0" />
@@ -124,6 +131,7 @@ export default function ApplicantExperience() {
             onClick={() => setDarkMode(p => !p)}
             className="p-2 rounded-lg text-secondary hover:text-primary hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
             title="Toggle theme"
+            aria-label={darkMode ? 'Switch to light theme' : 'Switch to dark theme'}
           >
             {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
@@ -137,8 +145,9 @@ export default function ApplicantExperience() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+      <main id="main-content" className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         <div className="relative overflow-hidden rounded-2xl bg-sidebar-bg text-sidebar-text px-6 py-8 sm:px-10 sm:py-10 shadow-lg shadow-black/10">
+          <DotGrid dotSize={3} gap={16} proximity={80} shockRadius={120} baseColor="#2A2A2A" activeColor="#F1F2EE" />
           <img
             src={lumoraLogo}
             alt=""
@@ -204,7 +213,7 @@ export default function ApplicantExperience() {
         {devPanelOpen ? (
           <div className="bg-surface border border-line rounded-2xl shadow-lg shadow-black/5 p-3.5 w-60 animate-[slideUp_0.15s_ease-out]">
             <div className="flex items-center justify-between mb-2.5">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-secondary">Preview stage</span>
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-secondary">Preview stage</span>
               <button
                 onClick={() => setDevPanelOpen(false)}
                 className="text-secondary hover:text-primary rounded p-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
@@ -222,7 +231,7 @@ export default function ApplicantExperience() {
                 <option key={s} value={s}>{STAGE_LABELS[s]}</option>
               ))}
             </select>
-            <p className="text-[10px] text-secondary mt-2.5 leading-relaxed">Dev tool — jumps between mock states while this route runs without a backend.</p>
+            <p className="text-[11px] text-secondary mt-2.5 leading-relaxed">Dev tool — jumps between mock states while this route runs without a backend.</p>
           </div>
         ) : (
           <button
