@@ -1,7 +1,8 @@
 // @ts-nocheck
 import { useState, useRef, useEffect } from 'react';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import ScrollReveal from '../../components/react-bits/ScrollReveal/ScrollReveal';
+import ScrollTrigger from 'gsap/ScrollTrigger';
+import FaqScrollReveal from '../../components/react-bits/ScrollReveal/ScrollReveal';
+import ScrollRevealGroup from '../../components/ScrollRevealGroup';
 import { Link } from 'react-router-dom';
 import Ferrofluid from '../../components/Ferrofluid';
 import Header from '../../components/Header';
@@ -30,8 +31,10 @@ import BlurText from '../../components/react-bits/BlurText/BlurText';
 import Dock from '../../components/Dock';
 import VariableProximity from '../../components/react-bits/VariableProximity/VariableProximity';
 import TrueFocus from '../../components/react-bits/TrueFocus/TrueFocus';
+import ScrollReveal from '../../components/ScrollReveal';
 
 import ScrollVelocity from '../../components/react-bits/ScrollVelocity/ScrollVelocity';
+import { useAutoScroll } from '../../hooks/useAutoScroll';
 import Galaxy from '../../components/react-bits/Galaxy/Galaxy';
 import Shuffle from '../../components/react-bits/Shuffle/ShuffleText';
 import CountUp from '../../components/CountUp';
@@ -149,6 +152,7 @@ export default function Opportunities() {
   const [activeFilters, setActiveFilters] = useState<number[]>([]);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  useAutoScroll(scrollRef, { speed: 0.5, resumeDelay: 1500 });
 
   const handleNotifySignup = (email: string) => {
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -264,6 +268,7 @@ export default function Opportunities() {
         </AnimatedContent>
 
         {/* STATS BAR */}
+        <ScrollReveal delay={0.1}>
         <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
         <section style={{ position: 'relative' }}>
           <div style={{ 
@@ -371,8 +376,10 @@ export default function Opportunities() {
           </div>
         </section>
         </AnimatedContent>
+        </ScrollReveal>
 
         {/* SEARCH & FILTERS */}
+        <ScrollReveal delay={0.1}>
         <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
         <section className="space-y-4">
           <div className="flex flex-col lg:flex-row gap-4 justify-between items-center">
@@ -445,8 +452,10 @@ export default function Opportunities() {
           </div>
         </section>
         </AnimatedContent>
+        </ScrollReveal>
 
         {/* FEATURED OPPORTUNITY */}
+        <ScrollReveal delay={0.1}>
         <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
         <section className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-64 shrink-0">
@@ -547,8 +556,10 @@ export default function Opportunities() {
           </ElectricBorder>
         </section>
         </AnimatedContent>
+        </ScrollReveal>
 
         {/* RECOMMENDED */}
+        <ScrollReveal delay={0.1}>
         <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
         <section>
           <div className="flex justify-between items-end mb-6">
@@ -622,8 +633,10 @@ export default function Opportunities() {
           </div>
         </section>
         </AnimatedContent>
+        </ScrollReveal>
 
         {/* BROWSE BY FORTE */}
+        <ScrollReveal delay={0.1}>
         <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
         <section>
           <div className="flex justify-between items-end mb-6">
@@ -656,10 +669,11 @@ export default function Opportunities() {
             </div>
           </div>
           <div className="relative group">
-            <div ref={scrollRef} className="overflow-x-auto overflow-y-hidden pb-6 pt-2 px-2 -mx-2 scroll-smooth no-scrollbar" style={{ scrollbarWidth: 'none', scrollBehavior: 'smooth', msOverflowStyle: 'none' }}>
+            <div ref={scrollRef} className="w-full overflow-x-auto overflow-y-hidden pb-6 pt-2 px-2 -mx-2 no-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               <style>{`.no-scrollbar::-webkit-scrollbar { display: none; }`}</style>
-              <div className="flex gap-6 w-max" ref={particleGridRef}>
+              <div ref={particleGridRef}>
                 <GlobalSpotlight gridRef={particleGridRef} enabled={true} spotlightRadius={250} />
+                <ScrollRevealGroup className="flex flex-nowrap gap-6 w-max" staggerDelay={0.1}>
                   {BROWSE_BY_FORTE.map((f, i) => (
                     <ParticleCard
                       key={i}
@@ -706,18 +720,68 @@ export default function Opportunities() {
                         </StarBorder>
                     </ParticleCard>
                   ))}
+                  {BROWSE_BY_FORTE.map((f, i) => (
+                    <ParticleCard
+                      key={`dup-${i}`}
+                      className="flex flex-col z-10 relative shrink-0 w-[340px] snap-start magic-bento-card--border-glow bg-[#111114] border border-white/10 rounded-2xl p-6 min-h-[500px]"
+                      style={{ '--glow-color-rgb': hexToRgbString(f.color) } as React.CSSProperties}
+                      glowColor={hexToRgbString(f.color)}
+                      enableTilt={false}
+                      enableMagnetism={true}
+                      clickEffect={false}
+                      particleCount={8}
+                      aria-hidden="true"
+                    >
+
+                        <div className="flex justify-between items-start mb-6">
+                          <GlareHover width="48px" height="48px" background="transparent" borderColor="transparent" className="rounded-xl overflow-hidden">
+                            <div className="p-3 rounded-xl w-full h-full flex items-center justify-center" style={{ backgroundColor: `${f.color}15`, color: f.color }}>
+                              <f.icon className="w-6 h-6" />
+                            </div>
+                          </GlareHover>
+                          <div className="flex items-center gap-3">
+                            <span className="text-[10px] uppercase bg-white/5 px-2 py-0.5 rounded-full text-gray-400 border border-white/10">Coming Soon</span>
+                            <Heart className="w-4 h-4 text-gray-600 hover:text-red-500 cursor-pointer" tabIndex={-1} />
+                          </div>
+                        </div>
+                        <h3 className="text-xl font-semibold mb-2">{f.title}</h3>
+                        <p className="text-xs text-gray-400 mb-6 h-8">{f.desc}</p>
+                        <div className="flex flex-wrap gap-2 mb-6">
+                          {f.chips.map(chip => (
+                            <span key={chip} className="px-2 py-1 bg-white/5 border border-white/10 rounded text-[11px] text-gray-300">{chip}</span>
+                          ))}
+                        </div>
+                        <div className="flex gap-4 text-xs text-gray-500 mb-6 border-b border-white/5 pb-6">
+                          <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {f.remote}</span>
+                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {f.duration}</span>
+                          <span className="flex items-center gap-1"><DollarSign className="w-3 h-3" /> {f.paid}</span>
+                        </div>
+                        <div className="flex justify-between items-center mb-6 mt-auto">
+                          <span className="text-xs font-semibold px-2 py-1 rounded" style={{ backgroundColor: `${f.color}15`, color: f.color }}>{f.level}</span>
+                          <span className="text-xs flex items-center gap-1 text-gray-500"><Users className="w-3 h-3" /> {f.applicants} Applicants</span>
+                        </div>
+                        <StarBorder as="div" color={f.color} speed="5s" className="w-full p-0">
+                          <button tabIndex={-1} className="w-full py-2.5 rounded-lg border text-sm font-semibold flex justify-center items-center gap-2 hover:bg-white/5 transition-colors" style={{ borderColor: `${f.color}50`, color: f.color }}>
+                            View Details <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </StarBorder>
+                    </ParticleCard>
+                  ))}
+                </ScrollRevealGroup>
               </div>
             </div>
           </div>
         </section>
         </AnimatedContent>
+        </ScrollReveal>
 
 
 
         {/* MENTORS */}
+        <ScrollReveal delay={0.1}>
         <section className="flex flex-col lg:flex-row gap-4">
           <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2} className="flex-1 h-full">
-          <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+          <ScrollRevealGroup className="flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4" staggerDelay={0.08}>
             {[
               { init: 'RA', name: 'Rahul Arora', role: 'Frontend Mentor', c: 'bg-blue-600', hex: '#2563eb' },
               { init: 'AK', name: 'Akhil Varma', role: 'Backend Mentor', c: 'bg-purple-600', hex: '#9333ea' },
@@ -747,7 +811,7 @@ export default function Opportunities() {
                 }
               />
             ))}
-          </div>
+          </ScrollRevealGroup>
           </AnimatedContent>
           <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2} delay={0.1} className="w-full lg:w-72 shrink-0 h-full">
           <div className="w-full lg:w-72 bg-[#111114] p-6 rounded-2xl border border-white/10 flex flex-col justify-between shrink-0">
@@ -793,8 +857,10 @@ export default function Opportunities() {
           </div>
           </AnimatedContent>
         </section>
+        </ScrollReveal>
 
         {/* FAQ */}
+        <ScrollReveal delay={0.1}>
         <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
         <section>
           <TextType
@@ -810,7 +876,7 @@ export default function Opportunities() {
             className="faq-heading text-2xl font-semibold mb-8"
           />
           <div className="grid md:grid-cols-2 gap-4 lg:gap-8">
-            <AnimatedList delay={100} className="space-y-4" showGradients={false}>
+            <ScrollRevealGroup className="space-y-4" staggerDelay={0.1}>
               {FAQS.slice(0,3).map((faq, i) => (
                 <div key={i} className="border-b border-white/10 pb-4">
                   <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex justify-between items-center text-left text-sm font-medium hover:text-blue-400 transition-colors">
@@ -820,7 +886,7 @@ export default function Opportunities() {
                   <div className={`grid transition-all duration-300 ease-in-out ${openFaq === i ? 'grid-rows-[1fr] opacity-100 mt-3' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden">
                       <div className="text-xs text-gray-400 leading-relaxed">
-                        <ScrollReveal
+                        <FaqScrollReveal
                           baseOpacity={0}
                           enableBlur={true}
                           baseRotation={0}
@@ -828,14 +894,14 @@ export default function Opportunities() {
                           textClassName="faq-answer-text"
                         >
                           {faq.a}
-                        </ScrollReveal>
+                        </FaqScrollReveal>
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
-            </AnimatedList>
-            <AnimatedList delay={100} className="space-y-4" showGradients={false}>
+            </ScrollRevealGroup>
+            <ScrollRevealGroup className="space-y-4" staggerDelay={0.1}>
               {FAQS.slice(3,6).map((faq, i) => (
                 <div key={i+3} className="border-b border-white/10 pb-4">
                   <button onClick={() => setOpenFaq(openFaq === i+3 ? null : i+3)} className="w-full flex justify-between items-center text-left text-sm font-medium hover:text-blue-400 transition-colors">
@@ -845,7 +911,7 @@ export default function Opportunities() {
                   <div className={`grid transition-all duration-300 ease-in-out ${openFaq === i+3 ? 'grid-rows-[1fr] opacity-100 mt-3' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden">
                       <div className="text-xs text-gray-400 leading-relaxed">
-                        <ScrollReveal
+                        <FaqScrollReveal
                           baseOpacity={0}
                           enableBlur={true}
                           baseRotation={0}
@@ -853,18 +919,20 @@ export default function Opportunities() {
                           textClassName="faq-answer-text"
                         >
                           {faq.a}
-                        </ScrollReveal>
+                        </FaqScrollReveal>
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
-            </AnimatedList>
+            </ScrollRevealGroup>
           </div>
         </section>
         </AnimatedContent>
+        </ScrollReveal>
 
         {/* HOW IT WORKS */}
+        <ScrollReveal delay={0.1}>
         <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
         <section className="relative overflow-hidden flex flex-col lg:flex-row justify-between items-center gap-12 border-t border-white/10 pt-16 pb-16 mt-20">
           <div style={{ position: 'absolute', inset: 0, zIndex: 0, width: '100%', height: '100%', maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)' }}>
@@ -878,15 +946,16 @@ export default function Opportunities() {
           </div>
           <div className="relative z-10 flex-1 flex flex-col gap-6 w-full px-6 lg:px-0">
             <h3 className="font-semibold text-2xl">How it works</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full" ref={stepsContainerRef}>
+            <div ref={stepsContainerRef}>
               <style>{`
                 .step-title-proximity {
                   font-size: inherit;
                   color: #ffffff;
                 }
               `}</style>
-              {[
-                { num: '01', t: 'Apply', sub: 'Submit your application in minutes.', color: 'text-blue-500' },
+              <ScrollRevealGroup className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full" staggerDelay={0.12}>
+                {[
+                  { num: '01', t: 'Apply', sub: 'Submit your application in minutes.', color: 'text-blue-500' },
                 { num: '02', t: 'Screen', sub: 'We review and shortlist the best matches.', color: 'text-pink-500' },
                 { num: '03', t: 'Interview', sub: 'Connect with the team and showcase your skills.', color: 'text-red-500' },
                 { num: '04', t: 'Onboard', sub: 'Complete the process and start building.', color: 'text-green-500' }
@@ -908,7 +977,8 @@ export default function Opportunities() {
                   </h4>
                   <p className="text-[11px] text-gray-500">{step.sub}</p>
                 </div>
-              ))}
+                ))}
+              </ScrollRevealGroup>
             </div>
           </div>
           <div className="relative z-10 shrink-0 bg-[#111114] p-6 rounded-2xl border border-white/10 flex flex-col items-center text-center gap-4 w-full lg:w-[420px] mx-6 lg:mx-0">
@@ -938,9 +1008,11 @@ export default function Opportunities() {
           </div>
         </section>
         </AnimatedContent>
+        </ScrollReveal>
       </main>
 
       {/* FOOTER */}
+      <ScrollReveal delay={0.1}>
       <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
       <FadeContent blur={true} duration={1} easing="ease-out" initialOpacity={0}>
         <footer className="relative z-10 border-t border-white/10 bg-black py-8 mt-12">
@@ -970,6 +1042,7 @@ export default function Opportunities() {
       </footer>
       </FadeContent>
       </AnimatedContent>
+      </ScrollReveal>
     </div>
   );
 }
