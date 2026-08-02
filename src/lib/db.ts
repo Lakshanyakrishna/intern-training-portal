@@ -528,10 +528,17 @@ export async function getApplications(): Promise<DbApplication[]> {
 
 export async function getApplicationByUserId(userId: string): Promise<DbApplication | null> {
   const supabase = requireSupabase();
+  // Normally exactly one row per user, but nothing in the schema enforces
+  // that (e.g. a failed resume upload followed by a resubmit can leave two
+  // rows behind) -- order + limit(1) before maybeSingle() so an unexpected
+  // duplicate degrades to "show the most recent one" instead of throwing
+  // and silently rendering as "no application yet".
   const { data } = await supabase
     .from('applications')
     .select('*')
     .eq('user_id', userId)
+    .order('applied_at', { ascending: false })
+    .limit(1)
     .maybeSingle();
   if (!data) return null;
   return {
