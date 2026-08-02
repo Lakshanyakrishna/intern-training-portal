@@ -57,7 +57,7 @@ import DecryptedText from '../../components/DecryptedText';
 const BROWSE_BY_FORTE = [
   {
     title: 'Frontend Development',
-    color: '#3b82f6',
+    color: '#C6CAC9',
     desc: 'Build fast, responsive, and beautiful web experiences.',
     chips: ['React', 'JavaScript', 'Git'],
     remote: 'Remote',
@@ -69,7 +69,7 @@ const BROWSE_BY_FORTE = [
   },
   {
     title: 'Backend Development',
-    color: '#a855f7',
+    color: '#C6CAC9',
     desc: 'Design scalable APIs, systems, and server-side logic.',
     chips: ['Node.js', 'Express', 'PostgreSQL'],
     remote: 'Remote',
@@ -81,7 +81,7 @@ const BROWSE_BY_FORTE = [
   },
   {
     title: 'UI/UX Design',
-    color: '#ec4899',
+    color: '#C6CAC9',
     desc: 'Create intuitive, delightful, human-centered designs.',
     chips: ['Figma', 'UI Design', 'Prototyping'],
     remote: 'Remote',
@@ -93,7 +93,7 @@ const BROWSE_BY_FORTE = [
   },
   {
     title: 'Agentic AI',
-    color: '#22c55e',
+    color: '#C6CAC9',
     desc: 'Build intelligent agents that act and adapt.',
     chips: ['Python', 'LangChain', 'LLMs'],
     remote: 'Remote',
@@ -105,7 +105,7 @@ const BROWSE_BY_FORTE = [
   },
   {
     title: 'Mobile Development',
-    color: '#f97316',
+    color: '#C6CAC9',
     desc: 'Craft smooth, reliable mobile apps users love.',
     chips: ['Flutter', 'Dart', 'Firebase'],
     remote: 'Hybrid',
@@ -117,7 +117,7 @@ const BROWSE_BY_FORTE = [
   },
   {
     title: 'Data & Analytics',
-    color: '#14b8a6',
+    color: '#C6CAC9',
     desc: 'Turn data into insights and drive decisions.',
     chips: ['Python', 'SQL', 'Power BI'],
     remote: 'Remote',
@@ -143,6 +143,15 @@ const hexToRgbString = (hex: string) => {
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
   return `${r}, ${g}, ${b}`;
+};
+
+const getDifficultyColor = (level: string) => {
+  switch (level) {
+    case 'Beginner': return { bg: '#C6CAC9', text: '#F1F2EE' };
+    case 'Intermediate': return { bg: '#9AA1A3', text: '#F1F2EE' };
+    case 'Advanced': return { bg: '#6D777C', text: '#F1F2EE' };
+    default: return { bg: '#9AA1A3', text: '#F1F2EE' };
+  }
 };
 
 export default function Opportunities() {
@@ -208,13 +217,13 @@ export default function Opportunities() {
         <section className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-12">
           <div className="max-w-2xl">
             <AnimatedContent distance={20} direction="vertical" delay={0.2} reverse={false} >
-              <p className="text-blue-500 font-semibold tracking-wider text-sm mb-4 uppercase">Careers at Lumora</p>
+              <p className="text-[#9AA1A3] font-semibold tracking-wider text-sm mb-4 uppercase">Careers at Lumora</p>
             </AnimatedContent>
             <h1 className="text-6xl sm:text-8xl font-bold leading-[0.9] tracking-tight mb-6">
               <SplitText text="OPEN ROLES" delay={100} from={{ opacity: 0, transform: 'translate3d(0,50px,0)' }} to={{ opacity: 1, transform: 'translate3d(0,0,0)' }} easing="easeOutCubic" threshold={0.2} rootMargin="-50px" />
             </h1>
             <div className="text-gray-400 text-lg mb-8 leading-relaxed max-w-xl">
-              <BlurText text="No live opportunities yet. This page goes live the moment an admin posts the first one — screened, structured, ready to apply to." delay={50} />
+              <BlurText text="Great journeys begin before the first step is even visible. This page goes live the moment an admin posts the first one — screened, structured, ready to apply to." delay={50} />
             </div>
             {/*
             <div className="flex flex-wrap items-center gap-6 text-sm text-gray-300">
@@ -278,7 +287,7 @@ export default function Opportunities() {
             pointerEvents: 'none'
           }}>
             <Ribbons
-              colors={['#4A9EFF']}
+              colors={['#858D91']}
               baseThickness={20}
               speedMultiplier={0.5}
               maxAge={400}
@@ -308,13 +317,13 @@ export default function Opportunities() {
                 className="w-full h-full"
                 backgroundColor="#111114"
                 borderRadius={16}
-                glowColor="217 91% 60%"
+                glowColor="193 6% 62%"
                 glowRadius={20}
                 glowIntensity={1.0}
                 edgeSensitivity={30}
                 coneSpread={25}
                 animated={false}
-                colors={['#3B82F6', '#60A5FA', '#93C5FD']}
+                colors={['#6D777C', '#9AA1A3', '#C6CAC9']}
               >
                 <HoverSplashCard className="w-full h-full">
                   <div className="w-full h-full" style={{ position: 'relative', overflow: 'hidden', borderRadius: 'inherit' }}>
@@ -341,7 +350,7 @@ export default function Opportunities() {
                         className="inline-flex"
                       >
                         <GradientText
-                          colors={['#60A5FA', '#3B82F6', '#93C5FD', '#3B82F6', '#60A5FA']}
+                          colors={['#6D777C', '#9AA1A3', '#C6CAC9', '#9AA1A3', '#6D777C']}
                           animationSpeed={4}
                           showBorder={false}
                           direction="horizontal"
@@ -399,7 +408,7 @@ export default function Opportunities() {
                     onClick={() => setActiveCategory(cat)}
                     className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
                       activeCategory === cat
-                        ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                        ? 'bg-[#9AA1A3]/20 text-[#F1F2EE] border border-[#9AA1A3]/30'
                         : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10 hover:text-gray-200'
                     }`}
                   >
@@ -514,16 +523,16 @@ export default function Opportunities() {
             <p className="text-gray-400 text-sm">We'll notify you when new opportunities are posted.</p>
           </div>
           <ElectricBorder
-            color="#3b82f6"
+            color="#C6CAC9"
             speed={1}
             chaos={0.08}
             borderRadius={16}
             className="flex-1"
           >
-            <SpotlightCard className="w-full h-full rounded-2xl bg-[#111114] p-6 lg:p-8 relative overflow-hidden flex flex-col lg:flex-row justify-between items-start gap-6 group" spotlightColor="rgba(59, 130, 246, 0.2)">
-            <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-blue-600/10 to-transparent pointer-events-none" />
+            <SpotlightCard className="w-full h-full rounded-2xl bg-[#111114] p-6 lg:p-8 relative overflow-hidden flex flex-col lg:flex-row justify-between items-start gap-6 group" spotlightColor="rgba(198, 202, 201, 0.2)">
+            <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-[#6D777C]/20 to-transparent pointer-events-none" />
             <div className="relative z-10 space-y-4">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-semibold border border-blue-500/30">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#858D91]/20 text-[#C6CAC9] text-xs font-semibold border border-[#858D91]/30">
                 <Star className="w-3 h-3 fill-current" /> Featured Opportunity
               </span>
               <h3 className="text-2xl font-bold">Frontend Developer Intern</h3>
@@ -531,7 +540,7 @@ export default function Opportunities() {
                 <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> Remote</span>
                 <span className="flex items-center gap-1"><DollarSign className="w-3 h-3" /> Paid</span>
                 <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> 3 Months</span>
-                <span className="flex items-center gap-1 text-blue-400"><Zap className="w-3 h-3" /> Hiring Immediately</span>
+                <span className="flex items-center gap-1 text-[#C6CAC9]"><Zap className="w-3 h-3" /> Hiring Immediately</span>
               </div>
               <div className="flex flex-wrap gap-2 pt-2">
                 {['React', 'Next.js', 'TypeScript', 'Tailwind CSS'].map(tech => (
@@ -544,13 +553,13 @@ export default function Opportunities() {
               <p className="text-sm flex items-center gap-2"><Clock className="w-4 h-4 text-gray-500" /> Aug 20, 2026</p>
               <p className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-gray-500" /> 58 Applicants</p>
               <ClickSpark sparkColor="#fff" sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
-                <button className="mt-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
+                <button className="mt-2 bg-[#F1F2EE] hover:bg-[#C6CAC9] text-[#6D777C] px-6 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
                   Apply Now <ChevronRight className="w-4 h-4" />
                 </button>
               </ClickSpark>
             </div>
             <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-20 pointer-events-none">
-              <Code className="w-32 h-32 text-blue-500" />
+              <Code className="w-32 h-32 text-[#9AA1A3]" />
             </div>
           </SpotlightCard>
           </ElectricBorder>
@@ -564,10 +573,10 @@ export default function Opportunities() {
         <section>
           <div className="flex justify-between items-end mb-6">
             <div>
-              <h2 className="text-xl font-semibold flex items-center gap-2"><Zap className="w-5 h-5 text-yellow-500" /> Recommended For You</h2>
+              <h2 className="text-xl font-semibold flex items-center gap-2"><Zap className="w-5 h-5 text-[#F1F2EE]" /> Recommended For You</h2>
               <p className="text-sm text-gray-500 mt-1">Based on your interests and profile.</p>
             </div>
-            <button className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors">
+            <button className="text-sm text-[#F1F2EE] hover:text-[#C6CAC9] flex items-center gap-1 transition-colors">
               View all recommendations <ChevronRight className="w-4 h-4" />
             </button>
           </div>
@@ -589,7 +598,7 @@ export default function Opportunities() {
                   <CursorGrid
                     className="absolute inset-0 z-0 pointer-events-none"
                     cellSize={40}
-                    color="#3B82F6"
+                    color="#9AA1A3"
                     radius={100}
                     falloff="smooth"
                     holdTime={300}
@@ -605,7 +614,7 @@ export default function Opportunities() {
                   <div className="relative z-10 flex flex-col justify-between h-full p-5">
                     <div className="flex justify-between items-start mb-4">
                       <div className="relative w-10 h-10 flex items-center justify-center rounded-lg bg-[#111114] overflow-hidden">
-                        <div style={{ position: 'absolute', width: '40px', height: '40px', inset: 0, zIndex: 0 }}>
+                        <div style={{ position: 'absolute', width: '40px', height: '40px', inset: 0, zIndex: 0, filter: 'grayscale(100%) brightness(1.5)' }}>
                           <Orb
                             hue={r.t === 'Frontend Developer' ? 260 : r.t === 'Backend Developer' ? 200 : 320}
                             hoverIntensity={0.15}
@@ -663,7 +672,7 @@ export default function Opportunities() {
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
-              <button className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors">
+              <button className="text-sm text-[#F1F2EE] hover:text-[#C6CAC9] flex items-center gap-1 transition-colors">
                 View all tracks <ChevronRight className="w-4 h-4" />
               </button>
             </div>
@@ -694,7 +703,7 @@ export default function Opportunities() {
                           </GlareHover>
                           <div className="flex items-center gap-3">
                             <span className="text-[10px] uppercase bg-white/5 px-2 py-0.5 rounded-full text-gray-400 border border-white/10">Coming Soon</span>
-                            <Heart className="w-4 h-4 text-gray-600 hover:text-red-500 cursor-pointer" />
+                            <Heart className="w-4 h-4 text-gray-600 hover:text-[#C6CAC9] cursor-pointer" />
                           </div>
                         </div>
                         <h3 className="text-xl font-semibold mb-2">{f.title}</h3>
@@ -710,7 +719,7 @@ export default function Opportunities() {
                           <span className="flex items-center gap-1"><DollarSign className="w-3 h-3" /> {f.paid}</span>
                         </div>
                         <div className="flex justify-between items-center mb-6 mt-auto">
-                          <span className="text-xs font-semibold px-2 py-1 rounded" style={{ backgroundColor: `${f.color}15`, color: f.color }}>{f.level}</span>
+                          <span className="text-xs font-semibold px-2 py-1 rounded" style={{ backgroundColor: getDifficultyColor(f.level).bg, color: getDifficultyColor(f.level).text }}>{f.level}</span>
                           <span className="text-xs flex items-center gap-1 text-gray-500"><Users className="w-3 h-3" /> {f.applicants} Applicants</span>
                         </div>
                         <StarBorder as="div" color={f.color} speed="5s" className="w-full p-0">
@@ -741,7 +750,7 @@ export default function Opportunities() {
                           </GlareHover>
                           <div className="flex items-center gap-3">
                             <span className="text-[10px] uppercase bg-white/5 px-2 py-0.5 rounded-full text-gray-400 border border-white/10">Coming Soon</span>
-                            <Heart className="w-4 h-4 text-gray-600 hover:text-red-500 cursor-pointer" tabIndex={-1} />
+                            <Heart className="w-4 h-4 text-gray-600 hover:text-[#C6CAC9] cursor-pointer" tabIndex={-1} />
                           </div>
                         </div>
                         <h3 className="text-xl font-semibold mb-2">{f.title}</h3>
@@ -757,7 +766,7 @@ export default function Opportunities() {
                           <span className="flex items-center gap-1"><DollarSign className="w-3 h-3" /> {f.paid}</span>
                         </div>
                         <div className="flex justify-between items-center mb-6 mt-auto">
-                          <span className="text-xs font-semibold px-2 py-1 rounded" style={{ backgroundColor: `${f.color}15`, color: f.color }}>{f.level}</span>
+                          <span className="text-xs font-semibold px-2 py-1 rounded" style={{ backgroundColor: getDifficultyColor(f.level).bg, color: getDifficultyColor(f.level).text }}>{f.level}</span>
                           <span className="text-xs flex items-center gap-1 text-gray-500"><Users className="w-3 h-3" /> {f.applicants} Applicants</span>
                         </div>
                         <StarBorder as="div" color={f.color} speed="5s" className="w-full p-0">
@@ -783,11 +792,11 @@ export default function Opportunities() {
           <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2} className="flex-1 h-full">
           <ScrollRevealGroup className="flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4" staggerDelay={0.08}>
             {[
-              { init: 'RA', name: 'Rahul Arora', role: 'Frontend Mentor', c: 'bg-blue-600', hex: '#2563eb' },
-              { init: 'AK', name: 'Akhil Varma', role: 'Backend Mentor', c: 'bg-purple-600', hex: '#9333ea' },
-              { init: 'SN', name: 'Sneha Nair', role: 'AI Mentor', c: 'bg-green-600', hex: '#16a34a' },
-              { init: 'PD', name: 'Priya Desai', role: 'Design Mentor', c: 'bg-pink-600', hex: '#db2777' },
-              { init: 'YG', name: 'Yash Gupta', role: 'Data Mentor', c: 'bg-teal-600', hex: '#0d9488' }
+              { init: 'RA', name: 'Rahul Arora', role: 'Frontend Mentor', c: 'bg-[#6D777C] text-[#F1F2EE]', hex: '#6D777C' },
+              { init: 'AK', name: 'Akhil Varma', role: 'Backend Mentor', c: 'bg-[#6D777C] text-[#F1F2EE]', hex: '#6D777C' },
+              { init: 'SN', name: 'Sneha Nair', role: 'AI Mentor', c: 'bg-[#6D777C] text-[#F1F2EE]', hex: '#6D777C' },
+              { init: 'PD', name: 'Priya Desai', role: 'Design Mentor', c: 'bg-[#6D777C] text-[#F1F2EE]', hex: '#6D777C' },
+              { init: 'YG', name: 'Yash Gupta', role: 'Data Mentor', c: 'bg-[#6D777C] text-[#F1F2EE]', hex: '#6D777C' }
             ].map((m, i) => (
               <PixelTransition
                 key={i}
@@ -806,7 +815,7 @@ export default function Opportunities() {
                 secondContent={
                   <div className="bg-[#111114] p-5 rounded-2xl flex flex-col items-center justify-center text-center w-full h-full">
                     <h4 className="font-semibold text-sm mb-2">{m.role}</h4>
-                    <button className={`px-4 py-2 mt-2 rounded-full text-xs font-semibold text-white ${m.c} hover:opacity-90 transition-opacity`}>Book a 1:1 session</button>
+                    <button className={`px-4 py-2 mt-2 rounded-full text-xs font-semibold ${m.c} hover:opacity-90 transition-opacity`}>Book a 1:1 session</button>
                   </div>
                 }
               />
@@ -848,7 +857,7 @@ export default function Opportunities() {
             </div>
             <AnimatedContent distance={0} delay={1.2} animateOpacity>
               <div className="flex gap-1.5 mt-6">
-                <div className="w-2 h-2 rounded-full bg-blue-500" />
+                <div className="w-2 h-2 rounded-full bg-[#F1F2EE]" />
                 <div className="w-2 h-2 rounded-full bg-gray-600 transition-colors" />
                 <div className="w-2 h-2 rounded-full bg-gray-600 transition-colors" />
                 <div className="w-2 h-2 rounded-full bg-gray-600 transition-colors" />
@@ -879,7 +888,7 @@ export default function Opportunities() {
             <ScrollRevealGroup className="space-y-4" staggerDelay={0.1}>
               {FAQS.slice(0,3).map((faq, i) => (
                 <div key={i} className="border-b border-white/10 pb-4">
-                  <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex justify-between items-center text-left text-sm font-medium hover:text-blue-400 transition-colors">
+                  <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex justify-between items-center text-left text-sm font-medium hover:text-[#F1F2EE] transition-colors">
                     {faq.q}
                     {openFaq === i ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
                   </button>
@@ -904,7 +913,7 @@ export default function Opportunities() {
             <ScrollRevealGroup className="space-y-4" staggerDelay={0.1}>
               {FAQS.slice(3,6).map((faq, i) => (
                 <div key={i+3} className="border-b border-white/10 pb-4">
-                  <button onClick={() => setOpenFaq(openFaq === i+3 ? null : i+3)} className="w-full flex justify-between items-center text-left text-sm font-medium hover:text-blue-400 transition-colors">
+                  <button onClick={() => setOpenFaq(openFaq === i+3 ? null : i+3)} className="w-full flex justify-between items-center text-left text-sm font-medium hover:text-[#F1F2EE] transition-colors">
                     {faq.q}
                     {openFaq === i+3 ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
                   </button>
@@ -955,10 +964,10 @@ export default function Opportunities() {
               `}</style>
               <ScrollRevealGroup className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full" staggerDelay={0.12}>
                 {[
-                  { num: '01', t: 'Apply', sub: 'Submit your application in minutes.', color: 'text-blue-500' },
-                { num: '02', t: 'Screen', sub: 'We review and shortlist the best matches.', color: 'text-pink-500' },
-                { num: '03', t: 'Interview', sub: 'Connect with the team and showcase your skills.', color: 'text-red-500' },
-                { num: '04', t: 'Onboard', sub: 'Complete the process and start building.', color: 'text-green-500' }
+                  { num: '01', t: 'Apply', sub: 'Submit your application in minutes.', color: 'text-[#F1F2EE]' },
+                { num: '02', t: 'Screen', sub: 'We review and shortlist the best matches.', color: 'text-[#9AA1A3]' },
+                { num: '03', t: 'Interview', sub: 'Connect with the team and showcase your skills.', color: 'text-[#858D91]' },
+                { num: '04', t: 'Onboard', sub: 'Complete the process and start building.', color: 'text-[#C6CAC9]' }
               ].map((step) => (
                 <div key={step.num}>
                   <div className={`text-2xl font-light mb-2 ${step.color}`}>
@@ -999,7 +1008,7 @@ export default function Opportunities() {
                 borderColor="#333333"
                 buttonColor="#ffffff"
                 buttonTextColor="#000000"
-                iconColor="#3B82F6"
+                iconColor="#C6CAC9"
                 textColor="#ffffff"
                 placeholderColor="#888888"
                 onSubmit={handleNotifySignup}
