@@ -57,7 +57,7 @@ import DecryptedText from '../../components/DecryptedText';
 const BROWSE_BY_FORTE = [
   {
     title: 'Frontend Development',
-    color: '#C6CAC9',
+    color: '#6D777C',
     desc: 'Build fast, responsive, and beautiful web experiences.',
     chips: ['React', 'JavaScript', 'Git'],
     remote: 'Remote',
@@ -69,7 +69,7 @@ const BROWSE_BY_FORTE = [
   },
   {
     title: 'Backend Development',
-    color: '#C6CAC9',
+    color: '#858D91',
     desc: 'Design scalable APIs, systems, and server-side logic.',
     chips: ['Node.js', 'Express', 'PostgreSQL'],
     remote: 'Remote',
@@ -81,7 +81,7 @@ const BROWSE_BY_FORTE = [
   },
   {
     title: 'UI/UX Design',
-    color: '#C6CAC9',
+    color: '#9AA1A3',
     desc: 'Create intuitive, delightful, human-centered designs.',
     chips: ['Figma', 'UI Design', 'Prototyping'],
     remote: 'Remote',
@@ -105,7 +105,7 @@ const BROWSE_BY_FORTE = [
   },
   {
     title: 'Mobile Development',
-    color: '#C6CAC9',
+    color: '#F1F2EE',
     desc: 'Craft smooth, reliable mobile apps users love.',
     chips: ['Flutter', 'Dart', 'Firebase'],
     remote: 'Hybrid',
@@ -117,7 +117,7 @@ const BROWSE_BY_FORTE = [
   },
   {
     title: 'Data & Analytics',
-    color: '#C6CAC9',
+    color: '#6D777C',
     desc: 'Turn data into insights and drive decisions.',
     chips: ['Python', 'SQL', 'Power BI'],
     remote: 'Remote',
@@ -152,6 +152,26 @@ const getDifficultyColor = (level: string) => {
     case 'Advanced': return { bg: '#6D777C', text: '#F1F2EE' };
     default: return { bg: '#9AA1A3', text: '#F1F2EE' };
   }
+};
+
+const ComingSoonWrapper = ({ children }: { children: React.ReactNode }) => {
+  const [show, setShow] = useState(false);
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShow(true);
+    setTimeout(() => setShow(false), 2000);
+  };
+  return (
+    <div className="relative inline-flex w-full justify-center" onClickCapture={handleClick}>
+      {children}
+      {show && (
+        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#111114] border border-white/20 text-[#F1F2EE] text-xs px-3 py-1.5 rounded-md shadow-xl whitespace-nowrap z-[9999] pointer-events-none animate-in fade-in slide-in-from-bottom-2 duration-200">
+          Coming soon
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default function Opportunities() {
@@ -222,11 +242,11 @@ export default function Opportunities() {
             <h1 className="text-6xl sm:text-8xl font-bold leading-[0.9] tracking-tight mb-6">
               <SplitText text="OPEN ROLES" delay={100} from={{ opacity: 0, transform: 'translate3d(0,50px,0)' }} to={{ opacity: 1, transform: 'translate3d(0,0,0)' }} easing="easeOutCubic" threshold={0.2} rootMargin="-50px" />
             </h1>
-            <div className="text-gray-400 text-lg mb-8 leading-relaxed max-w-xl">
+            <div className="text-[#9AA1A3] text-lg mb-8 leading-relaxed max-w-xl">
               <BlurText text="Great journeys begin before the first step is even visible. This page goes live the moment an admin posts the first one — screened, structured, ready to apply to." delay={50} />
             </div>
             {/*
-            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-300">
+            <div className="flex flex-wrap items-center gap-6 text-sm text-[#C6CAC9]">
               <AnimatedContent distance={20} direction="vertical" reverse={false}  delay={0.5}>
                 <span className="flex items-center gap-2"><Users className="w-4 h-4" /> Open to students & recent grads</span>
               </AnimatedContent>
@@ -266,7 +286,7 @@ export default function Opportunities() {
             </div>
           </div>
           <div className="flex flex-col items-start lg:items-end gap-3">
-            <p className="text-sm text-gray-400">Be the first to know when a role opens</p>
+            <p className="text-sm text-[#9AA1A3]">Be the first to know when a role opens</p>
             <Magnet padding={15} disabled={false} magnetStrength={3}>
               <Link to="/signup" className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-semibold hover:scale-105 transition-transform">
                 Get notified <ChevronRight className="w-4 h-4" />
@@ -287,7 +307,7 @@ export default function Opportunities() {
             pointerEvents: 'none'
           }}>
             <Ribbons
-              colors={['#858D91']}
+              colors={['#C6CAC9']}
               baseThickness={20}
               speedMultiplier={0.5}
               maxAge={400}
@@ -339,7 +359,7 @@ export default function Opportunities() {
                       />
                     </div>
                     <div className="flex flex-col gap-2 p-5 h-full relative z-10 pointer-events-none">
-                      <stat.icon className="w-5 h-5 text-gray-400" />
+                      <stat.icon className="w-5 h-5 text-[#9AA1A3]" />
                       <div>
                         <h3 className="text-lg font-semibold flex items-center pointer-events-auto">
                       <GlitchText
@@ -350,7 +370,7 @@ export default function Opportunities() {
                         className="inline-flex"
                       >
                         <GradientText
-                          colors={['#6D777C', '#9AA1A3', '#C6CAC9', '#9AA1A3', '#6D777C']}
+                          colors={['#9AA1A3', '#F1F2EE']}
                           animationSpeed={4}
                           showBorder={false}
                           direction="horizontal"
@@ -374,7 +394,7 @@ export default function Opportunities() {
                         </GradientText>
                       </GlitchText>
                     </h3>
-                    <p className="text-xs text-gray-500">{stat.sub}</p>
+                    <p className="text-xs text-[#858D91]">{stat.sub}</p>
                     </div>
                   </div>
                   </div>
@@ -394,9 +414,9 @@ export default function Opportunities() {
           <div className="flex flex-col lg:flex-row gap-4 justify-between items-center">
             <div className="flex-1 flex flex-wrap items-center gap-3 w-full">
               <div className="w-full md:w-64">
-                <GlareHover width="100%" height="auto" background="transparent" borderColor="transparent" className="w-full rounded-full overflow-hidden">
+                <GlareHover width="100%" height="auto" background="transparent" borderColor="#C6CAC9" className="w-full rounded-full overflow-hidden">
                   <div className="relative w-full h-full">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#858D91] pointer-events-none" />
                     <input type="text" placeholder="Search opportunities..." className="w-full h-full bg-[#111114] border border-white/10 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-white/30 relative z-10" />
                   </div>
                 </GlareHover>
@@ -409,7 +429,7 @@ export default function Opportunities() {
                     className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
                       activeCategory === cat
                         ? 'bg-[#9AA1A3]/20 text-[#F1F2EE] border border-[#9AA1A3]/30'
-                        : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10 hover:text-gray-200'
+                        : 'bg-white/5 text-[#9AA1A3] border border-white/10 hover:bg-white/10 hover:text-[#F1F2EE]'
                     }`}
                   >
                     {cat}
@@ -418,18 +438,18 @@ export default function Opportunities() {
               </div>
             </div>
             <div className="flex items-center gap-4 shrink-0">
-              <div className="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
+              <div className="flex items-center gap-2 text-sm text-[#9AA1A3] cursor-pointer">
                 Sort by: <span className="text-white flex items-center">Newest <ChevronDown className="w-4 h-4 ml-1" /></span>
               </div>
               <div className="flex items-center gap-3 border-l border-white/10 pl-4">
                 <ClickSpark sparkColor="#fff" sparkSize={4} sparkRadius={12} sparkCount={6} duration={300}>
-                  <Bookmark className="w-4 h-4 text-gray-400 hover:text-white cursor-pointer" />
+                  <Bookmark className="w-4 h-4 text-[#9AA1A3] hover:text-white cursor-pointer" />
                 </ClickSpark>
                 <ClickSpark sparkColor="#fff" sparkSize={4} sparkRadius={12} sparkCount={6} duration={300}>
-                  <GitCompare className="w-4 h-4 text-gray-400 hover:text-white cursor-pointer" />
+                  <GitCompare className="w-4 h-4 text-[#9AA1A3] hover:text-white cursor-pointer" />
                 </ClickSpark>
                 <ClickSpark sparkColor="#fff" sparkSize={4} sparkRadius={12} sparkCount={6} duration={300}>
-                  <Share className="w-4 h-4 text-gray-400 hover:text-white cursor-pointer" />
+                  <Share className="w-4 h-4 text-[#9AA1A3] hover:text-white cursor-pointer" />
                 </ClickSpark>
               </div>
             </div>
@@ -455,7 +475,7 @@ export default function Opportunities() {
                 colors={[1, 2, 3, 1, 2, 3, 1]}
               />
             </div>
-            <button className="px-4 py-1.5 rounded-full text-xs bg-transparent border border-white/10 text-gray-400 flex items-center hover:border-white/30 shrink-0">
+            <button className="px-4 py-1.5 rounded-full text-xs bg-transparent border border-white/10 text-[#9AA1A3] flex items-center hover:border-white/30 shrink-0">
               More <ChevronDown className="w-3 h-3 ml-1" />
             </button>
           </div>
@@ -513,14 +533,14 @@ export default function Opportunities() {
                 sentence="0 Opportunities Available"
                 manualMode={false}
                 blurAmount={4}
-                borderColor="#ffffff"
-                glowColor="rgba(255, 255, 255, 0.4)"
+                borderColor="#9AA1A3"
+                glowColor="rgba(154, 161, 163, 0.4)"
                 animationDuration={0.6}
                 pauseBetweenAnimations={1.2}
               />
             </div>
             
-            <p className="text-gray-400 text-sm">We'll notify you when new opportunities are posted.</p>
+            <p className="text-[#9AA1A3] text-sm">We'll notify you when new opportunities are posted.</p>
           </div>
           <ElectricBorder
             color="#C6CAC9"
@@ -536,7 +556,7 @@ export default function Opportunities() {
                 <Star className="w-3 h-3 fill-current" /> Featured Opportunity
               </span>
               <h3 className="text-2xl font-bold">Frontend Developer Intern</h3>
-              <div className="flex flex-wrap gap-3 text-xs text-gray-400">
+              <div className="flex flex-wrap gap-3 text-xs text-[#9AA1A3]">
                 <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> Remote</span>
                 <span className="flex items-center gap-1"><DollarSign className="w-3 h-3" /> Paid</span>
                 <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> 3 Months</span>
@@ -544,18 +564,20 @@ export default function Opportunities() {
               </div>
               <div className="flex flex-wrap gap-2 pt-2">
                 {['React', 'Next.js', 'TypeScript', 'Tailwind CSS'].map(tech => (
-                  <span key={tech} className="px-3 py-1 bg-white/5 border border-white/10 rounded-md text-xs text-gray-300">{tech}</span>
+                  <span key={tech} className="px-3 py-1 bg-white/5 border border-white/10 rounded-md text-xs text-[#C6CAC9]">{tech}</span>
                 ))}
               </div>
             </div>
             <div className="relative z-10 flex flex-col items-end gap-3 shrink-0">
-              <p className="text-xs text-gray-400">Apply before</p>
-              <p className="text-sm flex items-center gap-2"><Clock className="w-4 h-4 text-gray-500" /> Aug 20, 2026</p>
-              <p className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-gray-500" /> 58 Applicants</p>
+              <p className="text-xs text-[#9AA1A3]">Apply before</p>
+              <p className="text-sm flex items-center gap-2"><Clock className="w-4 h-4 text-[#858D91]" /> Aug 20, 2026</p>
+              <p className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-[#858D91]" /> 58 Applicants</p>
               <ClickSpark sparkColor="#fff" sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
-                <button className="mt-2 bg-[#F1F2EE] hover:bg-[#C6CAC9] text-[#6D777C] px-6 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
-                  Apply Now <ChevronRight className="w-4 h-4" />
-                </button>
+                <ComingSoonWrapper>
+                  <button className="mt-2 w-full bg-[#F1F2EE] hover:bg-[#C6CAC9] text-[#6D777C] px-6 py-2.5 rounded-lg text-sm font-semibold flex justify-center items-center gap-2 transition-colors">
+                    Apply Now <ChevronRight className="w-4 h-4" />
+                  </button>
+                </ComingSoonWrapper>
               </ClickSpark>
             </div>
             <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-20 pointer-events-none">
@@ -574,7 +596,7 @@ export default function Opportunities() {
           <div className="flex justify-between items-end mb-6">
             <div>
               <h2 className="text-xl font-semibold flex items-center gap-2"><Zap className="w-5 h-5 text-[#F1F2EE]" /> Recommended For You</h2>
-              <p className="text-sm text-gray-500 mt-1">Based on your interests and profile.</p>
+              <p className="text-sm text-[#858D91] mt-1">Based on your interests and profile.</p>
             </div>
             <button className="text-sm text-[#F1F2EE] hover:text-[#C6CAC9] flex items-center gap-1 transition-colors">
               View all recommendations <ChevronRight className="w-4 h-4" />
@@ -623,17 +645,17 @@ export default function Opportunities() {
                             backgroundColor="#111114"
                           />
                         </div>
-                        <Terminal className="w-5 h-5 text-gray-400 relative z-10" />
+                        <Terminal className="w-5 h-5 text-[#9AA1A3] relative z-10" />
                       </div>
-                      <span className="text-[10px] uppercase bg-white/10 px-2 py-0.5 rounded-full text-gray-400">Coming Soon</span>
+                      <span className="text-[10px] uppercase bg-white/10 px-2 py-0.5 rounded-full text-[#9AA1A3]">Coming Soon</span>
                     </div>
                     <div>
                       <h4 className="font-semibold text-sm mb-1">{r.t}</h4>
-                      <p className="text-xs text-gray-500 mb-4">{r.sub}</p>
+                      <p className="text-xs text-[#858D91] mb-4">{r.sub}</p>
                     </div>
                     <div className="flex justify-between items-center text-xs">
-                      <span className="text-gray-400">Matches your {r.match} interest</span>
-                      <ChevronRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors" />
+                      <span className="text-[#9AA1A3]">Matches your {r.match} interest</span>
+                      <ChevronRight className="w-4 h-4 text-[#6D777C] group-hover:text-white transition-colors" />
                     </div>
                   </div>
                 </div>
@@ -661,7 +683,7 @@ export default function Opportunities() {
                   className="text-xl font-semibold"
                 />
               </div>
-              <p className="text-sm text-gray-500 mt-1">The tracks Lumora is hiring for first.</p>
+              <p className="text-sm text-[#858D91] mt-1">The tracks Lumora is hiring for first.</p>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
@@ -696,36 +718,38 @@ export default function Opportunities() {
                     >
 
                         <div className="flex justify-between items-start mb-6">
-                          <GlareHover width="48px" height="48px" background="transparent" borderColor="transparent" className="rounded-xl overflow-hidden">
+                          <GlareHover width="48px" height="48px" background="transparent" borderColor="#C6CAC9" className="rounded-xl overflow-hidden">
                             <div className="p-3 rounded-xl w-full h-full flex items-center justify-center" style={{ backgroundColor: `${f.color}15`, color: f.color }}>
                               <f.icon className="w-6 h-6" />
                             </div>
                           </GlareHover>
                           <div className="flex items-center gap-3">
-                            <span className="text-[10px] uppercase bg-white/5 px-2 py-0.5 rounded-full text-gray-400 border border-white/10">Coming Soon</span>
-                            <Heart className="w-4 h-4 text-gray-600 hover:text-[#C6CAC9] cursor-pointer" />
+                            <span className="text-[10px] uppercase bg-white/5 px-2 py-0.5 rounded-full text-[#9AA1A3] border border-white/10">Coming Soon</span>
+                            <Heart className="w-4 h-4 text-[#6D777C] hover:text-[#C6CAC9] cursor-pointer" />
                           </div>
                         </div>
                         <h3 className="text-xl font-semibold mb-2">{f.title}</h3>
-                        <p className="text-xs text-gray-400 mb-6 h-8">{f.desc}</p>
+                        <p className="text-xs text-[#9AA1A3] mb-6 h-8">{f.desc}</p>
                         <div className="flex flex-wrap gap-2 mb-6">
                           {f.chips.map(chip => (
-                            <span key={chip} className="px-2 py-1 bg-white/5 border border-white/10 rounded text-[11px] text-gray-300">{chip}</span>
+                            <span key={chip} className="px-2 py-1 bg-white/5 border border-white/10 rounded text-[11px] text-[#C6CAC9]">{chip}</span>
                           ))}
                         </div>
-                        <div className="flex gap-4 text-xs text-gray-500 mb-6 border-b border-white/5 pb-6">
+                        <div className="flex gap-4 text-xs text-[#858D91] mb-6 border-b border-white/5 pb-6">
                           <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {f.remote}</span>
                           <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {f.duration}</span>
                           <span className="flex items-center gap-1"><DollarSign className="w-3 h-3" /> {f.paid}</span>
                         </div>
                         <div className="flex justify-between items-center mb-6 mt-auto">
                           <span className="text-xs font-semibold px-2 py-1 rounded" style={{ backgroundColor: getDifficultyColor(f.level).bg, color: getDifficultyColor(f.level).text }}>{f.level}</span>
-                          <span className="text-xs flex items-center gap-1 text-gray-500"><Users className="w-3 h-3" /> {f.applicants} Applicants</span>
+                          <span className="text-xs flex items-center gap-1 text-[#858D91]"><Users className="w-3 h-3" /> {f.applicants} Applicants</span>
                         </div>
-                        <StarBorder as="div" color={f.color} speed="5s" className="w-full p-0">
-                          <button className="w-full py-2.5 rounded-lg border text-sm font-semibold flex justify-center items-center gap-2 hover:bg-white/5 transition-colors" style={{ borderColor: `${f.color}50`, color: f.color }}>
-                            View Details <ChevronRight className="w-4 h-4" />
-                          </button>
+                        <StarBorder as="div" color={f.color} speed="5s" className="w-full p-0" innerClassName="!border-[#1a1a1a] !to-[#111114]">
+                          <ComingSoonWrapper>
+                            <button className="w-full py-2.5 rounded-lg border text-sm font-semibold flex justify-center items-center gap-2 hover:bg-white/5 transition-colors" style={{ borderColor: `${f.color}50`, color: f.color }}>
+                              View Details <ChevronRight className="w-4 h-4" />
+                            </button>
+                          </ComingSoonWrapper>
                         </StarBorder>
                     </ParticleCard>
                   ))}
@@ -743,33 +767,33 @@ export default function Opportunities() {
                     >
 
                         <div className="flex justify-between items-start mb-6">
-                          <GlareHover width="48px" height="48px" background="transparent" borderColor="transparent" className="rounded-xl overflow-hidden">
+                          <GlareHover width="48px" height="48px" background="transparent" borderColor="#C6CAC9" className="rounded-xl overflow-hidden">
                             <div className="p-3 rounded-xl w-full h-full flex items-center justify-center" style={{ backgroundColor: `${f.color}15`, color: f.color }}>
                               <f.icon className="w-6 h-6" />
                             </div>
                           </GlareHover>
                           <div className="flex items-center gap-3">
-                            <span className="text-[10px] uppercase bg-white/5 px-2 py-0.5 rounded-full text-gray-400 border border-white/10">Coming Soon</span>
-                            <Heart className="w-4 h-4 text-gray-600 hover:text-[#C6CAC9] cursor-pointer" tabIndex={-1} />
+                            <span className="text-[10px] uppercase bg-white/5 px-2 py-0.5 rounded-full text-[#9AA1A3] border border-white/10">Coming Soon</span>
+                            <Heart className="w-4 h-4 text-[#6D777C] hover:text-[#C6CAC9] cursor-pointer" tabIndex={-1} />
                           </div>
                         </div>
                         <h3 className="text-xl font-semibold mb-2">{f.title}</h3>
-                        <p className="text-xs text-gray-400 mb-6 h-8">{f.desc}</p>
+                        <p className="text-xs text-[#9AA1A3] mb-6 h-8">{f.desc}</p>
                         <div className="flex flex-wrap gap-2 mb-6">
                           {f.chips.map(chip => (
-                            <span key={chip} className="px-2 py-1 bg-white/5 border border-white/10 rounded text-[11px] text-gray-300">{chip}</span>
+                            <span key={chip} className="px-2 py-1 bg-white/5 border border-white/10 rounded text-[11px] text-[#C6CAC9]">{chip}</span>
                           ))}
                         </div>
-                        <div className="flex gap-4 text-xs text-gray-500 mb-6 border-b border-white/5 pb-6">
+                        <div className="flex gap-4 text-xs text-[#858D91] mb-6 border-b border-white/5 pb-6">
                           <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {f.remote}</span>
                           <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {f.duration}</span>
                           <span className="flex items-center gap-1"><DollarSign className="w-3 h-3" /> {f.paid}</span>
                         </div>
                         <div className="flex justify-between items-center mb-6 mt-auto">
                           <span className="text-xs font-semibold px-2 py-1 rounded" style={{ backgroundColor: getDifficultyColor(f.level).bg, color: getDifficultyColor(f.level).text }}>{f.level}</span>
-                          <span className="text-xs flex items-center gap-1 text-gray-500"><Users className="w-3 h-3" /> {f.applicants} Applicants</span>
+                          <span className="text-xs flex items-center gap-1 text-[#858D91]"><Users className="w-3 h-3" /> {f.applicants} Applicants</span>
                         </div>
-                        <StarBorder as="div" color={f.color} speed="5s" className="w-full p-0">
+                        <StarBorder as="div" color={f.color} speed="5s" className="w-full p-0" innerClassName="!border-[#1a1a1a] !to-[#111114]">
                           <button tabIndex={-1} className="w-full py-2.5 rounded-lg border text-sm font-semibold flex justify-center items-center gap-2 hover:bg-white/5 transition-colors" style={{ borderColor: `${f.color}50`, color: f.color }}>
                             View Details <ChevronRight className="w-4 h-4" />
                           </button>
@@ -809,7 +833,7 @@ export default function Opportunities() {
                   <div className="bg-[#111114] p-5 rounded-2xl flex flex-col items-center justify-center text-center w-full h-full">
                     <div className={`w-12 h-12 rounded-full ${m.c} flex items-center justify-center font-bold mb-4 shadow-lg shrink-0`}>{m.init}</div>
                     <h4 className="font-semibold text-sm">{m.name}</h4>
-                    <p className="text-[11px] text-gray-400 mt-1">{m.role}</p>
+                    <p className="text-[11px] text-[#9AA1A3] mt-1">{m.role}</p>
                   </div>
                 }
                 secondContent={
@@ -832,7 +856,7 @@ export default function Opportunities() {
                   font-weight: 600 !important;
                   letter-spacing: 0.05em !important;
                   text-transform: uppercase !important;
-                  color: #8b8b9e !important;
+                  color: #858D91 !important;
                   display: inline-block;
                 }
               `}</style>
@@ -848,19 +872,19 @@ export default function Opportunities() {
                 text='"Lumora gave me real projects, amazing mentors, and the confidence to build for the real world."'
                 speed={80}
                 maxIterations={15}
-                className="text-sm italic text-gray-300 leading-relaxed"
+                className="text-sm italic text-[#C6CAC9] leading-relaxed"
                 animateOn="view"
               />
               <AnimatedContent distance={0} delay={1} animateOpacity>
-                <p className="text-xs text-gray-400 mt-4">— Priya Sharma<br/>Frontend Intern, Cohort 0</p>
+                <p className="text-xs text-[#9AA1A3] mt-4">— Priya Sharma<br/>Frontend Intern, Cohort 0</p>
               </AnimatedContent>
             </div>
             <AnimatedContent distance={0} delay={1.2} animateOpacity>
               <div className="flex gap-1.5 mt-6">
                 <div className="w-2 h-2 rounded-full bg-[#F1F2EE]" />
-                <div className="w-2 h-2 rounded-full bg-gray-600 transition-colors" />
-                <div className="w-2 h-2 rounded-full bg-gray-600 transition-colors" />
-                <div className="w-2 h-2 rounded-full bg-gray-600 transition-colors" />
+                <div className="w-2 h-2 rounded-full bg-[#6D777C] transition-colors" />
+                <div className="w-2 h-2 rounded-full bg-[#6D777C] transition-colors" />
+                <div className="w-2 h-2 rounded-full bg-[#6D777C] transition-colors" />
               </div>
             </AnimatedContent>
           </div>
@@ -890,11 +914,11 @@ export default function Opportunities() {
                 <div key={i} className="border-b border-white/10 pb-4">
                   <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex justify-between items-center text-left text-sm font-medium hover:text-[#F1F2EE] transition-colors">
                     {faq.q}
-                    {openFaq === i ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
+                    {openFaq === i ? <ChevronUp className="w-4 h-4 text-[#858D91]" /> : <ChevronDown className="w-4 h-4 text-[#858D91]" />}
                   </button>
                   <div className={`grid transition-all duration-300 ease-in-out ${openFaq === i ? 'grid-rows-[1fr] opacity-100 mt-3' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden">
-                      <div className="text-xs text-gray-400 leading-relaxed">
+                      <div className="text-xs text-[#9AA1A3] leading-relaxed">
                         <FaqScrollReveal
                           baseOpacity={0}
                           enableBlur={true}
@@ -915,11 +939,11 @@ export default function Opportunities() {
                 <div key={i+3} className="border-b border-white/10 pb-4">
                   <button onClick={() => setOpenFaq(openFaq === i+3 ? null : i+3)} className="w-full flex justify-between items-center text-left text-sm font-medium hover:text-[#F1F2EE] transition-colors">
                     {faq.q}
-                    {openFaq === i+3 ? <ChevronUp className="w-4 h-4 text-gray-500" /> : <ChevronDown className="w-4 h-4 text-gray-500" />}
+                    {openFaq === i+3 ? <ChevronUp className="w-4 h-4 text-[#858D91]" /> : <ChevronDown className="w-4 h-4 text-[#858D91]" />}
                   </button>
                   <div className={`grid transition-all duration-300 ease-in-out ${openFaq === i+3 ? 'grid-rows-[1fr] opacity-100 mt-3' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden">
-                      <div className="text-xs text-gray-400 leading-relaxed">
+                      <div className="text-xs text-[#9AA1A3] leading-relaxed">
                         <FaqScrollReveal
                           baseOpacity={0}
                           enableBlur={true}
@@ -984,14 +1008,14 @@ export default function Opportunities() {
                       className="step-title-proximity"
                     />
                   </h4>
-                  <p className="text-[11px] text-gray-500">{step.sub}</p>
+                  <p className="text-[11px] text-[#858D91]">{step.sub}</p>
                 </div>
                 ))}
               </ScrollRevealGroup>
             </div>
           </div>
           <div className="relative z-10 shrink-0 bg-[#111114] p-6 rounded-2xl border border-white/10 flex flex-col items-center text-center gap-4 w-full lg:w-[420px] mx-6 lg:mx-0">
-            <p className="text-sm text-gray-400">Not ready to apply?<br/>Get notified when we post.</p>
+            <p className="text-sm text-[#9AA1A3]">Not ready to apply?<br/>Get notified when we post.</p>
             <div style={{ width: '100%' }}>
               <CurvedInput
                 placeholder="Enter your email"
@@ -1005,12 +1029,12 @@ export default function Opportunities() {
                 fontSize={13}
                 shadowSize="none"
                 backgroundColor="#1a1a1a"
-                borderColor="#333333"
+                borderColor="#6D777C"
                 buttonColor="#ffffff"
                 buttonTextColor="#000000"
                 iconColor="#C6CAC9"
                 textColor="#ffffff"
-                placeholderColor="#888888"
+                placeholderColor="#9AA1A3"
                 onSubmit={handleNotifySignup}
               />
             </div>
@@ -1030,10 +1054,10 @@ export default function Opportunities() {
             <div className="w-6 h-6 text-white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
             <span className="font-bold text-lg tracking-tight">Lumora</span>
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-[#858D91]">
             © 2026 Lumora. All rights reserved.
           </div>
-          <div className="flex items-center gap-6 text-xs text-gray-400">
+          <div className="flex items-center gap-6 text-xs text-[#9AA1A3]">
             <Link to="#" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link to="#" className="hover:text-white transition-colors">Terms of Service</Link>
             <Link to="#" className="hover:text-white transition-colors">Careers</Link>
