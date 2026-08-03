@@ -8,6 +8,8 @@ import lumoraLogo from '../assets/lumora-logo.png';
 import DotGrid from './components/DotGrid';
 import JourneyTracker from './components/JourneyTracker';
 import CurrentMission from './components/CurrentMission';
+import EstimatedTimeline from './components/EstimatedTimeline';
+import WhatsNext from './components/WhatsNext';
 import StageContent from './components/StageContent';
 import ActivityFeed from './components/ActivityFeed';
 import NotificationPreview from './components/NotificationPreview';
@@ -252,17 +254,21 @@ export default function ApplicantExperience() {
             <JourneyTracker stage={stage} />
 
             <div className="grid lg:grid-cols-[1fr_320px] gap-6 items-start">
-              <CurrentMission>
-                <StageContent
-                  stage={stage}
-                  opportunities={MOCK_OPPORTUNITIES}
-                  application={application}
-                  slotGroups={MOCK_INTERVIEW_SLOTS}
-                  interview={scheduledInterview}
-                  selectedInfo={{ mentor: '[Placeholder] Mentor Name', startDate: 'Sep 1, 2026', trainingDuration: '8 weeks' }}
-                  actions={actions}
-                />
-              </CurrentMission>
+              <div className="space-y-6">
+                <CurrentMission>
+                  <StageContent
+                    stage={stage}
+                    opportunities={MOCK_OPPORTUNITIES}
+                    application={application}
+                    slotGroups={MOCK_INTERVIEW_SLOTS}
+                    interview={scheduledInterview}
+                    selectedInfo={{ mentor: '[Placeholder] Mentor Name', startDate: 'Sep 1, 2026', trainingDuration: '8 weeks' }}
+                    actions={actions}
+                  />
+                </CurrentMission>
+                <EstimatedTimeline stage={stage} />
+                <WhatsNext stage={stage} />
+              </div>
 
               <div className="space-y-6">
                 <NotificationPreview notifications={MOCK_NOTIFICATIONS} />
