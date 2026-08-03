@@ -1,7 +1,8 @@
 // @ts-nocheck
-import { useState } from 'react';
-import Dither from '../../components/Dither';
+import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import Dither from '../../components/Dither';
+import Radar from '../../components/Radar';
 import Lightfall from '../../components/Lightfall';
 import OrbitBadges from '../../components/react-bits/OrbitBadges/OrbitBadges';
 import CountUp from '../../components/CountUp';
@@ -10,12 +11,13 @@ import Ferrofluid from '../../components/Ferrofluid';
 import Header from '../../components/Header';
 import IntroLogo from '../../components/IntroLogo';
 import SplitText from '../../components/SplitText';
-import Radar from '../../components/Radar';
 import BlurText from '../../components/react-bits/BlurText/BlurText';
 import AnimatedContent from '../../components/AnimatedContent';
 import ScrollReveal from '../../components/ScrollReveal';
 import ScrollRevealGroup from '../../components/ScrollRevealGroup';
-import PixelTransition from '../../components/react-bits/PixelTransition/PixelTransition';
+import CurvedLoop from '../../components/react-bits/CurvedLoop/CurvedLoop';
+import LogoLoop from '../../components/react-bits/LogoLoop/LogoLoop';
+
 import ClickSpark from '../../components/ClickSpark';
 import FadeContent from '../../components/FadeContent';
 import {
@@ -86,7 +88,9 @@ function ComingSoonLink({ label }: { label: string }) {
 }
 
 export default function About() {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [orbitPaused, setOrbitPaused] = useState(false);
+
   return (
     <div className="relative min-h-screen bg-[#0A0A0B] text-white overflow-hidden font-sans">
       <div className="fixed inset-0 pointer-events-none">
@@ -148,7 +152,15 @@ export default function About() {
           <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
             <section className="grid lg:grid-cols-2 gap-8 items-start">
               <div>
-                <p className="text-[#9AA1A3] font-semibold tracking-wider text-sm mb-4 uppercase">Our Mission</p>
+                <div className="[&>.curved-loop-jacket]:!min-h-[120px] [&>.curved-loop-jacket]:!h-[120px] flex items-center overflow-hidden" style={{ height: '120px' }}>
+                  <CurvedLoop 
+                    marqueeText="OUR MISSION ✦"
+                    speed={1.5}
+                    curveAmount={200}
+                    direction="left"
+                    interactive={true}
+                  />
+                </div>
                 <h2 className="text-3xl font-bold leading-tight mb-4">
                   Your degree taught you the theory. We help you earn the confidence.
                 </h2>
@@ -195,23 +207,16 @@ export default function About() {
                 <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0A0A0B] border border-white/20 items-center justify-center z-10">
                   <ArrowRight className="w-4 h-4 text-gray-300" />
                 </div>
-                <ElectricBorder
-                  color="#C6CAC9"
-                  speed={1}
-                  chaos={0.08}
-                  borderRadius={16}
-                >
-                  <div className="bg-[#111114] rounded-2xl p-6">
-                    <h3 className="text-lg font-semibold text-[#F1F2EE] mb-4">After Lumora</h3>
-                    <ul className="space-y-3">
-                      {['Has shipped real, mentor-reviewed work', 'Collaborates and communicates like a pro', "Walks into interviews with proof, not just promises"].map((t) => (
-                        <li key={t} className="flex items-start gap-2 text-sm text-gray-300">
-                          <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#C6CAC9]" /> {t}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </ElectricBorder>
+                <div className="bg-[#111114] border border-white/10 rounded-2xl p-6">
+                  <h3 className="text-lg font-semibold text-[#F1F2EE] mb-4">After Lumora</h3>
+                  <ul className="space-y-3">
+                    {['Has shipped real, mentor-reviewed work', 'Collaborates and communicates like a pro', "Walks into interviews with proof, not just promises"].map((t) => (
+                      <li key={t} className="flex items-start gap-2 text-sm text-gray-300">
+                        <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#C6CAC9]" /> {t}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </section>
           </AnimatedContent>
@@ -290,36 +295,20 @@ export default function About() {
         {/* WHAT YOU'LL GAIN */}
         <ScrollReveal delay={0.1}>
           <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
-            <section
-              className="flex justify-center"
-              onMouseEnter={() => setOrbitPaused(true)}
-              onMouseLeave={() => setOrbitPaused(false)}
-            >
-              <div style={{ maxWidth: 900, width: '100%' }}>
-                <OrbitBadges
-                  items={WHAT_YOULL_GAIN.map((item, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-2 bg-[#111114] border border-white/10 rounded-full px-4 py-2 text-xs text-gray-300 whitespace-nowrap shadow-lg"
-                    >
-                      <Check className="w-3.5 h-3.5 text-[#C6CAC9] shrink-0" /> {item}
-                    </div>
-                  ))}
-                  baseWidth={900}
-                  radiusX={380}
-                  radiusY={260}
-                  itemWidth={240}
-                  itemHeight={44}
-                  duration={40}
-                  responsive={true}
-                  paused={orbitPaused}
-                  centerContent={
-                    <div className="text-center px-4">
-                      <p className="text-[#9AA1A3] font-semibold tracking-wider text-xs uppercase mb-2">What You'll Gain</p>
-                      <h3 className="text-2xl font-bold">Everything you walk away with</h3>
-                    </div>
-                  }
-                />
+            <section className="flex flex-col items-center justify-center text-center max-w-4xl mx-auto px-4">
+              <div className="mb-10">
+                <p className="text-[#9AA1A3] font-semibold tracking-wider text-xs uppercase mb-2">What You'll Gain</p>
+                <h3 className="text-2xl font-bold">Everything you walk away with</h3>
+              </div>
+              <div className="flex flex-wrap justify-center gap-3">
+                {WHAT_YOULL_GAIN.map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-2 bg-[#111114] border border-white/10 rounded-full px-4 py-2 text-sm text-gray-300 shadow-lg"
+                  >
+                    <Check className="w-4 h-4 text-[#C6CAC9] shrink-0" /> {item}
+                  </div>
+                ))}
               </div>
             </section>
           </AnimatedContent>
@@ -333,7 +322,14 @@ export default function About() {
                 <div key={s.label} className="p-6 text-center">
                   {/* TODO: real numbers */}
                   <p className="text-3xl font-bold mb-1">
-                    <CountUp from={0} to={s.to} duration={1.5} separator="," />
+                    <CountUp
+                      from={0}
+                      to={s.to}
+                      separator=","
+                      direction="up"
+                      duration={1.5}
+                      className="count-up-text"
+                    />
                     {s.suffix}
                   </p>
                   <p className="text-xs text-gray-500">{s.label}</p>
@@ -348,11 +344,20 @@ export default function About() {
           <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
             <section className="text-center">
               <p className="text-[#9AA1A3] font-semibold tracking-wider text-sm mb-6 uppercase">Where Our Interns Get Placed</p>
-              {/* TODO: replace with real logo assets */}
-              <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-4 opacity-50">
-                {PARTNER_COMPANIES.map((name) => (
-                  <span key={name} className="text-lg font-semibold text-gray-400">{name}</span>
-                ))}
+              <div style={{ height: '40px', position: 'relative' }} className="opacity-50 mt-4">
+                <LogoLoop
+                  logos={PARTNER_COMPANIES.map(name => ({
+                    node: <span className="text-lg font-semibold text-gray-400">{name}</span>
+                  }))}
+                  speed={40}
+                  direction="left"
+                  logoHeight={20}
+                  gap={64}
+                  hoverSpeed={0}
+                  fadeOut
+                  fadeOutColor="#0A0A0B"
+                  ariaLabel="Companies where our interns get placed"
+                />
               </div>
             </section>
           </AnimatedContent>
@@ -367,8 +372,9 @@ export default function About() {
               <div className="bg-[#111114] border border-white/10 rounded-2xl p-8 relative overflow-hidden">
                 <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
                   <Lightfall
-                    colors={['#4A6CF7', '#2A3FCC', '#7FA0FF']}
-                    backgroundColor="#0A1440"
+                    className="grayscale"
+                    colors={['#9AA1A3', '#C6CAC9', '#F1F2EE']}
+                    backgroundColor="#111114"
                     speed={0.6}
                     streakCount={4}
                     streakWidth={0.8}
@@ -411,7 +417,7 @@ export default function About() {
             <section className="relative overflow-hidden bg-[#111114] border border-white/10 rounded-2xl p-12 text-center">
               <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
                 <Dither
-                  waveColor={[0.15, 0.15, 0.17]}
+                  waveColor={[0.776, 0.792, 0.788]}
                   disableAnimation={false}
                   enableMouseInteraction={true}
                   mouseRadius={0.3}
