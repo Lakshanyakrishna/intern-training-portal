@@ -378,7 +378,7 @@ export default function About() {
         <ScrollReveal delay={0.1}>
           <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
             <section className="text-center">
-              <p className="text-[#9AA1A3] font-semibold tracking-wider text-sm mb-6 uppercase">Where Our Interns Get Placed</p>
+              <p className="text-[#F1F2EE] font-bold tracking-wider text-sm mb-6 uppercase">Where Our Interns Get Placed</p>
               <div style={{ height: '40px', position: 'relative' }} className="opacity-50 mt-4">
                 <LogoLoop
                   logos={PARTNER_COMPANIES.map(name => ({
