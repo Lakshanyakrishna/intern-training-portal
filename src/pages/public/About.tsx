@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import Dither from '../../components/Dither';
 import Radar from '../../components/Radar';
 import Lightfall from '../../components/Lightfall';
-import OrbitBadges from '../../components/react-bits/OrbitBadges/OrbitBadges';
 import CountUp from '../../components/CountUp';
 import ElectricBorder from '../../components/react-bits/ElectricBorder/ElectricBorder';
 import Ferrofluid from '../../components/Ferrofluid';
@@ -89,7 +88,6 @@ function ComingSoonLink({ label }: { label: string }) {
 
 export default function About() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [orbitPaused, setOrbitPaused] = useState(false);
 
   return (
     <div className="relative min-h-screen bg-[#0A0A0B] text-white overflow-hidden font-sans">

@@ -14,6 +14,7 @@ import SpotlightCard from '../../components/SpotlightCard';
 import ClickSpark from '../../components/ClickSpark';
 import { ParticleCard, GlobalSpotlight } from '../../components/react-bits/ParticleCard/ParticleCard';
 import StarBorder from '../../components/StarBorder';
+
 import TiltedCard from '../../components/TiltedCard';
 import ElectricBorder from '../../components/react-bits/ElectricBorder/ElectricBorder';
 import BorderGlow from '../../components/react-bits/BorderGlow/BorderGlow';
@@ -847,46 +848,49 @@ export default function Opportunities() {
           </ScrollRevealGroup>
           </AnimatedContent>
           <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2} delay={0.1} className="w-full lg:w-72 shrink-0 h-full">
-          <div className="w-full lg:w-72 bg-[#111114] p-6 rounded-2xl border border-white/10 flex flex-col justify-between shrink-0">
-            <div>
-              <style>{`
-                .parallax .scroller .testimonial-ticker-text {
-                  font-size: 12px !important;
-                  line-height: 24px !important;
-                  font-weight: 600 !important;
-                  letter-spacing: 0.05em !important;
-                  text-transform: uppercase !important;
-                  color: #858D91 !important;
-                  display: inline-block;
-                }
-              `}</style>
-              <div style={{ height: '24px', overflow: 'hidden' }} className="mb-4">
-                <ScrollVelocity
-                  texts={['WHAT OUR INTERNS SAY']}
-                  velocity={15}
-                  numCopies={4}
-                  className="testimonial-ticker-text"
+          <div className="w-full lg:w-72 bg-[#111114] p-6 rounded-2xl border border-white/10 flex flex-col justify-between shrink-0 relative overflow-hidden">
+
+            <div style={{ position: 'relative', zIndex: 1 }} className="flex flex-col justify-between h-full">
+              <div>
+                <style>{`
+                  .parallax .scroller .testimonial-ticker-text {
+                    font-size: 12px !important;
+                    line-height: 24px !important;
+                    font-weight: 600 !important;
+                    letter-spacing: 0.05em !important;
+                    text-transform: uppercase !important;
+                    color: #858D91 !important;
+                    display: inline-block;
+                  }
+                `}</style>
+                <div style={{ height: '24px', overflow: 'hidden' }} className="mb-4">
+                  <ScrollVelocity
+                    texts={['WHAT OUR INTERNS SAY']}
+                    velocity={15}
+                    numCopies={4}
+                    className="testimonial-ticker-text"
+                  />
+                </div>
+                <DecryptedText
+                  text='"Lumora gave me real projects, amazing mentors, and the confidence to build for the real world."'
+                  speed={80}
+                  maxIterations={15}
+                  className="text-sm italic text-[#C6CAC9] leading-relaxed"
+                  animateOn="view"
                 />
+                <AnimatedContent distance={0} delay={1} animateOpacity>
+                  <p className="text-xs text-[#9AA1A3] mt-4">— Priya Sharma<br/>Frontend Intern, Cohort 0</p>
+                </AnimatedContent>
               </div>
-              <DecryptedText
-                text='"Lumora gave me real projects, amazing mentors, and the confidence to build for the real world."'
-                speed={80}
-                maxIterations={15}
-                className="text-sm italic text-[#C6CAC9] leading-relaxed"
-                animateOn="view"
-              />
-              <AnimatedContent distance={0} delay={1} animateOpacity>
-                <p className="text-xs text-[#9AA1A3] mt-4">— Priya Sharma<br/>Frontend Intern, Cohort 0</p>
+              <AnimatedContent distance={0} delay={1.2} animateOpacity>
+                <div className="flex gap-1.5 mt-6">
+                  <div className="w-2 h-2 rounded-full bg-[#F1F2EE]" />
+                  <div className="w-2 h-2 rounded-full bg-[#6D777C] transition-colors" />
+                  <div className="w-2 h-2 rounded-full bg-[#6D777C] transition-colors" />
+                  <div className="w-2 h-2 rounded-full bg-[#6D777C] transition-colors" />
+                </div>
               </AnimatedContent>
             </div>
-            <AnimatedContent distance={0} delay={1.2} animateOpacity>
-              <div className="flex gap-1.5 mt-6">
-                <div className="w-2 h-2 rounded-full bg-[#F1F2EE]" />
-                <div className="w-2 h-2 rounded-full bg-[#6D777C] transition-colors" />
-                <div className="w-2 h-2 rounded-full bg-[#6D777C] transition-colors" />
-                <div className="w-2 h-2 rounded-full bg-[#6D777C] transition-colors" />
-              </div>
-            </AnimatedContent>
           </div>
           </AnimatedContent>
         </section>
