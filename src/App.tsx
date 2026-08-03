@@ -1,54 +1,68 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
-import Home from './pages/public/Home';
-import About from './pages/public/About';
-import Apply from './pages/public/Apply';
-import Login from './pages/public/Login';
-import SignUp from './pages/public/SignUp';
-import Opportunities from './pages/public/Opportunities';
-import OpportunityDetail from './pages/public/OpportunityDetail';
-import Team from './pages/public/Team';
-import Contact from './pages/public/Contact';
-import Onboarding from './pages/Onboarding';
-import Dashboard from './pages/Dashboard';
-import ModulePage from './pages/ModulePage';
-import Capstone from './pages/Capstone';
-import TrackPage from './pages/TrackPage';
-import TicketsBoard from './pages/TicketsBoard';
-import Leaderboard from './pages/Leaderboard';
-import ProgressCenter from './pages/ProgressCenter';
-import ReadinessReviews from './pages/ReadinessReviews';
-import Feedback from './pages/Feedback';
-import Profile from './pages/Profile';
-import MentorDashboard from './pages/MentorDashboard';
-import InternManagement from './pages/InternManagement';
-import MentorReviews from './pages/MentorReviews';
-import ProjectReadiness from './pages/ProjectReadiness';
-import ApplicantExperience from './applicant/ApplicantExperience';
-import AdminApplications from './pages/AdminApplications';
-import AdminInterviews from './pages/AdminInterviews';
-import AdminConversion from './pages/AdminConversion';
-import AdminMentors from './pages/AdminMentors';
-import AdminTracks from './pages/AdminTracks';
-import AdminProjects from './pages/AdminProjects';
-import AdminOpportunities from './pages/AdminOpportunities';
-import ReadinessEvaluation from './pages/ReadinessEvaluation';
-import NotificationCenter from './pages/NotificationCenter';
-import NotificationSettings from './pages/NotificationSettings';
-import AdminNotificationsDashboard from './pages/AdminNotificationsDashboard';
-import AdminScreeningReport from './pages/AdminScreeningReport';
-import AdminCompletionReport from './pages/AdminCompletionReport';
-import InternPortfolio from './pages/InternPortfolio';
-import MentorCompletionReview from './pages/MentorCompletionReview';
 import { ErrorBoundary } from './components/ErrorBoundary';
+
+const Home = lazy(() => import('./pages/public/Home'));
+const About = lazy(() => import('./pages/public/About'));
+const Apply = lazy(() => import('./pages/public/Apply'));
+const Login = lazy(() => import('./pages/public/Login'));
+const SignUp = lazy(() => import('./pages/public/SignUp'));
+const Opportunities = lazy(() => import('./pages/public/Opportunities'));
+const OpportunityDetail = lazy(() => import('./pages/public/OpportunityDetail'));
+const Team = lazy(() => import('./pages/public/Team'));
+const Contact = lazy(() => import('./pages/public/Contact'));
+const Onboarding = lazy(() => import('./pages/Onboarding'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const ModulePage = lazy(() => import('./pages/ModulePage'));
+const Capstone = lazy(() => import('./pages/Capstone'));
+const TrackPage = lazy(() => import('./pages/TrackPage'));
+const TicketsBoard = lazy(() => import('./pages/TicketsBoard'));
+const Leaderboard = lazy(() => import('./pages/Leaderboard'));
+const ProgressCenter = lazy(() => import('./pages/ProgressCenter'));
+const ReadinessReviews = lazy(() => import('./pages/ReadinessReviews'));
+const Feedback = lazy(() => import('./pages/Feedback'));
+const Profile = lazy(() => import('./pages/Profile'));
+const MentorDashboard = lazy(() => import('./pages/MentorDashboard'));
+const InternManagement = lazy(() => import('./pages/InternManagement'));
+const MentorReviews = lazy(() => import('./pages/MentorReviews'));
+const ProjectReadiness = lazy(() => import('./pages/ProjectReadiness'));
+const ApplicantExperience = lazy(() => import('./applicant/ApplicantExperience'));
+const AdminApplications = lazy(() => import('./pages/AdminApplications'));
+const AdminInterviews = lazy(() => import('./pages/AdminInterviews'));
+const AdminConversion = lazy(() => import('./pages/AdminConversion'));
+const AdminMentors = lazy(() => import('./pages/AdminMentors'));
+const AdminTracks = lazy(() => import('./pages/AdminTracks'));
+const AdminProjects = lazy(() => import('./pages/AdminProjects'));
+const AdminOpportunities = lazy(() => import('./pages/AdminOpportunities'));
+const ReadinessEvaluation = lazy(() => import('./pages/ReadinessEvaluation'));
+const NotificationCenter = lazy(() => import('./pages/NotificationCenter'));
+const NotificationSettings = lazy(() => import('./pages/NotificationSettings'));
+const AdminNotificationsDashboard = lazy(() => import('./pages/AdminNotificationsDashboard'));
+const AdminScreeningReport = lazy(() => import('./pages/AdminScreeningReport'));
+const AdminCompletionReport = lazy(() => import('./pages/AdminCompletionReport'));
+const InternPortfolio = lazy(() => import('./pages/InternPortfolio'));
+const MentorCompletionReview = lazy(() => import('./pages/MentorCompletionReview'));
+
+// Each route now ships its own chunk instead of one 1.2MB bundle for every
+// page -- without this, the login screen had to download and parse every
+// admin/mentor/intern/applicant page (plus GSAP) before it could render.
+function PageLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="w-6 h-6 border-2 border-line border-t-primary rounded-full animate-spin" />
+    </div>
+  );
+}
 
 export default function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
         <BrowserRouter>
+          <Suspense fallback={<PageLoader />}>
           <Routes>
 
             {/* Public routes */}
@@ -139,6 +153,7 @@ export default function App() {
             </Route>
 
           </Routes>
+          </Suspense>
         </BrowserRouter>
       </AuthProvider>
     </ErrorBoundary>
