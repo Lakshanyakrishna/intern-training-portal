@@ -3,6 +3,30 @@ import type { AuthUser } from '../types';
 
 // ─── Users ────────────────────────────────────────────────────────
 
+// PostgREST returns raw snake_case columns; casting that straight to
+// AuthUser (as getUser/getAllUsers used to) silently loses every
+// snake_case field -- yearOfStudy, onboardingComplete, joinedDate all came
+// back undefined. Found while wiring the new profile fields through, which
+// would have inherited the same bug.
+function mapAuthUser(r: Record<string, unknown>): AuthUser {
+  return {
+    id: r.id as string,
+    email: r.email as string,
+    name: r.name as string,
+    role: r.role as AuthUser['role'],
+    college: (r.college as string) ?? undefined,
+    yearOfStudy: (r.year_of_study as string) ?? undefined,
+    phone: (r.phone as string) ?? undefined,
+    major: (r.major as string) ?? undefined,
+    githubUrl: (r.github_url as string) ?? undefined,
+    linkedinUrl: (r.linkedin_url as string) ?? undefined,
+    portfolioUrl: (r.portfolio_url as string) ?? undefined,
+    batch: r.batch as string,
+    joinedDate: r.joined_date as string,
+    onboardingComplete: r.onboarding_complete as boolean,
+  };
+}
+
 export async function getUser(id: string): Promise<AuthUser | null> {
   const supabase = requireSupabase();
   const { data, error } = await supabase
@@ -10,8 +34,8 @@ export async function getUser(id: string): Promise<AuthUser | null> {
     .select('*')
     .eq('id', id)
     .maybeSingle();
-  if (error) return null;
-  return data as AuthUser | null;
+  if (error || !data) return null;
+  return mapAuthUser(data);
 }
 
 export async function createUser(profile: AuthUser): Promise<void> {
@@ -23,6 +47,11 @@ export async function createUser(profile: AuthUser): Promise<void> {
     role: profile.role,
     college: profile.college ?? null,
     year_of_study: profile.yearOfStudy ?? null,
+    phone: profile.phone ?? null,
+    major: profile.major ?? null,
+    github_url: profile.githubUrl ?? null,
+    linkedin_url: profile.linkedinUrl ?? null,
+    portfolio_url: profile.portfolioUrl ?? null,
     batch: profile.batch,
     joined_date: profile.joinedDate,
     onboarding_complete: profile.onboardingComplete,
@@ -32,7 +61,7 @@ export async function createUser(profile: AuthUser): Promise<void> {
 
 export async function updateUser(
   id: string,
-  updates: Partial<Pick<AuthUser, 'name' | 'college' | 'yearOfStudy' | 'role' | 'onboardingComplete'>>
+  updates: Partial<Pick<AuthUser, 'name' | 'college' | 'yearOfStudy' | 'role' | 'onboardingComplete' | 'phone' | 'major' | 'githubUrl' | 'linkedinUrl' | 'portfolioUrl'>>
 ): Promise<void> {
   const supabase = requireSupabase();
   const dbUpdates: Record<string, unknown> = {};
@@ -41,6 +70,11 @@ export async function updateUser(
   if (updates.yearOfStudy !== undefined) dbUpdates.year_of_study = updates.yearOfStudy;
   if (updates.role !== undefined) dbUpdates.role = updates.role;
   if (updates.onboardingComplete !== undefined) dbUpdates.onboarding_complete = updates.onboardingComplete;
+  if (updates.phone !== undefined) dbUpdates.phone = updates.phone;
+  if (updates.major !== undefined) dbUpdates.major = updates.major;
+  if (updates.githubUrl !== undefined) dbUpdates.github_url = updates.githubUrl;
+  if (updates.linkedinUrl !== undefined) dbUpdates.linkedin_url = updates.linkedinUrl;
+  if (updates.portfolioUrl !== undefined) dbUpdates.portfolio_url = updates.portfolioUrl;
   const { error } = await supabase.from('users').update(dbUpdates).eq('id', id);
   if (error) throw error;
 }
@@ -48,7 +82,7 @@ export async function updateUser(
 export async function getAllUsers(): Promise<AuthUser[]> {
   const supabase = requireSupabase();
   const { data } = await supabase.from('users').select('*').order('name');
-  return (data as AuthUser[]) || [];
+  return ((data as Record<string, unknown>[]) || []).map(mapAuthUser);
 }
 
 // ─── User Settings ────────────────────────────────────────────────
@@ -464,6 +498,7 @@ export interface DbApplication {
   reviewedAt?: string;
   reviewerNotes?: string;
   screeningStatus?: 'pending' | 'processing' | 'analyzed' | 'failed';
+  offerAcceptedAt?: string;
 }
 
 export async function submitApplication(data: {
@@ -523,15 +558,23 @@ export async function getApplications(): Promise<DbApplication[]> {
     reviewedAt: r.reviewed_at as string | undefined,
     reviewerNotes: r.reviewer_notes as string | undefined,
     screeningStatus: r.screening_status as DbApplication['screeningStatus'],
+    offerAcceptedAt: r.offer_accepted_at as string | undefined,
   }));
 }
 
 export async function getApplicationByUserId(userId: string): Promise<DbApplication | null> {
   const supabase = requireSupabase();
+  // Normally exactly one row per user, but nothing in the schema enforces
+  // that (e.g. a failed resume upload followed by a resubmit can leave two
+  // rows behind) -- order + limit(1) before maybeSingle() so an unexpected
+  // duplicate degrades to "show the most recent one" instead of throwing
+  // and silently rendering as "no application yet".
   const { data } = await supabase
     .from('applications')
     .select('*')
     .eq('user_id', userId)
+    .order('applied_at', { ascending: false })
+    .limit(1)
     .maybeSingle();
   if (!data) return null;
   return {
@@ -554,6 +597,7 @@ export async function getApplicationByUserId(userId: string): Promise<DbApplicat
     reviewedAt: data.reviewed_at,
     reviewerNotes: data.reviewer_notes,
     screeningStatus: data.screening_status,
+    offerAcceptedAt: data.offer_accepted_at,
   };
 }
 
@@ -581,6 +625,7 @@ export async function getApplication(id: string): Promise<DbApplication | null> 
     reviewedAt: data.reviewed_at,
     reviewerNotes: data.reviewer_notes,
     screeningStatus: data.screening_status,
+    offerAcceptedAt: data.offer_accepted_at,
   };
 }
 
@@ -601,11 +646,22 @@ export async function updateApplication(
   if (error) throw error;
 }
 
+// Applicant's own confirmation that they want the offer -- routed through a
+// narrow SECURITY DEFINER function (022_offer_acceptance.sql) rather than a
+// direct update, since applicants otherwise have no UPDATE path onto their
+// own already-linked application row at all.
+export async function acceptOffer(applicationId: string): Promise<void> {
+  const supabase = requireSupabase();
+  const { error } = await supabase.rpc('accept_offer', { p_application_id: applicationId });
+  if (error) throw error;
+}
+
 // ─── Resume Files (Phase D.7) ─────────────────────────────────────
 
 export interface DbResumeFile {
   id: string;
-  applicationId: string;
+  applicationId?: string;
+  userId?: string;
   filePath: string;
   fileName: string;
   fileSize: number;
@@ -689,6 +745,138 @@ export async function deleteResumeFile(id: string): Promise<void> {
     await supabase.storage.from('resumes').remove([file.file_path]);
   }
   const { error } = await supabase.from('resume_files').delete().eq('id', id);
+  if (error) throw error;
+}
+
+// Profile-level resume -- uploaded once, before any application exists
+// (023_applicant_profile.sql made application_id nullable and added
+// user_id specifically for this). Apply flow attaches it to the real
+// application id at submit time via attachResumeToApplication rather than
+// re-uploading the file.
+export async function uploadProfileResume(userId: string, file: File): Promise<DbResumeFile> {
+  const supabase = requireSupabase();
+  const fileExt = file.name.split('.').pop();
+  const filePath = `${userId}/profile/${Date.now()}.${fileExt}`;
+  const { error: uploadError } = await supabase.storage.from('resumes').upload(filePath, file, {
+    cacheControl: '3600',
+    upsert: true,
+  });
+  if (uploadError) throw uploadError;
+  const { data: inserted, error: dbError } = await supabase
+    .from('resume_files')
+    .insert({ user_id: userId, file_path: filePath, file_name: file.name, file_size: file.size, mime_type: file.type })
+    .select()
+    .single();
+  if (dbError) throw dbError;
+  return {
+    id: inserted.id,
+    applicationId: inserted.application_id ?? undefined,
+    userId: inserted.user_id ?? undefined,
+    filePath: inserted.file_path,
+    fileName: inserted.file_name,
+    fileSize: inserted.file_size,
+    mimeType: inserted.mime_type,
+    extractedText: inserted.extracted_text,
+    uploadedAt: inserted.uploaded_at,
+  };
+}
+
+export async function getProfileResume(userId: string): Promise<DbResumeFile | null> {
+  const supabase = requireSupabase();
+  const { data } = await supabase
+    .from('resume_files')
+    .select('*')
+    .eq('user_id', userId)
+    .is('application_id', null)
+    .order('uploaded_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (!data) return null;
+  return {
+    id: data.id,
+    applicationId: data.application_id ?? undefined,
+    userId: data.user_id ?? undefined,
+    filePath: data.file_path,
+    fileName: data.file_name,
+    fileSize: data.file_size,
+    mimeType: data.mime_type,
+    extractedText: data.extracted_text,
+    uploadedAt: data.uploaded_at,
+  };
+}
+
+// Links a profile-level resume to a real application once one exists,
+// instead of asking the applicant to upload the same file again.
+export async function attachResumeToApplication(resumeId: string, applicationId: string): Promise<void> {
+  const supabase = requireSupabase();
+  const { error } = await supabase.from('resume_files').update({ application_id: applicationId }).eq('id', resumeId);
+  if (error) throw error;
+}
+
+// ─── Applicant Experiences (Phase D.10) ───────────────────────────
+// Repeatable work/project history, filled once on the profile and reused
+// across the (currently one, ever) real application an applicant submits.
+
+export interface DbApplicantExperience {
+  id: string;
+  userId: string;
+  title: string;
+  company: string;
+  startDate?: string;
+  endDate?: string;
+  description?: string;
+  sortOrder: number;
+}
+
+export async function getApplicantExperiences(userId: string): Promise<DbApplicantExperience[]> {
+  const supabase = requireSupabase();
+  const { data } = await supabase
+    .from('applicant_experiences')
+    .select('*')
+    .eq('user_id', userId)
+    .order('sort_order', { ascending: true });
+  return ((data as Record<string, unknown>[]) || []).map(r => ({
+    id: r.id as string,
+    userId: r.user_id as string,
+    title: r.title as string,
+    company: r.company as string,
+    startDate: (r.start_date as string) ?? undefined,
+    endDate: (r.end_date as string) ?? undefined,
+    description: (r.description as string) ?? undefined,
+    sortOrder: r.sort_order as number,
+  }));
+}
+
+export async function createApplicantExperience(data: {
+  userId: string;
+  title: string;
+  company: string;
+  startDate?: string;
+  endDate?: string;
+  description?: string;
+  sortOrder?: number;
+}): Promise<string> {
+  const supabase = requireSupabase();
+  const { data: inserted, error } = await supabase
+    .from('applicant_experiences')
+    .insert({
+      user_id: data.userId,
+      title: data.title,
+      company: data.company,
+      start_date: data.startDate ?? null,
+      end_date: data.endDate ?? null,
+      description: data.description ?? null,
+      sort_order: data.sortOrder ?? 0,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return inserted.id;
+}
+
+export async function deleteApplicantExperience(id: string): Promise<void> {
+  const supabase = requireSupabase();
+  const { error } = await supabase.from('applicant_experiences').delete().eq('id', id);
   if (error) throw error;
 }
 
@@ -2228,4 +2416,101 @@ export async function getCompletionStats(): Promise<{
     projectCompletionRate: (projectsAssigned ?? 0) > 0 ? Math.round(((projectsCompleted ?? 0) / (projectsAssigned ?? 0)) * 100) : 0,
     avgReadinessScore: avgReadiness,
   };
+}
+
+// ─── Training Tracks (Phase D.9) ──────────────────────────────────
+// Schema has existed since migration 019 (training_tracks, track_fortes,
+// intern_track_assignments) but nothing in the app read or wrote it until
+// now -- Onboarding.tsx just showed a generic hardcoded "Foundation Track"
+// line regardless of what, if anything, an intern was assigned.
+
+export interface DbTrainingTrack {
+  id: string;
+  name: string;
+  description?: string;
+  sortOrder: number;
+  fortes: OpportunityForte[];
+}
+
+export async function getTrainingTracks(): Promise<DbTrainingTrack[]> {
+  const supabase = requireSupabase();
+  const [{ data: tracks }, { data: fortes }] = await Promise.all([
+    supabase.from('training_tracks').select('*').order('sort_order', { ascending: true }),
+    supabase.from('track_fortes').select('*'),
+  ]);
+  const forteMap = new Map<string, OpportunityForte[]>();
+  for (const f of (fortes || []) as { track_id: string; forte: OpportunityForte }[]) {
+    const arr = forteMap.get(f.track_id) || [];
+    arr.push(f.forte);
+    forteMap.set(f.track_id, arr);
+  }
+  return ((tracks || []) as Record<string, unknown>[]).map(t => ({
+    id: t.id as string,
+    name: t.name as string,
+    description: t.description as string | undefined,
+    sortOrder: t.sort_order as number,
+    fortes: forteMap.get(t.id as string) || [],
+  }));
+}
+
+export async function createTrainingTrack(data: {
+  name: string;
+  description?: string;
+  sortOrder?: number;
+  fortes: OpportunityForte[];
+}): Promise<string> {
+  const supabase = requireSupabase();
+  const { data: inserted, error } = await supabase
+    .from('training_tracks')
+    .insert({ name: data.name, description: data.description ?? null, sort_order: data.sortOrder ?? 0 })
+    .select()
+    .single();
+  if (error) throw error;
+  if (data.fortes.length > 0) {
+    const { error: forteError } = await supabase
+      .from('track_fortes')
+      .insert(data.fortes.map(forte => ({ track_id: inserted.id, forte })));
+    if (forteError) throw forteError;
+  }
+  return inserted.id;
+}
+
+export async function deleteTrainingTrack(id: string): Promise<void> {
+  const supabase = requireSupabase();
+  const { error } = await supabase.from('training_tracks').delete().eq('id', id);
+  if (error) throw error;
+}
+
+export interface DbInternTrackAssignment {
+  internId: string;
+  trackId?: string;
+  trackName?: string;
+  trainingDeadline?: string;
+  assignedAt: string;
+}
+
+export async function getInternTrackAssignment(internId: string): Promise<DbInternTrackAssignment | null> {
+  const supabase = requireSupabase();
+  const { data } = await supabase
+    .from('intern_track_assignments')
+    .select('*, training_tracks(name)')
+    .eq('intern_id', internId)
+    .maybeSingle();
+  if (!data) return null;
+  const trackName = (data as { training_tracks?: { name?: string } }).training_tracks?.name;
+  return {
+    internId: data.intern_id,
+    trackId: data.track_id ?? undefined,
+    trackName: trackName ?? undefined,
+    trainingDeadline: data.training_deadline ?? undefined,
+    assignedAt: data.assigned_at,
+  };
+}
+
+export async function assignInternTrack(internId: string, trackId: string | null): Promise<void> {
+  const supabase = requireSupabase();
+  const { error } = await supabase
+    .from('intern_track_assignments')
+    .upsert({ intern_id: internId, track_id: trackId }, { onConflict: 'intern_id' });
+  if (error) throw error;
 }

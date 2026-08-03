@@ -27,6 +27,7 @@ import InternManagement from './pages/InternManagement';
 import MentorReviews from './pages/MentorReviews';
 import ProjectReadiness from './pages/ProjectReadiness';
 import ApplicantDashboard from './pages/ApplicantDashboard';
+import ApplicantExperience from './applicant/ApplicantExperience';
 import AdminApplications from './pages/AdminApplications';
 import AdminInterviews from './pages/AdminInterviews';
 import AdminConversion from './pages/AdminConversion';
@@ -74,6 +75,7 @@ export default function App() {
               </ProtectedRoute>
             }>
               <Route path="/profile" element={<Profile />} />
+              <Route path="/applicant" element={<ApplicantExperience />} />
               <Route path="/applicant/dashboard" element={<ApplicantDashboard />} />
               <Route path="/notifications" element={<NotificationCenter />} />
               <Route path="/notifications/settings" element={<NotificationSettings />} />
