@@ -16,6 +16,7 @@ import ScrollReveal from '../../components/ScrollReveal';
 import ScrollRevealGroup from '../../components/ScrollRevealGroup';
 import CurvedLoop from '../../components/react-bits/CurvedLoop/CurvedLoop';
 import LogoLoop from '../../components/react-bits/LogoLoop/LogoLoop';
+import OrbitImages from '../../components/react-bits/OrbitImages/OrbitImages';
 
 import ClickSpark from '../../components/ClickSpark';
 import FadeContent from '../../components/FadeContent';
@@ -88,6 +89,17 @@ function ComingSoonLink({ label }: { label: string }) {
 
 export default function About() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [orbitPaused, setOrbitPaused] = useState(false);
+  const [supportsOffsetPath, setSupportsOffsetPath] = useState(true);
+
+  useEffect(() => {
+    // Check if browser supports offset-path with path() - required for OrbitImages
+    setSupportsOffsetPath(
+      typeof CSS !== 'undefined' && 
+      CSS.supports && 
+      CSS.supports('offset-path', 'path("M 0 0 L 1 1")')
+    );
+  }, []);
 
   return (
     <div className="relative min-h-screen bg-[#0A0A0B] text-white overflow-hidden font-sans">
@@ -294,20 +306,45 @@ export default function About() {
         <ScrollReveal delay={0.1}>
           <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
             <section className="flex flex-col items-center justify-center text-center max-w-4xl mx-auto px-4">
-              <div className="mb-10">
-                <p className="text-[#9AA1A3] font-semibold tracking-wider text-xs uppercase mb-2">What You'll Gain</p>
-                <h3 className="text-2xl font-bold">Everything you walk away with</h3>
-              </div>
-              <div className="flex flex-wrap justify-center gap-3">
-                {WHAT_YOULL_GAIN.map((item, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-2 bg-[#111114] border border-white/10 rounded-full px-4 py-2 text-sm text-gray-300 shadow-lg"
-                  >
-                    <Check className="w-4 h-4 text-[#C6CAC9] shrink-0" /> {item}
+              {supportsOffsetPath ? (
+                <OrbitImages
+                  items={WHAT_YOULL_GAIN.map((item, i) => (
+                    <div key={i} className="flex items-center gap-2 bg-[#111114] border border-white/10 rounded-full px-4 py-2 text-sm text-[#C6CAC9] shadow-lg whitespace-nowrap">
+                      <Check className="w-4 h-4 text-[#C6CAC9] shrink-0" /> {item}
+                    </div>
+                  ))}
+                  shape="ellipse"
+                  radiusX={340}
+                  radiusY={140}
+                  rotation={0}
+                  duration={30}
+                  itemSize={180}
+                  responsive={true}
+                  centerContent={
+                    <div className="text-center">
+                      <p className="text-[#9AA1A3] font-semibold tracking-wider text-xs uppercase mb-2">What You'll Gain</p>
+                      <h3 className="text-2xl font-bold text-[#F1F2EE]">Everything you walk away with</h3>
+                    </div>
+                  }
+                />
+              ) : (
+                <>
+                  <div className="mb-10">
+                    <p className="text-[#9AA1A3] font-semibold tracking-wider text-xs uppercase mb-2">What You'll Gain</p>
+                    <h3 className="text-2xl font-bold">Everything you walk away with</h3>
                   </div>
-                ))}
-              </div>
+                  <div className="flex flex-wrap justify-center gap-3">
+                    {WHAT_YOULL_GAIN.map((item, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center gap-2 bg-[#111114] border border-white/10 rounded-full px-4 py-2 text-sm text-gray-300 shadow-lg"
+                      >
+                        <Check className="w-4 h-4 text-[#C6CAC9] shrink-0" /> {item}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </section>
           </AnimatedContent>
         </ScrollReveal>
