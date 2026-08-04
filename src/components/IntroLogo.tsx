@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import lumoraLogo from '../assets/lumora-logo.png';
 import DecryptedText from './DecryptedText';
+import StickerPeel from './StickerPeel';
 
 type Phase = 'enter' | 'confused' | 'confident' | 'settled';
 
@@ -40,7 +41,9 @@ export default function IntroLogo({ animate = true }: IntroLogoProps) {
 
   return (
     <div
-      className="fixed z-30 pointer-events-none flex items-center transition-all ease-[cubic-bezier(0.22,1,0.36,1)]"
+      className={`fixed z-30 flex items-center transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        settled ? 'pointer-events-auto' : 'pointer-events-none'
+      }`}
       style={{
         transitionDuration: settled ? '900ms' : '600ms',
         left: settled ? '1.75rem' : '50%',
@@ -49,18 +52,33 @@ export default function IntroLogo({ animate = true }: IntroLogoProps) {
         gap: settled ? '0.75rem' : '0.9rem',
       }}
     >
-      <img
-        src={lumoraLogo}
-        alt="Lumora"
-        className="transition-all ease-[cubic-bezier(0.22,1,0.36,1)] shrink-0"
-        style={{
-          width: settled ? '52px' : '56px',
-          height: settled ? '52px' : '56px',
-          opacity: visible ? 1 : 0,
-          transitionDuration: settled ? '900ms' : '500ms',
-          filter: 'drop-shadow(0 0 12px rgba(198,202,201,0.35))',
-        }}
-      />
+      {settled ? (
+        <div style={{ width: '52px', height: '52px', position: 'relative' }} className="shrink-0">
+          <StickerPeel
+            imageSrc={lumoraLogo}
+            width={52}
+            rotate={15}
+            peelBackHoverPct={25}
+            peelBackActivePct={45}
+            shadowIntensity={0.5}
+            lightingIntensity={0.15}
+            initialPosition="center"
+          />
+        </div>
+      ) : (
+        <img
+          src={lumoraLogo}
+          alt="Lumora"
+          className="transition-all ease-[cubic-bezier(0.22,1,0.36,1)] shrink-0"
+          style={{
+            width: '56px',
+            height: '56px',
+            opacity: visible ? 1 : 0,
+            transitionDuration: '500ms',
+            filter: 'drop-shadow(0 0 12px rgba(198,202,201,0.35))',
+          }}
+        />
+      )}
       <div
         className="relative overflow-hidden transition-all ease-[cubic-bezier(0.22,1,0.36,1)]"
         style={{

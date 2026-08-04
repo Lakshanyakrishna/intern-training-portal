@@ -1,0 +1,29 @@
+@keyframes gradient-border {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-gradient-border {
+  animation: gradient-border 3s linear infinite;
+}
+
+.contact-info-card,
+.social-button,
+.faq-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contact-info-card:hover,
+.faq-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 40px rgba(241, 242, 238, 0.1);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  box-shadow: 0 0 20px rgba(241, 242, 238, 0.1);
+}

@@ -4,3 +4,9 @@
   height: 100%;
   overflow: hidden;
 }
+
+.ferrofluid-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+}
