@@ -27,8 +27,8 @@ export default function JourneyPath({ stages, completedStages, onCompleteStage }
               isCompleted
                 ? 'bg-green-500 text-white'
                 : isCurrent
-                  ? 'bg-blue-500 text-white ring-4 ring-blue-200 dark:ring-blue-800'
-                  : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400'
+                  ? 'bg-neutral-500 text-white ring-4 ring-neutral-200 dark:ring-neutral-800'
+                  : 'bg-gray-300 dark:bg-gray-600 text-secondary'
             }`}>
               {isCompleted ? '✓' : index + 1}
             </div>
@@ -37,8 +37,8 @@ export default function JourneyPath({ stages, completedStages, onCompleteStage }
                 isCompleted
                   ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
                   : isCurrent
-                    ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/30'
-                    : 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700'
+                    ? 'bg-neutral-50 dark:bg-neutral-900/20 border-neutral-200 dark:border-neutral-800 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900/30'
+                    : 'bg-surface-alt border-line'
               }`}
                 onClick={() => isCurrent && onCompleteStage(stage.id)}
               >
@@ -48,8 +48,8 @@ export default function JourneyPath({ stages, completedStages, onCompleteStage }
                     isCompleted
                       ? 'text-green-800 dark:text-green-200'
                       : isCurrent
-                        ? 'text-blue-800 dark:text-blue-200'
-                        : 'text-gray-500 dark:text-gray-400'
+                        ? 'text-neutral-800 dark:text-neutral-200'
+                        : 'text-secondary'
                   }`}>{stage.title}</span>
                 </div>
               </div>

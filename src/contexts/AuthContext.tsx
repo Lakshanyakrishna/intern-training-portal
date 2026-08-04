@@ -20,6 +20,7 @@ interface AuthContextType {
   signUp: (data: SignUpData) => Promise<{ error?: string; user?: AuthUser }>;
   signOut: () => void;
   completeOnboarding: () => void;
+  refreshUser: () => Promise<void>;
 }
 
 const DEFAULT_BATCH = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
@@ -133,7 +134,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         onboardingComplete: false,
       };
 
-      await createUser(profile);
+      // sb.auth.signUp() establishes a session before this line runs, which
+      // fires the onAuthStateChange listener above (ensureUserProfile)
+      // concurrently with the rest of this function -- both race to insert
+      // the same row. Whichever loses gets a 23505 duplicate-key conflict;
+      // that's expected here, not a real failure, so tolerate it the same
+      // way ensureUserProfile already does. But if the listener's fallback
+      // insert won, the row it created has a generic email-derived name
+      // (see ensureUserProfile above), not what was actually typed into
+      // this form -- reconcile it explicitly rather than leaving whichever
+      // insert happened to win as the silent source of truth.
+      try {
+        await createUser(profile);
+      } catch (err) {
+        const code = (err as { code?: string })?.code;
+        if (code !== '23505') throw err;
+        await updateUser(profile.id, { name: data.name, college: data.college, yearOfStudy: data.yearOfStudy }).catch(() => {});
+      }
       notifyEvent('account_created', profile.id, {
         name: data.name,
       }).catch(() => {});
@@ -175,8 +192,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(updated);
   }, [user]);
 
+  // Re-fetches the current user from the DB and replaces the context copy.
+  // Needed for the profile page (github/linkedin/portfolio/phone/major) --
+  // without this, a save would only be visible after a full reload, and
+  // the Apply flow (which reads profile fields off this same `user` object
+  // to skip re-asking for them) would keep working from stale data.
+  const refreshUser = useCallback(async () => {
+    if (!user) return;
+    const fresh = await getUser(user.id);
+    if (fresh) setUser(fresh);
+  }, [user]);
+
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, completeOnboarding }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, completeOnboarding, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

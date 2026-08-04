@@ -10,7 +10,7 @@ import type { DbApplication, DbResumeAnalysis, DbAnalysisVersion, DbResumeFile }
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   pending: { label: 'Pending', color: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' },
-  reviewed: { label: 'Reviewed', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' },
+  reviewed: { label: 'Reviewed', color: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-900/30 dark:text-neutral-300' },
   shortlisted: { label: 'Shortlisted', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' },
   rejected: { label: 'Rejected', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' },
   accepted: { label: 'Accepted', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' },
@@ -18,7 +18,7 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
 
 const SCREENING_LABELS: Record<string, { label: string; color: string }> = {
   pending: { label: 'Not screened', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' },
-  processing: { label: 'Screening...', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' },
+  processing: { label: 'Screening...', color: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-900/30 dark:text-neutral-300' },
   failed: { label: 'Screening failed', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' },
 };
 
@@ -117,8 +117,8 @@ export default function AdminApplications() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Application Management</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Review, shortlist, and manage applications.</p>
+        <h1 className="text-2xl font-bold text-primary">Application Management</h1>
+        <p className="text-sm text-secondary mt-1">Review, shortlist, and manage applications.</p>
       </div>
 
       {/* Status filter tabs */}
@@ -129,8 +129,8 @@ export default function AdminApplications() {
             onClick={() => setFilter(s.key)}
             className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${
               filter === s.key
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                ? 'bg-accent text-white'
+                : 'bg-gray-100 dark:bg-gray-800 text-secondary hover:bg-gray-200 dark:hover:bg-gray-700'
             }`}
           >
             {s.label} ({countByStatus(s.key)})
@@ -140,10 +140,10 @@ export default function AdminApplications() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* List */}
-        <div className="lg:col-span-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+        <div className="lg:col-span-1 bg-surface border border-line rounded-xl overflow-hidden">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-12 text-sm text-gray-400 dark:text-gray-500">No applications found.</div>
@@ -159,11 +159,11 @@ export default function AdminApplications() {
                     key={app.id}
                     onClick={() => openDetail(app.id)}
                     className={`w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${
-                      selectedId === app.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                      selectedId === app.id ? 'bg-neutral-50 dark:bg-neutral-900/20' : ''
                     }`}
                   >
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{app.name}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{app.email}</p>
+                    <p className="text-sm font-medium text-primary truncate">{app.name}</p>
+                    <p className="text-xs text-secondary truncate">{app.email}</p>
                     <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
                       <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${si.color}`}>{si.label}</span>
                       {sc && <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${sc.color}`}>{sc.label}</span>}
@@ -179,18 +179,18 @@ export default function AdminApplications() {
         {/* Detail */}
         <div className="lg:col-span-2">
           {!detail ? (
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-8 text-center">
+            <div className="bg-surface border border-line rounded-xl p-8 text-center">
               <p className="text-sm text-gray-400 dark:text-gray-500">Select an application to review.</p>
             </div>
           ) : (
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-6">
+            <div className="bg-surface border border-line rounded-xl p-6 space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{detail.name}</h2>
+                <h2 className="text-lg font-semibold text-primary">{detail.name}</h2>
                 <div className="flex items-center gap-2">
                   <select
                     value={detail.status}
                     onChange={e => handleStatusChange(detail.id, e.target.value as DbApplication['status'])}
-                    className="text-xs px-2.5 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="text-xs px-2.5 py-1.5 rounded-lg border border-line bg-surface text-primary"
                   >
                     <option value="pending">Pending</option>
                     <option value="reviewed">Mark Reviewed</option>
@@ -203,50 +203,50 @@ export default function AdminApplications() {
 
               <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
                 <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Email</p>
-                  <p className="font-medium text-gray-900 dark:text-white">{detail.email}</p>
+                  <p className="text-xs text-secondary">Email</p>
+                  <p className="font-medium text-primary">{detail.email}</p>
                 </div>
                 {detail.phone && <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Phone</p>
-                  <p className="font-medium text-gray-900 dark:text-white">{detail.phone}</p>
+                  <p className="text-xs text-secondary">Phone</p>
+                  <p className="font-medium text-primary">{detail.phone}</p>
                 </div>}
                 {detail.college && <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">College</p>
-                  <p className="font-medium text-gray-900 dark:text-white">{detail.college}</p>
+                  <p className="text-xs text-secondary">College</p>
+                  <p className="font-medium text-primary">{detail.college}</p>
                 </div>}
                 {detail.major && <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Major</p>
-                  <p className="font-medium text-gray-900 dark:text-white">{detail.major}</p>
+                  <p className="text-xs text-secondary">Major</p>
+                  <p className="font-medium text-primary">{detail.major}</p>
                 </div>}
                 {detail.yearOfStudy && <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Year of Study</p>
-                  <p className="font-medium text-gray-900 dark:text-white">{detail.yearOfStudy}</p>
+                  <p className="text-xs text-secondary">Year of Study</p>
+                  <p className="font-medium text-primary">{detail.yearOfStudy}</p>
                 </div>}
                 <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Submitted</p>
-                  <p className="font-medium text-gray-900 dark:text-white">{new Date(detail.appliedAt).toLocaleDateString()}</p>
+                  <p className="text-xs text-secondary">Submitted</p>
+                  <p className="font-medium text-primary">{new Date(detail.appliedAt).toLocaleDateString()}</p>
                 </div>
                 {detail.heardFrom && <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Heard From</p>
-                  <p className="font-medium text-gray-900 dark:text-white">{detail.heardFrom}</p>
+                  <p className="text-xs text-secondary">Heard From</p>
+                  <p className="font-medium text-primary">{detail.heardFrom}</p>
                 </div>}
               </div>
 
               {detail.whyJoin && (
                 <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Why they want to join</p>
-                  <p className="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900/30 rounded-lg p-3">{detail.whyJoin}</p>
+                  <p className="text-xs text-secondary mb-1">Why they want to join</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 bg-surface-alt rounded-lg p-3">{detail.whyJoin}</p>
                 </div>
               )}
 
               {/* Resume + AI Analysis */}
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
+              <div className="border-t border-line pt-4 space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Resume & AI Screening</h3>
+                  <h3 className="text-sm font-semibold text-primary">Resume & AI Screening</h3>
                   <button
                     onClick={handleTriggerAnalysis}
                     disabled={analyzing}
-                    className="text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                    className="text-xs px-3 py-1.5 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover disabled:opacity-50 transition-colors"
                   >
                     {analyzing ? 'Analyzing...' : (analysis ? 'Re-analyze' : 'Analyze')}
                   </button>
@@ -254,7 +254,7 @@ export default function AdminApplications() {
 
                 {resumeFiles.length > 0 && (
                   <div className="text-sm">
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Resume</p>
+                    <p className="text-xs text-secondary mb-1">Resume</p>
                     {resumeFiles.map(rf => (
                       <button
                         key={rf.id}
@@ -270,7 +270,7 @@ export default function AdminApplications() {
                             win?.close();
                           }
                         }}
-                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-900/30 text-blue-600 dark:text-blue-400 hover:underline text-sm"
+                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-alt text-accent hover:underline text-sm"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                         {rf.fileName} ({(rf.fileSize / 1024).toFixed(0)} KB)
@@ -296,7 +296,7 @@ export default function AdminApplications() {
                     {/* Score bar */}
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Overall Score</span>
+                        <span className="text-xs font-medium text-secondary">Overall Score</span>
                         <span className={`text-sm font-bold ${(analysis.overallScore || 0) >= 70 ? 'text-green-600 dark:text-green-400' : (analysis.overallScore || 0) >= 50 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'}`}>
                           {analysis.overallScore}/100
                         </span>
@@ -312,20 +312,20 @@ export default function AdminApplications() {
                     <div className="flex items-center gap-3 flex-wrap">
                       <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                         analysis.recommendation === 'strongly_recommend' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                        analysis.recommendation === 'recommend' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' :
+                        analysis.recommendation === 'recommend' ? 'bg-neutral-100 text-neutral-700 dark:bg-neutral-900/30 dark:text-neutral-300' :
                         analysis.recommendation === 'neutral' ? 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' :
                         'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
                       }`}>
                         {analysis.recommendation?.replace('_', ' ')}
                       </span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">Confidence: {analysis.confidenceScore}%</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">v{analysis.analysisVersion}</span>
+                      <span className="text-xs text-secondary">Confidence: {analysis.confidenceScore}%</span>
+                      <span className="text-xs text-secondary">v{analysis.analysisVersion}</span>
                     </div>
 
                     {/* Top Reasons */}
                     {analysis.topReasons && analysis.topReasons.length > 0 && (
                       <div>
-                        <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5">Top Reasons</p>
+                        <p className="text-xs font-medium text-secondary mb-1.5">Top Reasons</p>
                         <ol className="list-decimal list-inside text-sm text-gray-700 dark:text-gray-300 space-y-0.5">
                           {analysis.topReasons.map((r, i) => <li key={i}>{r}</li>)}
                         </ol>
@@ -334,7 +334,7 @@ export default function AdminApplications() {
 
                     {/* Detailed Scores */}
                     <details className="text-sm">
-                      <summary className="cursor-pointer text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">Detailed Scores</summary>
+                      <summary className="cursor-pointer text-xs font-medium text-secondary hover:text-gray-700 dark:hover:text-gray-200">Detailed Scores</summary>
                       <div className="mt-2 grid grid-cols-2 gap-2">
                         {[
                           { label: 'Technical', value: analysis.technicalScore },
@@ -348,8 +348,8 @@ export default function AdminApplications() {
                           { label: 'Motivation', value: analysis.motivationScore },
                           { label: 'Resume Quality', value: analysis.resumeQualityScore },
                         ].map(s => (
-                          <div key={s.label} className="flex items-center justify-between px-3 py-1.5 bg-gray-50 dark:bg-gray-900/30 rounded-lg">
-                            <span className="text-xs text-gray-500 dark:text-gray-400">{s.label}</span>
+                          <div key={s.label} className="flex items-center justify-between px-3 py-1.5 bg-surface-alt rounded-lg">
+                            <span className="text-xs text-secondary">{s.label}</span>
                             <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{s.value ?? '-'}</span>
                           </div>
                         ))}
@@ -361,7 +361,7 @@ export default function AdminApplications() {
                       {analysis.strengths && analysis.strengths.length > 0 && (
                         <div>
                           <p className="text-xs font-medium text-green-600 dark:text-green-400 mb-1">Strengths</p>
-                          <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-0.5 list-disc list-inside">
+                          <ul className="text-xs text-secondary space-y-0.5 list-disc list-inside">
                             {analysis.strengths.map((s, i) => <li key={i}>{s}</li>)}
                           </ul>
                         </div>
@@ -369,7 +369,7 @@ export default function AdminApplications() {
                       {analysis.weaknesses && analysis.weaknesses.length > 0 && (
                         <div>
                           <p className="text-xs font-medium text-red-600 dark:text-red-400 mb-1">Weaknesses</p>
-                          <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-0.5 list-disc list-inside">
+                          <ul className="text-xs text-secondary space-y-0.5 list-disc list-inside">
                             {analysis.weaknesses.map((w, i) => <li key={i}>{w}</li>)}
                           </ul>
                         </div>
@@ -391,10 +391,10 @@ export default function AdminApplications() {
                     {/* Version History */}
                     {versions.length > 1 && (
                       <details className="text-sm">
-                        <summary className="cursor-pointer text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">Analysis History ({versions.length} versions)</summary>
+                        <summary className="cursor-pointer text-xs font-medium text-secondary hover:text-gray-700 dark:hover:text-gray-200">Analysis History ({versions.length} versions)</summary>
                         <div className="mt-2 space-y-2">
                           {versions.map(v => (
-                            <div key={v.id} className="px-3 py-2 bg-gray-50 dark:bg-gray-900/30 rounded-lg text-xs text-gray-600 dark:text-gray-400">
+                            <div key={v.id} className="px-3 py-2 bg-surface-alt rounded-lg text-xs text-secondary">
                               <span className="font-medium text-gray-700 dark:text-gray-300">v{v.versionNumber}</span>
                               {' '}— {v.triggerReason} — {new Date(v.createdAt).toLocaleDateString()}
                               {v.scores && ` — Score: ${v.scores.overall || '-'}`}
@@ -408,7 +408,7 @@ export default function AdminApplications() {
               </div>
 
               <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Reviewer Notes</p>
+                <p className="text-xs text-secondary mb-1">Reviewer Notes</p>
                 <textarea
                   value={detail.reviewerNotes || ''}
                   onChange={async e => {
@@ -421,7 +421,7 @@ export default function AdminApplications() {
                     }
                   }}
                   rows={3}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 rounded-lg border border-line bg-surface text-sm text-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent"
                   placeholder="Add reviewer notes..."
                 />
               </div>

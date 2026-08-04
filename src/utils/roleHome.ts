@@ -5,7 +5,7 @@ import type { UserRole } from '../types';
 export function roleHomePath(role: UserRole | undefined): string {
   switch (role) {
     case 'applicant':
-      return '/applicant/dashboard';
+      return '/applicant';
     case 'mentor':
       return '/mentor';
     case 'admin':

@@ -98,8 +98,8 @@ export default function ModulePage() {
   if (!module) {
     return (
       <div className="py-20 text-center">
-        <h2 className="text-lg font-bold text-gray-800 dark:text-white">Module not found</h2>
-          <Link to="/" className="mt-3 inline-block text-sm text-blue-500 hover:underline">Back to Dashboard</Link>
+        <h2 className="text-lg font-bold text-primary">Module not found</h2>
+          <Link to="/" className="mt-3 inline-block text-sm text-neutral-500 hover:underline">Back to Dashboard</Link>
       </div>
     );
   }
@@ -193,7 +193,7 @@ export default function ModulePage() {
   return (
     <div className="-m-4 md:-m-6 lg:-m-8 max-w-none">
       {/* Module header bar */}
-      <div className="px-4 md:px-6 lg:px-8 h-14 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 flex items-center justify-between">
+      <div className="px-4 md:px-6 lg:px-8 h-14 border-b border-line bg-surface flex items-center justify-between">
         <div className="flex items-center gap-2 min-w-0">
           <button
             onClick={() => setSidebarOpen(p => !p)}
@@ -212,10 +212,10 @@ export default function ModulePage() {
           <span className="text-xs text-gray-300 dark:text-gray-600">/</span>
           <span className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate">{module.title}</span>
         </div>
-        <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 shrink-0">
+        <div className="flex items-center gap-3 text-xs text-secondary shrink-0">
           <span className="hidden sm:inline font-medium text-gray-700 dark:text-gray-300">{progressPercent}%</span>
           <div className="w-20 sm:w-28 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div className="h-full bg-blue-500 rounded-full transition-all duration-500" style={{ width: `${progressPercent}%` }} />
+            <div className="h-full bg-neutral-500 rounded-full transition-all duration-500" style={{ width: `${progressPercent}%` }} />
           </div>
           <span className="hidden md:inline text-gray-400">{module.lessons.length} lessons</span>
           <span className="hidden lg:inline text-gray-400">{module.challenges.length} challenge{module.challenges.length !== 1 ? 's' : ''}</span>
@@ -226,7 +226,7 @@ export default function ModulePage() {
       {/* Two-panel body */}
       <div className="flex" style={{ height: 'calc(100vh - 56px - 56px)' }}>
         {/* Lesson navigation sidebar */}
-        <aside className={`${sidebarOpen ? 'w-52' : 'w-0'} shrink-0 border-r border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 transition-all duration-200 ease-in-out overflow-hidden`}>
+        <aside className={`${sidebarOpen ? 'w-52' : 'w-0'} shrink-0 border-r border-line bg-surface-alt transition-all duration-200 ease-in-out overflow-hidden`}>
           <nav className="p-2 space-y-0.5 w-52">
             {flow.map((item, index) => {
               const status = getItemStatus(index);
@@ -236,12 +236,12 @@ export default function ModulePage() {
               const isSelected = index === selectedIndex && !locked;
 
               let leftIcon;
-              if (item.type === 'module-overview') leftIcon = <span className="w-6 text-center text-xs text-blue-400 dark:text-blue-500 font-bold">i</span>;
+              if (item.type === 'module-overview') leftIcon = <span className="w-6 text-center text-xs text-neutral-400 dark:text-neutral-500 font-bold">i</span>;
               else if (status === 'completed') leftIcon = <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />;
               else if (locked) leftIcon = <Lock className="w-4 h-4 text-gray-300 dark:text-gray-600 shrink-0" />;
               else if (item.type === 'lesson') leftIcon = <span className="w-6 text-center text-xs font-mono font-medium text-gray-400 dark:text-gray-500">{String(num).padStart(2, '0')}</span>;
               else if (item.type === 'practice') leftIcon = <span className="w-5 text-center text-xs text-gray-300 dark:text-gray-500">○</span>;
-              else if (item.type === 'checkpoint') leftIcon = <span className="w-5 text-center text-xs text-blue-400 dark:text-blue-500">?</span>;
+              else if (item.type === 'checkpoint') leftIcon = <span className="w-5 text-center text-xs text-neutral-400 dark:text-neutral-500">?</span>;
               else if (item.type === 'challenge') leftIcon = <span className="w-5 text-center text-xs text-gray-300 dark:text-gray-500">◆</span>;
               else leftIcon = <span className="w-5 text-center text-xs text-gray-300 dark:text-gray-500">■</span>;
 
@@ -252,12 +252,12 @@ export default function ModulePage() {
                   disabled={locked}
                   className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-left text-sm transition-all duration-150 ${
                     isSelected
-                      ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 font-medium'
+                      ? 'bg-neutral-50 dark:bg-neutral-900/20 text-neutral-600 dark:text-neutral-300 font-medium'
                       : status === 'completed'
                       ? 'text-green-600 dark:text-green-400/80 hover:bg-green-50/50 dark:hover:bg-green-900/10'
                       : locked
                       ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800/50'
+                      : 'text-secondary hover:bg-gray-100 dark:hover:bg-gray-800/50'
                   }`}
                 >
                   {leftIcon}
@@ -269,7 +269,7 @@ export default function ModulePage() {
         </aside>
 
         {/* Content area */}
-        <main className="flex-1 overflow-y-auto bg-white dark:bg-gray-950">
+        <main className="flex-1 overflow-y-auto bg-surface">
           {selectedItem && (
             <div className="p-4 md:p-5 lg:p-6 xl:p-8">
               {/* Section label */}
@@ -286,8 +286,8 @@ export default function ModulePage() {
               {selectedItem.type === 'module-overview' && (
                 <div className="max-w-none space-y-8">
                   <div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{module.title}</h1>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1.5">{module.description}</p>
+                    <h1 className="text-2xl font-bold text-primary">{module.title}</h1>
+                    <p className="text-sm text-secondary mt-1.5">{module.description}</p>
                   </div>
 
                   <section>
@@ -300,7 +300,7 @@ export default function ModulePage() {
                     <ul className="space-y-2">
                       {module.learningObjectives.map((obj, i) => (
                         <li key={i} className="flex items-start gap-2.5 text-sm text-gray-700 dark:text-gray-300">
-                          <span className="text-blue-500 mt-1 shrink-0">•</span>
+                          <span className="text-neutral-500 mt-1 shrink-0">•</span>
                           <span>{obj}</span>
                         </li>
                       ))}
@@ -327,9 +327,9 @@ export default function ModulePage() {
                       { label: 'Final Assessment', value: 1 },
                       { label: 'Est. Time', value: `${module.estimatedMinutes} min` },
                     ].map(stat => (
-                      <div key={stat.label} className="bg-gray-50 dark:bg-gray-900/30 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-center">
-                        <p className="text-lg font-semibold text-gray-900 dark:text-white">{stat.value}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{stat.label}</p>
+                      <div key={stat.label} className="bg-surface-alt border border-line rounded-xl px-4 py-3 text-center">
+                        <p className="text-lg font-semibold text-primary">{stat.value}</p>
+                        <p className="text-xs text-secondary mt-0.5">{stat.label}</p>
                       </div>
                     ))}
                   </section>
@@ -337,7 +337,7 @@ export default function ModulePage() {
                   <div className="pt-4">
                     <button
                       onClick={() => setSelectedIndex(1)}
-                      className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-xl bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+                      className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-xl bg-neutral-500 text-white hover:bg-accent transition-colors"
                     >
                       Start Module →
                     </button>
@@ -356,7 +356,7 @@ export default function ModulePage() {
                 return (
                   <div className="max-w-none space-y-8">
                     <div>
-                      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{lesson.title}</h1>
+                      <h1 className="text-2xl font-bold text-primary">{lesson.title}</h1>
                       {completed && (
                         <span className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-green-600 dark:text-green-400">
                           <CheckCircle className="w-3.5 h-3.5" /> Completed
@@ -377,7 +377,7 @@ export default function ModulePage() {
                         <ul className="space-y-2">
                           {lesson.keyConcepts.map((c, i) => (
                             <li key={i} className="flex items-start gap-2.5 text-sm text-gray-700 dark:text-gray-300">
-                              <span className="text-blue-500 mt-1 shrink-0">•</span>
+                              <span className="text-neutral-500 mt-1 shrink-0">•</span>
                               <span>{c}</span>
                             </li>
                           ))}
@@ -390,22 +390,22 @@ export default function ModulePage() {
                         <h2 className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Command Spotlight</h2>
                         <div className="space-y-4">
                           {lesson.commandSpotlight.map((cs, i) => (
-                            <div key={i} className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
-                              <div className="bg-gray-50 dark:bg-gray-900/30 px-5 py-3 border-b border-gray-200 dark:border-gray-700">
-                                <code className="text-sm font-mono font-semibold text-blue-600 dark:text-blue-400">{cs.command}</code>
+                            <div key={i} className="border border-line rounded-xl overflow-hidden">
+                              <div className="bg-surface-alt px-5 py-3 border-b border-line">
+                                <code className="text-sm font-mono font-semibold text-accent">{cs.command}</code>
                               </div>
                               <div className="px-5 py-3 space-y-3 text-sm">
                                 <div>
-                                  <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Purpose</span>
+                                  <span className="text-xs font-semibold text-secondary uppercase tracking-wider">Purpose</span>
                                   <p className="text-gray-700 dark:text-gray-300 mt-0.5">{cs.purpose}</p>
                                 </div>
                                 <div>
-                                  <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Syntax</span>
-                                  <code className="block text-sm font-mono text-gray-800 dark:text-gray-200 mt-0.5 bg-gray-50 dark:bg-gray-900/30 px-3 py-1.5 rounded-lg">{cs.syntax}</code>
+                                  <span className="text-xs font-semibold text-secondary uppercase tracking-wider">Syntax</span>
+                                  <code className="block text-sm font-mono text-primary mt-0.5 bg-surface-alt px-3 py-1.5 rounded-lg">{cs.syntax}</code>
                                 </div>
                                 <div>
-                                  <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Example</span>
-                                  <code className="block text-sm font-mono text-gray-800 dark:text-gray-200 mt-0.5 bg-gray-50 dark:bg-gray-900/30 px-3 py-1.5 rounded-lg">{cs.example}</code>
+                                  <span className="text-xs font-semibold text-secondary uppercase tracking-wider">Example</span>
+                                  <code className="block text-sm font-mono text-primary mt-0.5 bg-surface-alt px-3 py-1.5 rounded-lg">{cs.example}</code>
                                 </div>
                               </div>
                             </div>
@@ -417,7 +417,7 @@ export default function ModulePage() {
                     {lesson.tryItYourself && (
                       <section>
                         <h2 className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Try It Yourself</h2>
-                        <div className="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+                        <div className="bg-surface-alt border border-line rounded-xl p-5">
                           <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">{lesson.tryItYourself}</p>
                         </div>
                       </section>
@@ -426,7 +426,7 @@ export default function ModulePage() {
                     {lesson.scenario && (
                       <section>
                         <h2 className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Real Project Scenario</h2>
-                        <div className="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+                        <div className="bg-surface-alt border border-line rounded-xl p-5">
                           <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{lesson.scenario}</p>
                         </div>
                       </section>
@@ -437,9 +437,9 @@ export default function ModulePage() {
                         <h2 className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Commands You Need To Know</h2>
                         <div className="space-y-2">
                           {lesson.commands.map((cmd, i) => (
-                            <div key={i} className="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/30 rounded-lg px-4 py-2.5">
-                              <code className="text-sm font-mono font-semibold text-blue-600 dark:text-blue-400 shrink-0">{cmd.cmd}</code>
-                              <span className="text-xs text-gray-500 dark:text-gray-400">{cmd.desc}</span>
+                            <div key={i} className="flex items-center gap-3 bg-surface-alt rounded-lg px-4 py-2.5">
+                              <code className="text-sm font-mono font-semibold text-accent shrink-0">{cmd.cmd}</code>
+                              <span className="text-xs text-secondary">{cmd.desc}</span>
                             </div>
                           ))}
                         </div>
@@ -447,21 +447,21 @@ export default function ModulePage() {
                     )}
 
                     {practice && (
-                      <section className="border-t border-gray-200 dark:border-gray-800 pt-8">
+                      <section className="border-t border-line pt-8">
                         <h2 className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Hands-On Task</h2>
                         <div className="space-y-4">
-                          <p className="text-sm text-gray-600 dark:text-gray-400">{practice.description}</p>
-                          <div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-5">
+                          <p className="text-sm text-secondary">{practice.description}</p>
+                          <div className="bg-surface-alt rounded-xl p-5">
                             <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{practice.task}</p>
                           </div>
                           {practice.hints && practice.hints.length > 0 && (
                             <details className="group">
-                              <summary className="text-xs text-gray-500 dark:text-gray-400 cursor-pointer hover:text-gray-700 dark:hover:text-gray-300 transition-colors select-none">
+                              <summary className="text-xs text-secondary cursor-pointer hover:text-gray-700 dark:hover:text-gray-300 transition-colors select-none">
                                 Need a hint? ({practice.hints.length} available)
                               </summary>
                               <div className="mt-2 space-y-1.5">
                                 {practice.hints.map((h, i) => (
-                                  <p key={i} className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/30 px-3 py-2 rounded-lg">Hint {i + 1}: {h}</p>
+                                  <p key={i} className="text-xs text-secondary bg-surface-alt px-3 py-2 rounded-lg">Hint {i + 1}: {h}</p>
                                 ))}
                               </div>
                             </details>
@@ -480,25 +480,25 @@ export default function ModulePage() {
                       <div className="flex items-center justify-between pt-4">
                         <button
                           onClick={() => handleLessonComplete(lesson.id)}
-                          className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+                          className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl bg-neutral-500 text-white hover:bg-accent transition-colors"
                         >
                           <CheckCircle className="w-4 h-4" /> Mark Lesson Complete
                         </button>
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-800">
+                    <div className="flex items-center justify-between pt-6 border-t border-line">
                       <button
                         onClick={() => setSelectedIndex(Math.max(0, selectedIndex - 1))}
                         disabled={selectedIndex === 0}
-                        className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        className="text-sm text-secondary hover:text-gray-700 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                       >
                         ← Previous
                       </button>
                       <button
                         onClick={() => setSelectedIndex(Math.min(flow.length - 1, selectedIndex + 1))}
                         disabled={selectedIndex >= flow.length - 1 || isItemLocked(selectedIndex + 1)}
-                        className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                       >
                         Next {navLabels[flow[selectedIndex + 1]?.type] || ''} →
                       </button>
@@ -517,13 +517,13 @@ export default function ModulePage() {
                 return (
                   <div className="max-w-none space-y-6">
                     <div>
-                      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{practice.title}</h1>
+                      <h1 className="text-2xl font-bold text-primary">{practice.title}</h1>
                       {completed && <span className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-green-600 dark:text-green-400"><CheckCircle className="w-3.5 h-3.5" /> Completed</span>}
                     </div>
                     <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">{practice.description}</p>
-                    <div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-5">
+                    <div className="bg-surface-alt rounded-xl p-5">
                       <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Task</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{practice.task}</p>
+                      <p className="text-sm text-secondary">{practice.task}</p>
                     </div>
                     <PracticeCard
                       practice={practice}
@@ -531,9 +531,9 @@ export default function ModulePage() {
                       existingSubmission={submission}
                       onSaveSubmission={(text) => savePracticeSubmission(module.id, practice.id, text)}
                     />
-                    <div className="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-800">
-                      <button onClick={() => setSelectedIndex(Math.max(0, selectedIndex - 1))} disabled={selectedIndex === 0} className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">← Previous</button>
-                      <button onClick={() => setSelectedIndex(Math.min(flow.length - 1, selectedIndex + 1))} disabled={selectedIndex >= flow.length - 1 || isItemLocked(selectedIndex + 1)} className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Next {navLabels[flow[selectedIndex + 1]?.type] || ''} →</button>
+                    <div className="flex items-center justify-between pt-6 border-t border-line">
+                      <button onClick={() => setSelectedIndex(Math.max(0, selectedIndex - 1))} disabled={selectedIndex === 0} className="text-sm text-secondary hover:text-gray-700 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">← Previous</button>
+                      <button onClick={() => setSelectedIndex(Math.min(flow.length - 1, selectedIndex + 1))} disabled={selectedIndex >= flow.length - 1 || isItemLocked(selectedIndex + 1)} className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Next {navLabels[flow[selectedIndex + 1]?.type] || ''} →</button>
                     </div>
                   </div>
                 );
@@ -548,7 +548,7 @@ export default function ModulePage() {
                 return (
                   <div className="max-w-none space-y-6">
                     <div>
-                      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{cp.title}</h1>
+                      <h1 className="text-2xl font-bold text-primary">{cp.title}</h1>
                       {existingResult?.passed && (
                         <span className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-green-600 dark:text-green-400">
                           <CheckCircle className="w-3.5 h-3.5" /> Passed
@@ -575,23 +575,23 @@ export default function ModulePage() {
                 return (
                   <div className="max-w-none space-y-6">
                     <div>
-                      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Challenge</h1>
+                      <h1 className="text-2xl font-bold text-primary">Challenge</h1>
                       {allChallengesDone && <span className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-green-600 dark:text-green-400"><CheckCircle className="w-3.5 h-3.5" /> Completed all challenges</span>}
                     </div>
 
                     {!allReqMet && (
-                      <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-6 bg-gray-50 dark:bg-gray-900/30">
-                        <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Challenge Requirements</h3>
+                      <div className="border border-line rounded-xl p-6 bg-surface-alt">
+                        <h3 className="text-xs font-semibold text-secondary uppercase tracking-wider mb-3">Challenge Requirements</h3>
                         <div className="space-y-2">
-                          <div className={`flex items-center gap-2 text-sm ${lessonsReq ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                          <div className={`flex items-center gap-2 text-sm ${lessonsReq ? 'text-green-600 dark:text-green-400' : 'text-secondary'}`}>
                             <span>{lessonsReq ? '✓' : '✗'}</span>
                             <span>Complete {module.lessons.length} Lessons</span>
                           </div>
-                          <div className={`flex items-center gap-2 text-sm ${practicesReq ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                          <div className={`flex items-center gap-2 text-sm ${practicesReq ? 'text-green-600 dark:text-green-400' : 'text-secondary'}`}>
                             <span>{practicesReq ? '✓' : '✗'}</span>
                             <span>Complete {module.practices.length} Hands-On Task{module.practices.length !== 1 ? 's' : ''}</span>
                           </div>
-                          <div className={`flex items-center gap-2 text-sm ${checkpointsReq ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                          <div className={`flex items-center gap-2 text-sm ${checkpointsReq ? 'text-green-600 dark:text-green-400' : 'text-secondary'}`}>
                             <span>{checkpointsReq ? '✓' : '✗'}</span>
                             <span>Complete {module.checkpointQuizzes.length} Checkpoint{module.checkpointQuizzes.length !== 1 ? 's' : ''}</span>
                           </div>
@@ -611,26 +611,26 @@ export default function ModulePage() {
                     {allReqMet && (
                       <div className="space-y-6">
                         {ticket && (
-                          <div className="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+                          <div className="bg-surface-alt border border-line rounded-xl p-5">
                             <div className="flex items-center gap-2 mb-2">
                               <span className="text-xs font-mono font-semibold text-gray-500 bg-gray-200 dark:bg-gray-700 dark:text-gray-300 px-1.5 py-0.5 rounded">{ticket.id}</span>
                               <span className="text-xs text-gray-400 dark:text-gray-500">Company Task</span>
                             </div>
-                            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">{ticket.title}</h3>
+                            <h3 className="text-sm font-semibold text-primary mb-3">{ticket.title}</h3>
                             <div className="grid sm:grid-cols-2 gap-4">
                               <div>
-                                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Requirements</p>
+                                <p className="text-xs font-semibold text-secondary uppercase tracking-wide mb-1.5">Requirements</p>
                                 <ul className="space-y-1">
                                   {ticket.requirements.map((r, i) => (
-                                    <li key={i} className="text-xs text-gray-600 dark:text-gray-400 flex items-start gap-1.5"><span className="text-gray-400 mt-0.5">•</span>{r}</li>
+                                    <li key={i} className="text-xs text-secondary flex items-start gap-1.5"><span className="text-gray-400 mt-0.5">•</span>{r}</li>
                                   ))}
                                 </ul>
                               </div>
                               <div>
-                                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Acceptance Criteria</p>
+                                <p className="text-xs font-semibold text-secondary uppercase tracking-wide mb-1.5">Acceptance Criteria</p>
                                 <ul className="space-y-1">
                                   {ticket.acceptance.map((a, i) => (
-                                    <li key={i} className="text-xs text-gray-600 dark:text-gray-400 flex items-start gap-1.5"><span className="text-green-500 mt-0.5">✓</span>{a}</li>
+                                    <li key={i} className="text-xs text-secondary flex items-start gap-1.5"><span className="text-green-500 mt-0.5">✓</span>{a}</li>
                                   ))}
                                 </ul>
                               </div>
@@ -650,9 +650,9 @@ export default function ModulePage() {
                             />
                           );
                         })}
-                        <div className="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-800">
-                          <button onClick={() => setSelectedIndex(Math.max(0, selectedIndex - 1))} disabled={selectedIndex === 0} className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">← Previous</button>
-                          <button onClick={() => setSelectedIndex(Math.min(flow.length - 1, selectedIndex + 1))} disabled={selectedIndex >= flow.length - 1 || isItemLocked(selectedIndex + 1)} className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Next {navLabels[flow[selectedIndex + 1]?.type] || ''} →</button>
+                        <div className="flex items-center justify-between pt-6 border-t border-line">
+                          <button onClick={() => setSelectedIndex(Math.max(0, selectedIndex - 1))} disabled={selectedIndex === 0} className="text-sm text-secondary hover:text-gray-700 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">← Previous</button>
+                          <button onClick={() => setSelectedIndex(Math.min(flow.length - 1, selectedIndex + 1))} disabled={selectedIndex >= flow.length - 1 || isItemLocked(selectedIndex + 1)} className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">Next {navLabels[flow[selectedIndex + 1]?.type] || ''} →</button>
                         </div>
                       </div>
                     )}
@@ -666,15 +666,15 @@ export default function ModulePage() {
                 return (
                   <div className="max-w-none space-y-6">
                     <div>
-                      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Module Assessment</h1>
+                      <h1 className="text-2xl font-bold text-primary">Module Assessment</h1>
                       {modProg.quizPassed && <span className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-green-600 dark:text-green-400"><CheckCircle className="w-3.5 h-3.5" /> Passed</span>}
                     </div>
                     {locked && !modProg.quizPassed ? (
-                      <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-6 bg-gray-50 dark:bg-gray-900/30">
+                      <div className="border border-line rounded-xl p-6 bg-surface-alt">
                         <div className="flex items-center gap-3">
                           <Lock className="w-5 h-5 text-gray-300 dark:text-gray-600" />
                           <div>
-                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Assessment locked</p>
+                            <p className="text-sm font-medium text-secondary">Assessment locked</p>
                             <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Complete the challenge first to unlock the assessment.</p>
                           </div>
                         </div>
@@ -692,8 +692,8 @@ export default function ModulePage() {
                     ) : (
                       <QuizEngine questions={module.quizzes} onPass={handleQuizPass} moduleTitle={module.title} lessons={module.lessons} existingResult={modProg.assessmentResult} />
                     )}
-                    <div className="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-800">
-                      <button onClick={() => setSelectedIndex(Math.max(0, selectedIndex - 1))} disabled={selectedIndex === 0} className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">← Previous</button>
+                    <div className="flex items-center justify-between pt-6 border-t border-line">
+                      <button onClick={() => setSelectedIndex(Math.max(0, selectedIndex - 1))} disabled={selectedIndex === 0} className="text-sm text-secondary hover:text-gray-700 dark:hover:text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">← Previous</button>
                     </div>
                   </div>
                 );

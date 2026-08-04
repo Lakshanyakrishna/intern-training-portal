@@ -29,8 +29,8 @@ export default function MentorReview() {
       <div className="flex items-center gap-3">
         <span className="text-4xl"><CheckCircle className="w-8 h-8 inline-block" /></span>
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Mentor Review Checklist</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Submit your work for mentor review before starting client projects.</p>
+          <h1 className="text-2xl font-bold text-primary">Mentor Review Checklist</h1>
+          <p className="text-sm text-secondary">Submit your work for mentor review before starting client projects.</p>
         </div>
       </div>
 
@@ -45,8 +45,8 @@ export default function MentorReview() {
         </div>
       )}
 
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-5">
-        <h2 className="font-semibold text-gray-800 dark:text-white">Your Information</h2>
+      <div className="bg-surface border border-line rounded-xl p-6 space-y-5">
+        <h2 className="font-semibold text-primary">Your Information</h2>
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">GitHub Profile URL</label>
@@ -55,7 +55,7 @@ export default function MentorReview() {
               value={form.githubProfile}
               onChange={e => setForm(p => ({ ...p, githubProfile: e.target.value }))}
               placeholder="https://github.com/your-username"
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2.5 rounded-lg border border-line bg-surface text-primary text-sm focus:ring-2 focus:ring-accent focus:border-transparent outline-none"
             />
           </div>
           <div>
@@ -65,7 +65,7 @@ export default function MentorReview() {
               value={form.deployedProjectLink}
               onChange={e => setForm(p => ({ ...p, deployedProjectLink: e.target.value }))}
               placeholder="https://your-project.vercel.app"
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2.5 rounded-lg border border-line bg-surface text-primary text-sm focus:ring-2 focus:ring-accent focus:border-transparent outline-none"
             />
           </div>
           <div>
@@ -75,21 +75,21 @@ export default function MentorReview() {
               value={form.repositoryLink}
               onChange={e => setForm(p => ({ ...p, repositoryLink: e.target.value }))}
               placeholder="https://github.com/your-username/your-repo"
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2.5 rounded-lg border border-line bg-surface text-primary text-sm focus:ring-2 focus:ring-accent focus:border-transparent outline-none"
             />
           </div>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-4">
-        <h2 className="font-semibold text-gray-800 dark:text-white">Challenge Completion Status</h2>
+      <div className="bg-surface border border-line rounded-xl p-6 space-y-4">
+        <h2 className="font-semibold text-primary">Challenge Completion Status</h2>
         <div className="space-y-2">
           {allChallenges.map(ch => {
             const done = (progress.moduleProgress[ch.moduleId]?.challenges || []).includes(ch.id);
             return (
-              <div key={ch.id} className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-900/50">
+              <div key={ch.id} className="flex items-center gap-3 px-3 py-2 rounded-lg bg-surface-alt">
                 <span className={done ? 'text-green-500' : 'text-gray-300'}>{done ? <CheckCircle className="w-5 h-5 inline-block" /> : <Circle className="w-5 h-5 inline-block" />}</span>
-                <span className={`text-sm flex-1 ${done ? 'text-gray-800 dark:text-white' : 'text-gray-400'}`}>
+                <span className={`text-sm flex-1 ${done ? 'text-primary' : 'text-gray-400'}`}>
                   {ch.title}
                 </span>
                 <span className={`text-xs px-2 py-0.5 rounded ${done ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'}`}>
@@ -101,8 +101,8 @@ export default function MentorReview() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-4">
-        <h2 className="font-semibold text-gray-800 dark:text-white">Progress Summary</h2>
+      <div className="bg-surface border border-line rounded-xl p-6 space-y-4">
+        <h2 className="font-semibold text-primary">Progress Summary</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             { label: 'Lessons Read', value: progress.completedLessons.length, icon: <BookOpen className="w-6 h-6 inline-block" /> },
@@ -110,10 +110,10 @@ export default function MentorReview() {
             { label: 'Challenges Done', value: progress.completedChallenges.length, icon: <Award className="w-6 h-6 inline-block" /> },
             { label: 'Quizzes Passed', value: progress.passedQuizzes.length, icon: <ClipboardCheck className="w-6 h-6 inline-block" /> },
           ].map(s => (
-            <div key={s.label} className="text-center p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
+            <div key={s.label} className="text-center p-3 bg-surface-alt rounded-xl">
               <span className="text-2xl">{s.icon}</span>
-              <p className="text-xl font-bold text-gray-800 dark:text-white mt-1">{s.value}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{s.label}</p>
+              <p className="text-xl font-bold text-primary mt-1">{s.value}</p>
+              <p className="text-xs text-secondary">{s.label}</p>
             </div>
           ))}
         </div>
@@ -122,7 +122,7 @@ export default function MentorReview() {
       <button
         onClick={handleSave}
         disabled={!form.githubProfile || !form.deployedProjectLink || !form.repositoryLink}
-        className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold disabled:opacity-40 hover:from-blue-700 hover:to-indigo-700 transition-all"
+        className="w-full py-3 rounded-xl bg-gradient-to-r from-neutral-600 to-indigo-600 text-white font-semibold disabled:opacity-40 hover:from-neutral-700 hover:to-indigo-700 transition-all"
       >
         {saved ? '✓ Submitted!' : 'Submit for Mentor Review'}
       </button>

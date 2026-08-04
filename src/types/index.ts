@@ -104,14 +104,6 @@ export interface Practice {
   hints: string[];
 }
 
-export interface Badge {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  requirement: { type: string; value: number };
-}
-
 export interface DebugScenario {
   id: string;
   title: string;
@@ -251,6 +243,11 @@ export interface AuthUser {
   role: UserRole;
   college?: string;
   yearOfStudy?: string;
+  phone?: string;
+  major?: string;
+  githubUrl?: string;
+  linkedinUrl?: string;
+  portfolioUrl?: string;
   batch: string;
   joinedDate: string;
   onboardingComplete: boolean;

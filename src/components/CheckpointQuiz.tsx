@@ -23,10 +23,10 @@ function resultStyle(score: number, total: number) {
     message: 'Excellent work.',
   };
   if (score >= total * 0.66) return {
-    border: 'border-blue-200 dark:border-blue-800',
-    bg: 'bg-blue-50 dark:bg-blue-900/20',
-    text: 'text-blue-800 dark:text-blue-200',
-    subtext: 'text-blue-600 dark:text-blue-400',
+    border: 'border-neutral-200 dark:border-neutral-800',
+    bg: 'bg-neutral-50 dark:bg-neutral-900/20',
+    text: 'text-neutral-800 dark:text-neutral-200',
+    subtext: 'text-accent',
     message: 'Good progress. Review the explanations before continuing.',
   };
   return {
@@ -112,7 +112,7 @@ export default function CheckpointQuiz({ quiz, existingResult, onComplete, onCon
         {onContinue && (
           <button
             onClick={onContinue}
-            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl bg-neutral-500 text-white hover:bg-accent transition-colors"
           >
             Continue <ArrowRight />
           </button>
@@ -142,7 +142,7 @@ export default function CheckpointQuiz({ quiz, existingResult, onComplete, onCon
           if (!qq) return null;
           return (
             <div key={i} className={`rounded-xl border p-5 ${a?.correct ? 'border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-900/10' : 'border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-900/10'}`}>
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-3">{i + 1}. {qq.q}</p>
+              <p className="text-sm font-medium text-primary mb-3">{i + 1}. {qq.q}</p>
               <ul className="space-y-1.5 mb-3">
                 {qq.options.map((opt, j) => {
                   const isSelected = a?.selected === j;
@@ -173,7 +173,7 @@ export default function CheckpointQuiz({ quiz, existingResult, onComplete, onCon
           <div className="flex justify-end pt-2">
             <button
               onClick={onContinue}
-              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl bg-neutral-500 text-white hover:bg-accent transition-colors"
             >
               Continue <ArrowRight />
             </button>
@@ -199,15 +199,15 @@ export default function CheckpointQuiz({ quiz, existingResult, onComplete, onCon
                 : answers[i] !== undefined && !answers[i]?.correct
                 ? 'bg-amber-400'
                 : i === current
-                ? 'bg-blue-400'
+                ? 'bg-neutral-400'
                 : 'bg-gray-200 dark:bg-gray-700'
             }`} />
           ))}
         </div>
       </div>
 
-      <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 p-5">
-        <p className="text-sm font-medium text-gray-800 dark:text-gray-200 mb-4">{question.q}</p>
+      <div className="rounded-xl border border-line bg-surface/50 p-5">
+        <p className="text-sm font-medium text-primary mb-4">{question.q}</p>
 
         <ul className="space-y-2">
           {question.options.map((opt, j) => {
@@ -226,15 +226,15 @@ export default function CheckpointQuiz({ quiz, existingResult, onComplete, onCon
                       : showWrong
                       ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border-2 border-amber-400'
                       : isSelected
-                      ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-2 border-blue-400'
-                      : 'bg-gray-50 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300 border-2 border-transparent hover:border-blue-200 dark:hover:border-blue-700'
+                      ? 'bg-neutral-50 dark:bg-neutral-900/30 text-neutral-700 dark:text-neutral-300 border-2 border-neutral-400'
+                      : 'bg-surface-alt text-gray-700 dark:text-gray-300 border-2 border-transparent hover:border-neutral-200 dark:hover:border-neutral-700'
                   }`}
                 >
                   <span className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-medium shrink-0 ${
                     showCorrect ? 'border-green-500 bg-green-500 text-white' :
                     showWrong ? 'border-amber-500 bg-amber-500 text-white' :
-                    isSelected ? 'border-blue-500 bg-blue-500 text-white' :
-                    'border-gray-300 dark:border-gray-600'
+                    isSelected ? 'border-neutral-500 bg-neutral-500 text-white' :
+                    'border-line'
                   }`}>
                     {String.fromCharCode(65 + j)}
                   </span>
@@ -270,14 +270,14 @@ export default function CheckpointQuiz({ quiz, existingResult, onComplete, onCon
           <button
             onClick={handleSubmit}
             disabled={selected < 0}
-            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl bg-blue-500 text-white hover:bg-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl bg-neutral-500 text-white hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             Submit
           </button>
         ) : (
           <button
             onClick={handleNext}
-            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl bg-neutral-500 text-white hover:bg-accent transition-colors"
           >
             {current + 1 < quiz.questions.length ? 'Next →' : 'See Results'}
           </button>

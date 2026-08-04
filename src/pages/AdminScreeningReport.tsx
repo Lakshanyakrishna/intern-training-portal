@@ -64,47 +64,47 @@ export default function AdminScreeningReport() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">AI Screening Report</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Cross-opportunity analysis of AI-screened applications.</p>
+        <h1 className="text-2xl font-bold text-primary">AI Screening Report</h1>
+        <p className="text-sm text-secondary mt-1">Cross-opportunity analysis of AI-screened applications.</p>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-16">
-          <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-5 h-5 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : data.length === 0 ? (
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-8 text-center">
+        <div className="bg-surface border border-line rounded-xl p-8 text-center">
           <p className="text-sm text-gray-400 dark:text-gray-500">No analyzed applications found. Run AI screening on applications first.</p>
         </div>
       ) : (
         <>
           {/* Summary cards */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{total}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Analyzed</p>
+            <div className="bg-surface border border-line rounded-xl p-4">
+              <p className="text-2xl font-bold text-primary">{total}</p>
+              <p className="text-xs text-secondary">Analyzed</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-              <p className="text-2xl font-bold text-blue-600">{avgScore}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Avg Score</p>
+            <div className="bg-surface border border-line rounded-xl p-4">
+              <p className="text-2xl font-bold text-neutral-600">{avgScore}</p>
+              <p className="text-xs text-secondary">Avg Score</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+            <div className="bg-surface border border-line rounded-xl p-4">
               <p className="text-2xl font-bold text-green-600">{recommended}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Recommended</p>
+              <p className="text-xs text-secondary">Recommended</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+            <div className="bg-surface border border-line rounded-xl p-4">
               <p className="text-2xl font-bold text-yellow-600">{neutral}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Neutral</p>
+              <p className="text-xs text-secondary">Neutral</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+            <div className="bg-surface border border-line rounded-xl p-4">
               <p className="text-2xl font-bold text-red-600">{weak}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Weak/Reject</p>
+              <p className="text-xs text-secondary">Weak/Reject</p>
             </div>
           </div>
 
           {/* By recommendation */}
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
-            <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Applications by Recommendation</h2>
+          <div className="bg-surface border border-line rounded-xl p-5">
+            <h2 className="text-sm font-semibold text-primary mb-3">Applications by Recommendation</h2>
             <div className="space-y-2">
               {Object.entries(byRecommendation).map(([rec, items]) => (
                 <div key={rec} className="flex items-center gap-3 text-sm">
@@ -113,9 +113,9 @@ export default function AdminScreeningReport() {
                     rec === 'neutral' ? 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' :
                     'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
                   }`}>{rec.replace('_', ' ')}</span>
-                  <span className="text-gray-500 dark:text-gray-400">{items.length} applications</span>
+                  <span className="text-secondary">{items.length} applications</span>
                   <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div className="h-2 rounded-full bg-blue-500" style={{ width: `${(items.length / data.length) * 100}%` }} />
+                    <div className="h-2 rounded-full bg-neutral-500" style={{ width: `${(items.length / data.length) * 100}%` }} />
                   </div>
                 </div>
               ))}
@@ -125,13 +125,13 @@ export default function AdminScreeningReport() {
           {/* Top Missing Skills */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {topMissingSkills.length > 0 && (
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
-                <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Most Common Missing Skills</h2>
+              <div className="bg-surface border border-line rounded-xl p-5">
+                <h2 className="text-sm font-semibold text-primary mb-3">Most Common Missing Skills</h2>
                 <div className="space-y-2">
                   {topMissingSkills.map(([skill, count]) => (
                     <div key={skill} className="flex items-center gap-3 text-sm">
                       <span className="flex-1 text-gray-700 dark:text-gray-300">{skill}</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">{count}</span>
+                      <span className="text-xs text-secondary">{count}</span>
                       <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                         <div className="h-1.5 rounded-full bg-orange-500" style={{ width: `${(count / data.length) * 100}%` }} />
                       </div>
@@ -141,13 +141,13 @@ export default function AdminScreeningReport() {
               </div>
             )}
             {topWeaknesses.length > 0 && (
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
-                <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Most Common Weaknesses</h2>
+              <div className="bg-surface border border-line rounded-xl p-5">
+                <h2 className="text-sm font-semibold text-primary mb-3">Most Common Weaknesses</h2>
                 <div className="space-y-2">
                   {topWeaknesses.map(([weakness, count]) => (
                     <div key={weakness} className="flex items-center gap-3 text-sm">
                       <span className="flex-1 text-gray-700 dark:text-gray-300">{weakness}</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">{count}</span>
+                      <span className="text-xs text-secondary">{count}</span>
                       <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                         <div className="h-1.5 rounded-full bg-red-500" style={{ width: `${(count / data.length) * 100}%` }} />
                       </div>

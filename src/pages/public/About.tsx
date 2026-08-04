@@ -1,11 +1,9 @@
-// @ts-nocheck
-import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Dither from '../../components/Dither';
 import Radar from '../../components/Radar';
 import Lightfall from '../../components/Lightfall';
 import CountUp from '../../components/CountUp';
-import ElectricBorder from '../../components/react-bits/ElectricBorder/ElectricBorder';
 import Ferrofluid from '../../components/Ferrofluid';
 import Header from '../../components/Header';
 import IntroLogo from '../../components/IntroLogo';
@@ -23,7 +21,7 @@ import FadeContent from '../../components/FadeContent';
 import {
   Code, Laptop, Users, Rocket, Box, Target, Quote,
   Check, X, ArrowRight, ChevronRight,
-  FileCheck, Sparkles, ShieldCheck, PenTool, Mail
+  FileCheck, Sparkles, ShieldCheck, Mail
 } from 'lucide-react';
 
 // TODO: replace with real data before launch
@@ -88,8 +86,6 @@ function ComingSoonLink({ label }: { label: string }) {
 }
 
 export default function About() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [orbitPaused, setOrbitPaused] = useState(false);
   const [supportsOffsetPath, setSupportsOffsetPath] = useState(true);
 
   useEffect(() => {
@@ -136,7 +132,7 @@ export default function About() {
                 delay={100}
                 from={{ opacity: 0, transform: 'translate3d(0,50px,0)' }}
                 to={{ opacity: 1, transform: 'translate3d(0,0,0)' }}
-                easing="easeOutCubic"
+                ease="easeOutCubic"
                 threshold={0.2}
                 rootMargin="-50px"
               />

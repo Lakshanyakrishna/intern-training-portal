@@ -12,12 +12,12 @@ export default function WeeklyGoalCard({ goal }: WeeklyGoalCardProps) {
   const overallPercent = Math.round((labsPercent + assessmentsPercent + xpPercent) / 3);
 
   return (
-    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 space-y-4">
-      <h3 className="text-sm font-semibold text-gray-800 dark:text-white">Weekly Goal</h3>
+    <div className="bg-surface border border-line rounded-xl p-5 space-y-4">
+      <h3 className="text-sm font-semibold text-primary">Weekly Goal</h3>
 
       <div className="space-y-3">
         <div>
-          <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
+          <div className="flex justify-between text-xs text-secondary mb-1">
             <span>Labs</span>
             <span>{goal.labsCompleted}/{goal.labs}</span>
           </div>
@@ -25,7 +25,7 @@ export default function WeeklyGoalCard({ goal }: WeeklyGoalCardProps) {
         </div>
 
         <div>
-          <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
+          <div className="flex justify-between text-xs text-secondary mb-1">
             <span>Assessments</span>
             <span>{goal.assessmentsCompleted}/{goal.assessments}</span>
           </div>
@@ -33,7 +33,7 @@ export default function WeeklyGoalCard({ goal }: WeeklyGoalCardProps) {
         </div>
 
         <div>
-          <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
+          <div className="flex justify-between text-xs text-secondary mb-1">
             <span>XP</span>
             <span>{goal.weeklyXp}/{goal.weeklyXpTarget}</span>
           </div>
@@ -41,14 +41,14 @@ export default function WeeklyGoalCard({ goal }: WeeklyGoalCardProps) {
         </div>
       </div>
 
-      <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+      <div className="pt-2 border-t border-line">
         <div className="flex justify-between items-center">
-          <span className="text-xs text-gray-500 dark:text-gray-400">Overall Progress</span>
+          <span className="text-xs text-secondary">Overall Progress</span>
           <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">{overallPercent}%</span>
         </div>
         <div className="mt-1.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
           <div
-            className="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full h-2 transition-all duration-500"
+            className="bg-gradient-to-r from-neutral-500 to-indigo-500 rounded-full h-2 transition-all duration-500"
             style={{ width: `${Math.min(overallPercent, 100)}%` }}
           />
         </div>
