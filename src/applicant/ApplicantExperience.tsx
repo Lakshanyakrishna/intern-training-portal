@@ -19,7 +19,7 @@ import { MOCK_OPPORTUNITIES } from './mock/opportunities';
 import { applicationForStage } from './mock/application';
 import { MOCK_INTERVIEW_SLOTS, MOCK_SCHEDULED_INTERVIEW } from './mock/interviews';
 import { activityForStage } from './mock/activity';
-import { MOCK_NOTIFICATIONS } from './mock/notifications';
+import { notificationsForStage } from './mock/notifications';
 import { MOCK_QUICK_STATS } from './mock/stats';
 import type { JourneyActions, ScheduledInterview, Stage } from './types';
 
@@ -222,7 +222,7 @@ export default function ApplicantExperience() {
           <img
             src={lumoraLogo}
             alt=""
-            className="absolute -right-10 -top-10 w-64 h-64 opacity-[0.08] pointer-events-none select-none"
+            className="absolute -right-10 -top-10 w-64 h-64 opacity-[0.18] pointer-events-none select-none"
           />
           <div className="relative flex items-center gap-2 mb-5">
             <img src={lumoraLogo} alt="" className="w-5 h-5" />
@@ -271,7 +271,7 @@ export default function ApplicantExperience() {
               </div>
 
               <div className="space-y-6">
-                <NotificationPreview notifications={MOCK_NOTIFICATIONS} />
+                <NotificationPreview notifications={notificationsForStage(stage)} />
                 <ActivityFeed items={activityForStage(stage)} />
                 <QuickStats stats={MOCK_QUICK_STATS} />
                 <HelpPanel />

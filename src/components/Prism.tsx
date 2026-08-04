@@ -2,6 +2,24 @@ import { useEffect, useRef } from 'react';
 import { Renderer, Triangle, Program, Mesh } from 'ogl';
 import './Prism.css';
 
+interface PrismProps {
+  height?: number;
+  baseWidth?: number;
+  animationType?: 'rotate' | 'hover' | '3drotate';
+  glow?: number;
+  offset?: { x: number; y: number };
+  noise?: number;
+  transparent?: boolean;
+  scale?: number;
+  hueShift?: number;
+  colorFrequency?: number;
+  hoverStrength?: number;
+  inertia?: number;
+  bloom?: number;
+  suspendWhenOffscreen?: boolean;
+  timeScale?: number;
+}
+
 const Prism = ({
   height = 3.5,
   baseWidth = 5.5,
@@ -18,8 +36,8 @@ const Prism = ({
   bloom = 1,
   suspendWhenOffscreen = false,
   timeScale = 0.5
-}) => {
-  const containerRef = useRef(null);
+}: PrismProps) => {
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -237,7 +255,7 @@ const Prism = ({
     resize();
 
     const rotBuf = new Float32Array(9);
-    const setMat3FromEuler = (yawY, pitchX, rollZ, out) => {
+    const setMat3FromEuler = (yawY: number, pitchX: number, rollZ: number, out: Float32Array) => {
       const cy = Math.cos(yawY),
         sy = Math.sin(yawY);
       const cx = Math.cos(pitchX),
@@ -293,10 +311,10 @@ const Prism = ({
       roll = 0;
     let targetYaw = 0,
       targetPitch = 0;
-    const lerp = (a, b, t) => a + (b - a) * t;
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
     const pointer = { x: 0, y: 0, inside: true };
-    const onMove = e => {
+    const onMove = (e: PointerEvent) => {
       const ww = Math.max(1, window.innerWidth);
       const wh = Math.max(1, window.innerHeight);
       const cx = ww * 0.5;
@@ -314,9 +332,9 @@ const Prism = ({
       pointer.inside = false;
     };
 
-    let onPointerMove = null;
+    let onPointerMove: ((e: PointerEvent) => void) | null = null;
     if (animationType === 'hover') {
-      onPointerMove = e => {
+      onPointerMove = (e: PointerEvent) => {
         onMove(e);
         startRAF();
       };
@@ -330,7 +348,7 @@ const Prism = ({
       program.uniforms.uUseBaseWobble.value = 1;
     }
 
-    const render = t => {
+    const render = (t: number) => {
       const time = (t - t0) * 0.001;
       program.uniforms.iTime.value = time;
 
@@ -383,15 +401,15 @@ const Prism = ({
       }
     };
 
+    let intersectionObserver: IntersectionObserver | null = null;
     if (suspendWhenOffscreen) {
-      const io = new IntersectionObserver(entries => {
+      intersectionObserver = new IntersectionObserver(entries => {
         const vis = entries.some(e => e.isIntersecting);
         if (vis) startRAF();
         else stopRAF();
       });
-      io.observe(container);
+      intersectionObserver.observe(container);
       startRAF();
-      container.__prismIO = io;
     } else {
       startRAF();
     }
@@ -404,11 +422,7 @@ const Prism = ({
         window.removeEventListener('mouseleave', onLeave);
         window.removeEventListener('blur', onBlur);
       }
-      if (suspendWhenOffscreen) {
-        const io = container.__prismIO;
-        if (io) io.disconnect();
-        delete container.__prismIO;
-      }
+      intersectionObserver?.disconnect();
       if (gl.canvas.parentElement === container) container.removeChild(gl.canvas);
     };
   }, [

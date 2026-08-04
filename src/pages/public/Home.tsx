@@ -11,77 +11,6 @@ import Footer from '../../components/Footer';
 import DomainPathCard from '../../components/DomainPathCard';
 import DomainBackground from '../../components/DomainBackground';
 import PremiumFeatureCard from '../../components/PremiumFeatureCard';
-import { getOpportunities } from '../../lib/db';
-import type { DbOpportunity } from '../../lib/db';
-
-// ─── Mock Opportunities ─────────────────────
-const MOCK_INTERNSHIPS = [
-  {
-    id: 'mock-1',
-    company: 'Meta',
-    role: 'Frontend Developer Intern',
-    location: 'Remote',
-    duration: '3 Months',
-    paid: 'Stipend',
-    logoLetter: 'M'
-  },
-  {
-    id: 'mock-2',
-    company: 'GrowthX',
-    role: 'Growth Marketing Intern',
-    location: 'Bangalore',
-    duration: '2 Months',
-    paid: 'Paid',
-    logoLetter: 'G'
-  },
-  {
-    id: 'mock-3',
-    company: 'Notion',
-    role: 'Product Design Intern',
-    location: 'Remote',
-    duration: '6 Months',
-    paid: 'Stipend',
-    logoLetter: 'N'
-  },
-  {
-    id: 'mock-4',
-    company: 'Swiggy',
-    role: 'Data Analyst Intern',
-    location: 'Hyderabad',
-    duration: '3 Months',
-    paid: 'Paid',
-    logoLetter: 'S'
-  },
-  {
-    id: 'mock-5',
-    company: 'Slice',
-    role: 'Backend Developer Intern',
-    location: 'Remote',
-    duration: '6 Months',
-    paid: 'Stipend',
-    logoLetter: 'S'
-  },
-  {
-    id: 'mock-6',
-    company: 'Lumora',
-    role: 'AI & ML Engineer Intern',
-    location: 'Remote',
-    duration: '6 Months',
-    paid: 'Paid',
-    logoLetter: 'L'
-  }
-];
-
-// ─── Tech Domains ─────────────────────
-const DOMAINS = [
-  { name: 'Frontend', desc: 'Build stunning interactive web user interfaces using modern React, Tailwind, and WebGL.' },
-  { name: 'Backend', desc: 'Design resilient distributed APIs, relational database schemas, caching layers, and server logic.' },
-  { name: 'UI / UX Design', desc: 'Create minimal user flows, modern responsive design systems, high-fidelity mockups in Figma.' },
-  { name: 'AI & ML', desc: 'Train deep neural networks, set up LLM pipelines, create embeddings, and orchestrate agent models.' },
-  { name: 'Cloud', desc: 'Manage VPC networks, automate serverless deployments, Terraform scripts, and secure Kubernetes.' },
-  { name: 'Cyber Security', desc: 'Conduct penetration tests, audit smart contracts, manage IAM structures, and secure server stacks.' },
-  { name: 'Data Science', desc: 'Perform statistical models, write data warehouse pipeline maps, pandas dashboards, and analytics.' }
-];
 
 // ─── Why Lumora Features ─────────────────────
 const WHY_LUMORA = [
@@ -158,9 +87,7 @@ const WHY_LUMORA = [
 ];
 
 export default function Home() {
-  const [dbOpportunities, setDbOpportunities] = useState<DbOpportunity[]>([]);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [scrolled, setScrolled] = useState(false);
   const [showcasePhase, setShowcasePhase] = useState<'hero' | 'internship' | 'domains' | 'features' | 'stats' | 'complete'>('hero');
   const [stats, setStats] = useState({ internships: 0, companies: 0, mentors: 0 });
 
@@ -230,35 +157,6 @@ export default function Home() {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
-
-  // Scroll detection for navbar (throttled)
-  useEffect(() => {
-    const handleScroll = throttle(() => {
-      setScrolled(window.scrollY > 50);
-    }, 16); // ~60fps
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Fetch opportunities from Supabase
-  useEffect(() => {
-    getOpportunities('active')
-      .then(setDbOpportunities)
-      .catch(err => console.error('Error fetching opportunities:', err));
-  }, []);
-
-  // Use mock data if DB returns fewer than 6
-  const featuredOpportunities = dbOpportunities.length >= 6 
-    ? dbOpportunities.slice(0, 6).map((opp, idx) => ({
-        id: opp.id,
-        company: MOCK_INTERNSHIPS[idx % MOCK_INTERNSHIPS.length].company,
-        role: opp.title,
-        location: opp.forte || 'Remote',
-        duration: '3 Months',
-        paid: 'Stipend',
-        logoLetter: MOCK_INTERNSHIPS[idx % MOCK_INTERNSHIPS.length].logoLetter
-      }))
-    : MOCK_INTERNSHIPS;
 
   return (
     <div className="min-h-screen bg-[#000000] text-[#F5F5F5] relative">

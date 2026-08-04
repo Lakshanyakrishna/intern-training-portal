@@ -1,9 +1,9 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { gsap } from 'gsap';
 
 import './Masonry.css';
 
-const useMedia = (queries, values, defaultValue) => {
+const useMedia = (queries: string[], values: number[], defaultValue: number) => {
   const get = () => {
     if (typeof window === 'undefined') return defaultValue;
     return values[queries.findIndex(q => matchMedia(q).matches)] ?? defaultValue;
@@ -38,7 +38,7 @@ const useMeasure = () => {
   return [ref, size] as const;
 };
 
-const preloadImages = async urls => {
+const preloadImages = async (urls: string[]) => {
   await Promise.all(
     urls.map(
       src =>
@@ -51,6 +51,33 @@ const preloadImages = async urls => {
   );
 };
 
+interface MasonryItem {
+  id: string;
+  img: string;
+  height: number;
+  url?: string;
+}
+
+interface GridItem extends MasonryItem {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+interface MasonryProps {
+  items: MasonryItem[];
+  ease?: string;
+  duration?: number;
+  stagger?: number;
+  animateFrom?: 'top' | 'bottom' | 'left' | 'right' | 'center' | 'random';
+  scaleOnHover?: boolean;
+  hoverScale?: number;
+  blurToFocus?: boolean;
+  colorShiftOnHover?: boolean;
+  renderContent?: ((item: GridItem) => ReactNode) | null;
+}
+
 const Masonry = ({
   items,
   ease = 'power3.out',
@@ -62,7 +89,7 @@ const Masonry = ({
   blurToFocus = true,
   colorShiftOnHover = false,
   renderContent = null
-}) => {
+}: MasonryProps) => {
   const columns = useMedia(
     ['(min-width:1500px)', '(min-width:1000px)', '(min-width:600px)', '(min-width:400px)'],
     [5, 4, 3, 2],
@@ -72,11 +99,11 @@ const Masonry = ({
   const [containerRef, { width }] = useMeasure();
   const [imagesReady, setImagesReady] = useState(renderContent ? true : false);
 
-  const getInitialPosition = (item: any) => {
+  const getInitialPosition = (item: GridItem) => {
     const containerRect = containerRef.current?.getBoundingClientRect();
     if (!containerRect) return { x: item.x, y: item.y };
 
-    let direction = animateFrom;
+    let direction: string = animateFrom;
 
     if (animateFrom === 'random') {
       const directions = ['top', 'bottom', 'left', 'right'];
@@ -106,7 +133,7 @@ const Masonry = ({
     preloadImages(items.map(i => i.img)).then(() => setImagesReady(true));
   }, [items]);
 
-  const grid = useMemo(() => {
+  const grid = useMemo<GridItem[]>(() => {
     if (!width) return [];
 
     const colHeights = new Array(columns).fill(0);
@@ -171,7 +198,7 @@ const Masonry = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grid, imagesReady, stagger, animateFrom, blurToFocus, duration, ease]);
 
-  const handleMouseEnter = (e, item) => {
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>, item: GridItem) => {
     const element = e.currentTarget;
     const selector = `[data-key="${item.id}"]`;
 
@@ -194,7 +221,7 @@ const Masonry = ({
     }
   };
 
-  const handleMouseLeave = (e, item) => {
+  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>, item: GridItem) => {
     const element = e.currentTarget;
     const selector = `[data-key="${item.id}"]`;
 

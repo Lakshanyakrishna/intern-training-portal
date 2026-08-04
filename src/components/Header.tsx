@@ -1,8 +1,5 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import PillNav from './react-bits/PillNav/PillNav';
-import { useAuth } from '../contexts/AuthContext';
-import { roleHomePath } from '../utils/roleHome';
 
 export interface NavLinkItem {
   to: string;
@@ -17,17 +14,8 @@ const defaultNavLinks: NavLinkItem[] = [
   { to: '/contact', label: 'Contact' }
 ];
 
-interface HeaderProps {
-  navLinks?: NavLinkItem[];
-  ctaLabel?: string;
-  ctaTo?: string;
-  scrolled?: boolean;
-}
-
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
-  const { user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,7 +39,7 @@ export default function Header() {
 
         <nav className="hidden items-center gap-10 md:flex">
           {navLinks.map((link) => (
-            <Link
+            <NavLink
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
@@ -67,7 +55,7 @@ export default function Header() {
                   )}
                 </>
               )}
-            </Link>
+            </NavLink>
           ))}
         </nav>
 
