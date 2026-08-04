@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import PillNav from './react-bits/PillNav/PillNav';
 import { useAuth } from '../contexts/AuthContext';
 import { roleHomePath } from '../utils/roleHome';
@@ -24,11 +25,25 @@ interface HeaderProps {
 }
 
 export default function Header() {
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navLinks = defaultNavLinks;
+
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-20 border-b border-[#3A3A3A]/40 transition-all duration-300 ${scrolled
+      className={`fixed inset-x-0 top-0 z-[100] border-b border-[#3A3A3A]/40 transition-all duration-300 ${scrolled
           ? 'bg-[#000000]/95 backdrop-blur-lg'
-          : 'bg-transparent'
+          : 'bg-[#050505]/80 backdrop-blur-md'
         }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-7">
@@ -36,10 +51,9 @@ export default function Header() {
 
         <nav className="hidden items-center gap-10 md:flex">
           {navLinks.map((link) => (
-            <NavLink
+            <Link
               key={link.to}
               to={link.to}
-              end={link.to === '/'}
               className={({ isActive }) =>
                 `relative pb-2 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors ${isActive ? 'text-[#F1F2EE]' : 'text-[#9AA1A3] hover:text-[#C6CAC9]'
                 }`
@@ -53,7 +67,7 @@ export default function Header() {
                   )}
                 </>
               )}
-            </NavLink>
+            </Link>
           ))}
         </nav>
 

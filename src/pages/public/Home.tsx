@@ -284,6 +284,8 @@ export default function Home() {
           mixBlendMode="screen"
         />
       </div>
+      <IntroLogo animate={false} />
+      <Header />
       <div className="relative z-10">
         <TargetCursor 
           targetSelector=".cursor-target"
@@ -294,8 +296,6 @@ export default function Home() {
           cursorColor="#ffffff"
           cursorColorOnTarget="#ffffff"
         />
-        <IntroLogo animate={false} />
-        <Header scrolled={scrolled} />
       
       {/* ─── HERO SECTION ─── */}
       <section className="mx-auto max-w-7xl px-8 pt-32 pb-20 md:pt-40 md:pb-32 relative">
