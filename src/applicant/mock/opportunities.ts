@@ -2,6 +2,9 @@
 // getOpportunities() API response so swapping this for a real fetch later
 // is a one-line change, not a rewrite of any component below this file.
 import type { Opportunity } from '../types';
+import feImg from '../../assets/forte-placeholders/fe.png';
+import beImg from '../../assets/forte-placeholders/be.png';
+import aiImg from '../../assets/forte-placeholders/ai.png';
 
 export const MOCK_OPPORTUNITIES: Opportunity[] = [
   {
@@ -13,6 +16,7 @@ export const MOCK_OPPORTUNITIES: Opportunity[] = [
     seats: 3,
     deadline: 'Sep 15, 2026',
     category: 'Frontend',
+    image: feImg,
   },
   {
     id: 'opp-backend',
@@ -23,6 +27,7 @@ export const MOCK_OPPORTUNITIES: Opportunity[] = [
     seats: 2,
     deadline: 'Sep 15, 2026',
     category: 'Backend',
+    image: beImg,
   },
   {
     id: 'opp-ai',
@@ -33,5 +38,6 @@ export const MOCK_OPPORTUNITIES: Opportunity[] = [
     seats: 2,
     deadline: 'Sep 30, 2026',
     category: 'Agentic AI',
+    image: aiImg,
   },
 ];

@@ -3,7 +3,6 @@ import type { ApplicationSummary } from '../types';
 export default function ResumeScreeningStage({ application }: { application: ApplicationSummary }) {
   return (
     <div>
-      <p className="text-xs font-medium uppercase tracking-wider text-secondary mb-1">Current mission</p>
       <h2 className="text-xl font-semibold text-primary mb-1">Hang tight — we're reviewing</h2>
       <p className="text-sm text-secondary mb-6">{application.opportunityTitle}</p>
 

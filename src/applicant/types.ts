@@ -25,6 +25,7 @@ export interface Opportunity {
   seats: number;
   deadline: string;
   category: string;
+  image?: string;
 }
 
 export interface ApplicationSummary {

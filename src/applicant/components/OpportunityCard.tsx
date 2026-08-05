@@ -8,8 +8,12 @@ import type { Opportunity } from '../types';
 export default function OpportunityCard({ opportunity, onApply }: { opportunity: Opportunity; onApply: (id: string) => void }) {
   return (
     <div className="rounded-2xl border border-line bg-surface overflow-hidden flex flex-col shadow-sm shadow-black/[0.03] hover:shadow-md hover:shadow-black/[0.06] hover:-translate-y-0.5 transition-all duration-200">
-      <div className="h-28 bg-surface-alt flex items-center justify-center text-[11px] text-secondary">
-        [ Image placeholder ]
+      <div className="h-40 bg-surface-alt flex items-center justify-center text-[11px] text-secondary overflow-hidden">
+        {opportunity.image ? (
+          <img src={opportunity.image} alt="" className="w-full h-full object-cover object-top" />
+        ) : (
+          '[ Image placeholder ]'
+        )}
       </div>
       <div className="p-5 flex flex-col flex-1">
         <span className="inline-block w-fit text-[11px] font-medium uppercase tracking-wider text-secondary bg-surface-alt rounded-full px-2 py-0.5">{opportunity.category}</span>

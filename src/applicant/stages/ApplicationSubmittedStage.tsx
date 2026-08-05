@@ -18,7 +18,6 @@ export default function ApplicationSubmittedStage({
 
   return (
     <div>
-      <p className="text-xs font-medium uppercase tracking-wider text-secondary mb-1">Current mission</p>
       <h2 className="text-xl font-semibold text-primary mb-1">Sit tight</h2>
       <p className="text-sm text-secondary mb-6">Your application is in — here's what we've got on file.</p>
 

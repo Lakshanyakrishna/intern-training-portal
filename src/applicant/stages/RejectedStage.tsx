@@ -12,7 +12,6 @@ export default function RejectedStage({
 }) {
   return (
     <div>
-      <p className="text-xs font-medium uppercase tracking-wider text-secondary mb-1">Current mission</p>
       <h2 className="text-xl font-semibold text-primary mb-1">This one didn't work out</h2>
       <p className="text-sm text-secondary mb-6">
         That's specific to this opportunity, not a verdict on you — plenty of applicants land somewhere else on a later round.

@@ -1,13 +1,18 @@
 import type { ReactNode } from 'react';
 
-// The heart of the interface -- everything else on the page (journey
-// tracker, activity feed, help panel) is stable chrome; this section is the
-// only thing that changes as the applicant moves through stages. Kept as a
-// thin semantic wrapper (not its own bordered card) since each stage
-// component already renders its own card chrome internally.
+// The heart of the interface -- everything else on the page (activity feed,
+// help panel) is stable chrome; this section is the only thing that changes
+// as the applicant moves through stages. Kept as a thin semantic wrapper
+// (not its own bordered card) since each stage component already renders
+// its own card chrome internally. The eyebrow label lives here once instead
+// of being duplicated across all 8 stage components.
 export default function CurrentMission({ children }: { children: ReactNode }) {
   return (
-    <section aria-label="Current mission" aria-live="polite" className="animate-[fadeIn_0.25s_ease-out]">
+    <section aria-label="Next up" aria-live="polite" className="animate-[fadeIn_0.25s_ease-out]">
+      <div className="inline-flex items-center gap-1.5 mb-3">
+        <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+        <span className="text-xs font-bold uppercase tracking-wider text-accent">Next Up</span>
+      </div>
       {children}
     </section>
   );

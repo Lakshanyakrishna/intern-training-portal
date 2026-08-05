@@ -105,7 +105,6 @@ export default function InterviewScheduledStage({
 
   return (
     <div>
-      <p className="text-xs font-medium uppercase tracking-wider text-secondary mb-1">Current mission</p>
       <h2 className="text-xl font-semibold text-primary mb-1">Prepare for your interview</h2>
       <p className="text-sm text-secondary mb-6">You're all set — here's everything you need.</p>
 

@@ -3,7 +3,6 @@ import { CheckCircle } from '../../components/Icons';
 export default function InterviewCompletedStage() {
   return (
     <div>
-      <p className="text-xs font-medium uppercase tracking-wider text-secondary mb-1">Current mission</p>
       <h2 className="text-xl font-semibold text-primary mb-1">Thanks for the conversation</h2>
       <p className="text-sm text-secondary mb-6">Your mentor is reviewing next steps.</p>
 

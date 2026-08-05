@@ -19,7 +19,6 @@ export default function SelectedStage({
 
   return (
     <div>
-      <p className="text-xs font-medium uppercase tracking-wider text-secondary mb-1">Current mission</p>
       <h2 className="text-xl font-semibold text-primary mb-1">Congratulations</h2>
       <p className="text-sm text-secondary mb-6">You've been selected — welcome to the program.</p>
 

@@ -12,7 +12,6 @@ export default function NoApplicationStage({
 }) {
   return (
     <div>
-      <p className="text-xs font-medium uppercase tracking-wider text-secondary mb-1">Current mission</p>
       <h2 className="text-xl font-semibold text-primary mb-1">Browse opportunities</h2>
       <p className="text-sm text-secondary mb-6">Find something worth applying to — it takes a few minutes.</p>
 
@@ -23,7 +22,7 @@ export default function NoApplicationStage({
           description="Check back soon — new opportunities are posted regularly."
         />
       ) : (
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {opportunities.map(opp => (
             <OpportunityCard key={opp.id} opportunity={opp} onApply={onApply} />
           ))}

@@ -6,7 +6,6 @@ import { Sun, Moon, XCircle, ChevronDown, LogOut } from '../components/Icons';
 import NotificationBell from '../components/NotificationBell';
 import lumoraLogo from '../assets/lumora-logo.png';
 import DotGrid from './components/DotGrid';
-import JourneyTracker from './components/JourneyTracker';
 import CurrentMission from './components/CurrentMission';
 import EstimatedTimeline from './components/EstimatedTimeline';
 import WhatsNext from './components/WhatsNext';
@@ -240,42 +239,38 @@ export default function ApplicantExperience() {
 
         {loading ? (
           <>
-            <SkeletonBlock className="h-24" />
-            <div className="grid lg:grid-cols-[1fr_320px] gap-6">
-              <SkeletonBlock className="h-72" />
-              <div className="space-y-6">
-                <SkeletonBlock className="h-40" />
-                <SkeletonBlock className="h-56" />
-              </div>
+            <SkeletonBlock className="h-72" />
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+              <SkeletonBlock className="h-40" />
+              <SkeletonBlock className="h-40" />
+              <SkeletonBlock className="h-40" />
             </div>
           </>
         ) : (
           <>
-            <JourneyTracker stage={stage} />
+            {/* Full width -- just the current stage's content (opportunity
+                grid, interview scheduler, etc). Everything else (timeline,
+                notifications, activity, help) sits below in its own row
+                until final placement is decided. */}
+            <CurrentMission>
+              <StageContent
+                stage={stage}
+                opportunities={MOCK_OPPORTUNITIES}
+                application={application}
+                slotGroups={MOCK_INTERVIEW_SLOTS}
+                interview={scheduledInterview}
+                selectedInfo={{ mentor: '[Placeholder] Mentor Name', startDate: 'Sep 1, 2026', trainingDuration: '8 weeks' }}
+                actions={actions}
+              />
+            </CurrentMission>
 
-            <div className="grid lg:grid-cols-[1fr_320px] gap-6 items-start">
-              <div className="space-y-6">
-                <CurrentMission>
-                  <StageContent
-                    stage={stage}
-                    opportunities={MOCK_OPPORTUNITIES}
-                    application={application}
-                    slotGroups={MOCK_INTERVIEW_SLOTS}
-                    interview={scheduledInterview}
-                    selectedInfo={{ mentor: '[Placeholder] Mentor Name', startDate: 'Sep 1, 2026', trainingDuration: '8 weeks' }}
-                    actions={actions}
-                  />
-                </CurrentMission>
-                <EstimatedTimeline stage={stage} />
-                <WhatsNext stage={stage} />
-              </div>
-
-              <div className="space-y-6">
-                <NotificationPreview notifications={notificationsForStage(stage)} />
-                <ActivityFeed items={activityForStage(stage)} />
-                <QuickStats stats={MOCK_QUICK_STATS} />
-                <HelpPanel />
-              </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+              <EstimatedTimeline stage={stage} />
+              <WhatsNext stage={stage} />
+              <NotificationPreview notifications={notificationsForStage(stage)} />
+              <ActivityFeed items={activityForStage(stage)} />
+              <QuickStats stats={MOCK_QUICK_STATS} />
+              <HelpPanel />
             </div>
           </>
         )}
