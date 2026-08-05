@@ -20,7 +20,7 @@ export default function PracticeCard({ practice, completed, existingSubmission, 
   };
 
   return (
-    <div className={`rounded-xl border p-5 ${completed && saved ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700'}`}>
+    <div className={`rounded-xl border p-5 ${completed && saved ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' : 'bg-surface border-line'}`}>
       {completed && saved ? (
         <div className="flex items-center gap-3">
           <div className="flex-1">
@@ -41,16 +41,16 @@ export default function PracticeCard({ practice, completed, existingSubmission, 
             onChange={e => setSubmission(e.target.value)}
             placeholder="Write your solution here..."
             rows={4}
-            className="w-full text-sm border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40 resize-y"
+            className="w-full text-sm border border-line rounded-lg px-3 py-2 bg-surface text-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
           />
           {practice.hints && practice.hints.length > 0 && (
             <details className="group">
-              <summary className="text-xs text-gray-500 dark:text-gray-400 cursor-pointer hover:text-gray-700 dark:hover:text-gray-300 transition-colors select-none">
+              <summary className="text-xs text-secondary cursor-pointer hover:text-gray-700 dark:hover:text-gray-300 transition-colors select-none">
                 Need a hint? ({practice.hints.length} available)
               </summary>
               <div className="mt-2 space-y-1.5">
                 {practice.hints.map((h, i) => (
-                  <p key={i} className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/30 px-3 py-2 rounded-lg">Hint {i + 1}: {h}</p>
+                  <p key={i} className="text-xs text-secondary bg-surface-alt px-3 py-2 rounded-lg">Hint {i + 1}: {h}</p>
                 ))}
               </div>
             </details>
@@ -58,7 +58,7 @@ export default function PracticeCard({ practice, completed, existingSubmission, 
           <button
             onClick={handleSave}
             disabled={!submission.trim()}
-            className="inline-flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            className="inline-flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
           >
             <Save className="w-4 h-4" />
             {saved ? 'Update Submission' : 'Save Submission'}

@@ -78,7 +78,7 @@ export default function ReadinessEvaluation() {
     }
   }
 
-  const inputClass = 'w-full px-3.5 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors';
+  const inputClass = 'w-full px-3.5 py-2.5 rounded-lg border border-line bg-surface text-sm text-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent transition-colors';
   const labelClass = 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5';
 
   const menteeName = mentees.find(m => m.internId === selectedInternId)?.internName || 'Unknown';
@@ -86,8 +86,8 @@ export default function ReadinessEvaluation() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Readiness Evaluation</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Evaluate intern readiness for client project.</p>
+        <h1 className="text-2xl font-bold text-primary">Readiness Evaluation</h1>
+        <p className="text-sm text-secondary mt-1">Evaluate intern readiness for client project.</p>
       </div>
 
       {message && (
@@ -103,7 +103,7 @@ export default function ReadinessEvaluation() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Form */}
         <div className="lg:col-span-2">
-          <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-5">
+          <form onSubmit={handleSubmit} className="bg-surface border border-line rounded-xl p-6 space-y-5">
             <div>
               <label className={labelClass}>Intern *</label>
               <select required value={selectedInternId} onChange={e => setSelectedInternId(e.target.value)} className={inputClass}>
@@ -116,7 +116,7 @@ export default function ReadinessEvaluation() {
 
             {selectedInternId && (
               <>
-                <p className="text-sm font-semibold text-gray-900 dark:text-white">Evaluating: {menteeName}</p>
+                <p className="text-sm font-semibold text-primary">Evaluating: {menteeName}</p>
 
                 <div className="grid grid-cols-2 gap-4">
                   {([
@@ -155,7 +155,7 @@ export default function ReadinessEvaluation() {
                   </select>
                 </div>
 
-                <button type="submit" disabled={saving} className="w-full py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors text-sm">
+                <button type="submit" disabled={saving} className="w-full py-2.5 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors text-sm">
                   {saving ? 'Saving...' : 'Save Evaluation'}
                 </button>
               </>
@@ -164,15 +164,15 @@ export default function ReadinessEvaluation() {
         </div>
 
         {/* History */}
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Evaluation History</h3>
+        <div className="bg-surface border border-line rounded-xl p-4">
+          <h3 className="text-sm font-semibold text-primary mb-3">Evaluation History</h3>
           {existing.length === 0 ? (
             <p className="text-xs text-gray-400 dark:text-gray-500">No previous evaluations.</p>
           ) : (
             <div className="space-y-3">
               {existing.map(e => (
-                <div key={e.id} className="text-xs border border-gray-200 dark:border-gray-700 rounded-lg p-3 space-y-1">
-                  <p className="text-gray-500 dark:text-gray-400">{new Date(e.evaluatedAt).toLocaleDateString()}</p>
+                <div key={e.id} className="text-xs border border-line rounded-lg p-3 space-y-1">
+                  <p className="text-secondary">{new Date(e.evaluatedAt).toLocaleDateString()}</p>
                   <p><span className="text-gray-500">Technical:</span> {e.technicalReadiness}/5</p>
                   <p><span className="text-gray-500">Communication:</span> {e.communicationReadiness}/5</p>
                   <p><span className="text-gray-500">Problem Solving:</span> {e.problemSolvingReadiness}/5</p>

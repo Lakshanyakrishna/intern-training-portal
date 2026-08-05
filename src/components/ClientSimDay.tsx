@@ -16,7 +16,7 @@ export default function ClientSimDay({ days, completedDays, onAdvance }: ClientS
 
   if (!day) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 text-center">
+      <div className="bg-surface rounded-xl p-6 border border-line text-center">
         <p className="text-green-600 dark:text-green-400 font-medium">Project complete!</p>
       </div>
     );
@@ -45,7 +45,7 @@ export default function ClientSimDay({ days, completedDays, onAdvance }: ClientS
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+      <div className="flex items-center justify-between text-sm text-secondary">
         <span className="font-medium">Day {day.day}/{days.length} - {day.title}</span>
         <span>{completedDays.length}/{days.length} days</span>
       </div>
@@ -61,10 +61,10 @@ export default function ClientSimDay({ days, completedDays, onAdvance }: ClientS
             <button
               key={action.id}
               onClick={() => handleAction(action.id)}
-              className="text-left p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors"
+              className="text-left p-3 rounded-xl border border-line bg-surface hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors"
             >
-              <span className="text-sm font-medium text-gray-800 dark:text-white">{action.label}</span>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{action.description}</p>
+              <span className="text-sm font-medium text-primary">{action.label}</span>
+              <p className="text-xs text-secondary mt-0.5">{action.description}</p>
             </button>
           ))}
         </div>
@@ -78,7 +78,7 @@ export default function ClientSimDay({ days, completedDays, onAdvance }: ClientS
             <p className={`text-sm font-medium mb-1 ${isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
               {isCorrect ? '✓ Great choice!' : '✗ That didn\'t go well'}
             </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-secondary">
               {isCorrect ? day.consequence : day.availableActions.find(a => a.id === selectedAction)?.outcome}
             </p>
           </div>
@@ -92,7 +92,7 @@ export default function ClientSimDay({ days, completedDays, onAdvance }: ClientS
           ) : (
             <button
               onClick={handleRetry}
-              className="w-full py-2.5 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              className="w-full py-2.5 rounded-xl bg-gray-100 dark:bg-gray-700 text-secondary text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
             >
               Try Again
             </button>

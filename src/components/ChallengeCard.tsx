@@ -37,15 +37,15 @@ export default function ChallengeCard({ challenge, completed, workspace, onSaveW
   };
 
   const submitted = workspace?.status === 'submitted';
-  const borderClass = completed ? 'border-green-200 dark:border-green-800' : 'border-gray-200 dark:border-gray-700';
-  const bgClass = completed ? 'bg-green-50 dark:bg-green-900/20' : 'bg-white dark:bg-gray-800';
+  const borderClass = completed ? 'border-green-200 dark:border-green-800' : 'border-line';
+  const bgClass = completed ? 'bg-green-50 dark:bg-green-900/20' : 'bg-surface';
 
   return (
     <div className={`${bgClass} ${borderClass} border rounded-xl overflow-hidden`}>
       <div className="p-5 space-y-4">
         <div className="flex items-start justify-between">
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">{challenge.title}</h4>
+            <h4 className="text-sm font-semibold text-primary">{challenge.title}</h4>
             <span className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-medium ${difficultyColors[challenge.difficulty]}`}>
               {challenge.difficulty}
             </span>
@@ -53,26 +53,26 @@ export default function ChallengeCard({ challenge, completed, workspace, onSaveW
           {completed && <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />}
         </div>
 
-        <p className="text-sm text-gray-600 dark:text-gray-400">{challenge.description}</p>
+        <p className="text-sm text-secondary">{challenge.description}</p>
 
-        <div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4">
-          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Task</p>
+        <div className="bg-surface-alt rounded-xl p-4">
+          <p className="text-xs font-medium text-secondary uppercase tracking-wide mb-1.5">Task</p>
           <p className="text-sm text-gray-700 dark:text-gray-300">{challenge.task}</p>
         </div>
 
         <div>
-          <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1.5">Notes / Scratchpad</label>
+          <label className="text-xs font-medium text-secondary block mb-1.5">Notes / Scratchpad</label>
           <textarea
             value={notes}
             onChange={e => setNotes(e.target.value)}
             placeholder="Jot down your thoughts, approach, or findings..."
             rows={3}
-            className="w-full text-sm border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40 resize-y"
+            className="w-full text-sm border border-line rounded-lg px-3 py-2 bg-surface text-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
           />
         </div>
 
         <div>
-          <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1.5">
+          <label className="text-xs font-medium text-secondary block mb-1.5">
             {submitted ? 'Submitted Solution' : 'Solution Submission'}
           </label>
           <textarea
@@ -80,21 +80,21 @@ export default function ChallengeCard({ challenge, completed, workspace, onSaveW
             onChange={e => setSubmission(e.target.value)}
             placeholder="Provide your solution, code, or explanation..."
             rows={4}
-            className="w-full text-sm border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40 resize-y"
+            className="w-full text-sm border border-line rounded-lg px-3 py-2 bg-surface text-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent/40 resize-y"
           />
         </div>
 
         <div className="flex flex-wrap gap-2">
           {!submitted && challenge.hints && hintsRevealed < challenge.hints.length && (
-            <button onClick={handleRevealHint} className="text-xs px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+            <button onClick={handleRevealHint} className="text-xs px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-secondary border border-line hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
               Show Hint ({hintsRevealed + 1}/{challenge.hints.length})
             </button>
           )}
-          <button onClick={handleSaveProgress} className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+          <button onClick={handleSaveProgress} className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-secondary border border-line hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
             <Save className="w-3.5 h-3.5" /> Save Progress
           </button>
           {!submitted && (
-            <button onClick={handleSubmit} disabled={!submission.trim()} className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium">
+            <button onClick={handleSubmit} disabled={!submission.trim()} className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-accent text-white hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium">
               <Send className="w-3.5 h-3.5" /> Submit Challenge
             </button>
           )}
@@ -108,7 +108,7 @@ export default function ChallengeCard({ challenge, completed, workspace, onSaveW
         {hintsRevealed > 0 && challenge.hints && (
           <div className="space-y-1.5">
             {challenge.hints.slice(0, hintsRevealed).map((h, i) => (
-              <p key={i} className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/30 px-3 py-2 rounded-lg">Hint {i + 1}: {h}</p>
+              <p key={i} className="text-xs text-secondary bg-surface-alt px-3 py-2 rounded-lg">Hint {i + 1}: {h}</p>
             ))}
           </div>
         )}

@@ -25,8 +25,8 @@ export default function TrackPage() {
   if (!track) {
     return (
       <div className="py-20 text-center">
-        <h2 className="text-lg font-bold text-gray-800 dark:text-white">Track not found</h2>
-        <Link to="/" className="mt-3 inline-block text-sm text-blue-600 hover:underline">Back to Dashboard</Link>
+        <h2 className="text-lg font-bold text-primary">Track not found</h2>
+        <Link to="/" className="mt-3 inline-block text-sm text-neutral-600 hover:underline">Back to Dashboard</Link>
       </div>
     );
   }
@@ -37,23 +37,23 @@ export default function TrackPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-8">
       {/* Track Header */}
-      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-white dark:bg-gray-800">
+      <div className="border border-line rounded-lg p-6 bg-surface">
         <div className="flex items-center gap-4 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300">
+          <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-secondary">
             {trackIcons[track.id]}
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">{track.name}</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{track.description}</p>
+            <h1 className="text-xl font-bold text-primary">{track.name}</h1>
+            <p className="text-sm text-secondary mt-0.5">{track.description}</p>
           </div>
         </div>
         <div className="flex items-center justify-between text-sm mb-2">
-          <span className="text-gray-600 dark:text-gray-400">{trackProg.completed}/{trackProg.total} Modules Completed</span>
-          <span className="text-gray-500 dark:text-gray-400">{trackProg.percent}%</span>
+          <span className="text-secondary">{trackProg.completed}/{trackProg.total} Modules Completed</span>
+          <span className="text-secondary">{trackProg.percent}%</span>
         </div>
         <div className="bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
           <div
-            className="bg-blue-600 h-1.5 rounded-full transition-all duration-500"
+            className="bg-accent h-1.5 rounded-full transition-all duration-500"
             style={{ width: `${trackProg.percent}%` }}
           />
         </div>
@@ -78,17 +78,17 @@ export default function TrackPage() {
               <div key={m.id} className="relative flex gap-5">
                 {/* Timeline node */}
                 <div className="flex flex-col items-center shrink-0 pt-1">
-                  <div className={`w-[50px] h-[50px] rounded-full flex items-center justify-center border-2 z-10 bg-white dark:bg-gray-800 ${
+                  <div className={`w-[50px] h-[50px] rounded-full flex items-center justify-center border-2 z-10 bg-surface ${
                     status === 'completed'
                       ? 'border-green-500'
                       : status === 'active'
-                      ? 'border-blue-500'
-                      : 'border-gray-300 dark:border-gray-600'
+                      ? 'border-neutral-500'
+                      : 'border-line'
                   }`}>
                     {status === 'completed' ? (
                       <CheckCircle className="w-5 h-5 text-green-500" />
                     ) : status === 'active' ? (
-                      <div className="w-3 h-3 rounded-full bg-blue-500" />
+                      <div className="w-3 h-3 rounded-full bg-neutral-500" />
                     ) : (
                       <Lock className="w-5 h-5 text-gray-300 dark:text-gray-600" />
                     )}
@@ -100,8 +100,8 @@ export default function TrackPage() {
                   status === 'completed'
                     ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20'
                     : status === 'active'
-                    ? 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
-                    : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30'
+                    ? 'border-line bg-surface'
+                    : 'border-line bg-surface-alt'
                 }`}>
                   <div className="flex items-start gap-4">
                     <span className={`text-2xl font-bold leading-none pt-0.5 ${
@@ -116,20 +116,20 @@ export default function TrackPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className={`text-base font-semibold ${
-                          status === 'locked' ? 'text-gray-400 dark:text-gray-500' : 'text-gray-900 dark:text-white'
+                          status === 'locked' ? 'text-gray-400 dark:text-gray-500' : 'text-primary'
                         }`}>{m.title}</h3>
                         {status === 'completed' && (
                           <span className="text-xs font-medium text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/40 px-2 py-0.5 rounded">Completed</span>
                         )}
                         {status === 'active' && (
-                          <span className="text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-2 py-0.5 rounded">In Progress</span>
+                          <span className="text-xs font-medium text-accent bg-neutral-100 dark:bg-neutral-900/30 px-2 py-0.5 rounded">In Progress</span>
                         )}
                         {status === 'locked' && (
                           <span className="text-xs font-medium text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">Locked</span>
                         )}
                       </div>
                       <p className={`text-sm mt-1 ${
-                        status === 'locked' ? 'text-gray-400 dark:text-gray-500' : 'text-gray-500 dark:text-gray-400'
+                        status === 'locked' ? 'text-gray-400 dark:text-gray-500' : 'text-secondary'
                       }`}>{m.description}</p>
                       <div className="flex items-center gap-4 mt-3 text-xs text-gray-400 dark:text-gray-500">
                         <span>{m.lessons.length} Lessons</span>
@@ -140,8 +140,8 @@ export default function TrackPage() {
                             to={`/module/${m.id}`}
                             className={`inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                               status === 'completed'
-                                ? 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
-                                : 'bg-blue-600 text-white hover:bg-blue-700'
+                                ? 'bg-surface text-gray-700 dark:text-gray-300 border border-line hover:bg-gray-50 dark:hover:bg-gray-600'
+                                : 'bg-accent text-white hover:bg-accent-hover'
                             }`}
                           >
                             {status === 'completed' ? 'View Module' : 'Continue'}

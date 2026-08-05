@@ -82,8 +82,8 @@ export default function NotificationCenter() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Notifications</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          <h1 className="text-2xl font-bold text-primary">Notifications</h1>
+          <p className="text-sm text-secondary mt-1">
             {unreadCount > 0
               ? `${unreadCount} unread notification${unreadCount !== 1 ? 's' : ''}`
               : 'All caught up'}
@@ -93,7 +93,7 @@ export default function NotificationCenter() {
           <button
             onClick={handleMarkAllRead}
             disabled={markingAll}
-            className="text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="text-xs px-3 py-1.5 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {markingAll ? 'Marking...' : 'Mark all as read'}
           </button>
@@ -102,7 +102,7 @@ export default function NotificationCenter() {
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-6 h-6 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : notifications.length === 0 ? (
         <div className="text-center py-16">
@@ -112,14 +112,14 @@ export default function NotificationCenter() {
         </div>
       ) : (
         <>
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+          <div className="bg-surface border border-line rounded-xl overflow-hidden">
             <div className="divide-y divide-gray-100 dark:divide-gray-700">
               {notifications.map(n => (
                 <button
                   key={n.id}
                   onClick={() => handleMarkRead(n)}
                   className={`w-full text-left px-4 py-3.5 transition-colors hover:bg-gray-50 dark:hover:bg-gray-750 ${
-                    !n.isRead ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''
+                    !n.isRead ? 'bg-neutral-50/50 dark:bg-neutral-900/10' : ''
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4">
@@ -128,17 +128,17 @@ export default function NotificationCenter() {
                         className={`text-sm truncate ${
                           n.isRead
                             ? 'text-gray-700 dark:text-gray-300'
-                            : 'text-gray-900 dark:text-white font-semibold'
+                            : 'text-primary font-semibold'
                         }`}
                       >
                         {n.title}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">
+                      <p className="text-xs text-secondary mt-0.5 line-clamp-2">
                         {n.message}
                       </p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 font-medium">
+                      <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-secondary font-medium">
                         {n.eventType}
                       </span>
                       <span className="text-[11px] text-gray-400 dark:text-gray-500 whitespace-nowrap">
@@ -155,7 +155,7 @@ export default function NotificationCenter() {
             <div className="flex justify-center">
               <button
                 onClick={handleLoadMore}
-                className="text-sm px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                className="text-sm px-4 py-2 rounded-lg border border-line text-secondary font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
               >
                 Load more
               </button>

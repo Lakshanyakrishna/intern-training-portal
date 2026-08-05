@@ -15,7 +15,6 @@ import ClickSpark from '../../components/ClickSpark';
 import { ParticleCard, GlobalSpotlight } from '../../components/react-bits/ParticleCard/ParticleCard';
 import StarBorder from '../../components/StarBorder';
 
-import TiltedCard from '../../components/TiltedCard';
 import ElectricBorder from '../../components/react-bits/ElectricBorder/ElectricBorder';
 import BorderGlow from '../../components/react-bits/BorderGlow/BorderGlow';
 import GradientText from '../../components/react-bits/GradientText/GradientText';
@@ -34,7 +33,6 @@ import TrueFocus from '../../components/react-bits/TrueFocus/TrueFocus';
 
 import { useAutoScroll } from '../../hooks/useAutoScroll';
 import Galaxy from '../../components/react-bits/Galaxy/Galaxy';
-import Shuffle from '../../components/react-bits/Shuffle/ShuffleText';
 import CountUp from '../../components/CountUp';
 import GlareHover from '../../components/GlareHover';
 import AnimatedList from '../../components/AnimatedList';
@@ -46,8 +44,8 @@ import {
   ChevronDown, Bookmark, GitCompare, Share, MapPin, DollarSign,
   Clock, Zap, ChevronUp, ChevronRight, Terminal,
   Layout, Database, Smartphone, PenTool, Brain, Search, Briefcase,
-  Code, Heart, MessageSquare, ShieldCheck, Users,
-  Mail, Star, ArrowRight, X, User
+  Code, Heart, ShieldCheck, Users,
+  Mail, Star
 } from 'lucide-react';
 
 import DecryptedText from '../../components/DecryptedText';
@@ -297,7 +295,7 @@ export default function Opportunities() {
               <p className="text-[#9AA1A3] font-bold tracking-[0.2em] text-lg mb-4 uppercase">Careers at Lumora</p>
             </Reveal>
             <h1 className="text-6xl sm:text-8xl font-bold leading-[0.9] tracking-tight mb-6">
-              <SplitText text="OPEN ROLES" delay={100} from={{ opacity: 0, transform: 'translate3d(0,50px,0)' }} to={{ opacity: 1, transform: 'translate3d(0,0,0)' }} easing="easeOutCubic" threshold={0.2} rootMargin="-50px" />
+              <SplitText text="OPEN ROLES" delay={100} from={{ opacity: 0, transform: 'translate3d(0,50px,0)' }} to={{ opacity: 1, transform: 'translate3d(0,0,0)' }} ease="easeOutCubic" threshold={0.2} rootMargin="-50px" />
             </h1>
             <div className="text-[#9AA1A3] text-lg mb-8 leading-relaxed max-w-xl">
               <BlurText text="Every great career starts with the right opportunity. New roles land here first — screened, structured, and ready for you to take the leap." delay={50} />

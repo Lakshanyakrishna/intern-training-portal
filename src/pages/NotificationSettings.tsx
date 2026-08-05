@@ -90,8 +90,8 @@ export default function NotificationSettings() {
   return (
     <div className="max-w-2xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Notification Settings</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Choose which notifications you'd like to receive.</p>
+        <h1 className="text-2xl font-bold text-primary">Notification Settings</h1>
+        <p className="text-sm text-secondary mt-1">Choose which notifications you'd like to receive.</p>
       </div>
 
       {message && (
@@ -106,11 +106,11 @@ export default function NotificationSettings() {
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-6 h-6 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
         <>
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+          <div className="bg-surface border border-line rounded-xl overflow-hidden">
             <div className="divide-y divide-gray-100 dark:divide-gray-700">
               {TOGGLES.map(t => (
                 <div key={t.key} className="flex items-center justify-between px-4 py-3.5">
@@ -119,7 +119,7 @@ export default function NotificationSettings() {
                     type="button"
                     onClick={() => toggle(t.key)}
                     className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors shrink-0 ${
-                      prefs[t.key] ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                      prefs[t.key] ? 'bg-accent' : 'bg-gray-300 dark:bg-gray-600'
                     }`}
                   >
                     <span
@@ -137,7 +137,7 @@ export default function NotificationSettings() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="text-sm px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="text-sm px-4 py-2 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {saving ? 'Saving...' : 'Save Preferences'}
             </button>

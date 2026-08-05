@@ -40,10 +40,10 @@ export default function TicketsBoard() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Task Board</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Real-world engineering tasks. Complete them to build your skills.</p>
+          <h1 className="text-2xl font-bold text-primary">Task Board</h1>
+          <p className="text-sm text-secondary mt-1">Real-world engineering tasks. Complete them to build your skills.</p>
         </div>
-        <span className="text-sm text-gray-500 dark:text-gray-400">{tickets.filter(t => t.done).length}/{tickets.length} done</span>
+        <span className="text-sm text-secondary">{tickets.filter(t => t.done).length}/{tickets.length} done</span>
       </div>
 
       <div className="flex gap-2">
@@ -53,8 +53,8 @@ export default function TicketsBoard() {
             onClick={() => setFilter(f)}
             className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
               filter === f
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                ? 'bg-accent text-white'
+                : 'bg-gray-100 dark:bg-gray-800 text-secondary hover:bg-gray-200 dark:hover:bg-gray-700'
             }`}
           >
             {f === 'all' ? 'All Tasks' : f === 'open' ? 'Open' : 'Completed'}
@@ -66,7 +66,7 @@ export default function TicketsBoard() {
         {filtered.map(ticket => (
           <div
             key={ticket.id}
-            className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 transition-colors ${
+            className={`bg-surface border border-line rounded-xl p-4 transition-colors ${
               ticket.done ? 'opacity-60' : ''
             }`}
           >
@@ -74,7 +74,7 @@ export default function TicketsBoard() {
               <div className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center cursor-pointer ${
                 ticket.done
                   ? 'bg-green-500 border-green-500 text-white'
-                  : 'border-gray-300 dark:border-gray-600'
+                  : 'border-line'
               }`}
                 onClick={() => !ticket.done && completeChallenge(ticket.moduleId, ticket.id)}
               >
@@ -88,14 +88,14 @@ export default function TicketsBoard() {
                   </span>
                   <span className="text-xs text-gray-400 dark:text-gray-500">{ticket.moduleTitle}</span>
                 </div>
-                <h3 className={`text-sm font-medium mt-1 ${ticket.done ? 'text-gray-400 dark:text-gray-500 line-through' : 'text-gray-800 dark:text-white'}`}>
+                <h3 className={`text-sm font-medium mt-1 ${ticket.done ? 'text-gray-400 dark:text-gray-500 line-through' : 'text-primary'}`}>
                   {ticket.title}
                 </h3>
               </div>
               {!ticket.done && (
                 <button
                   onClick={() => completeChallenge(ticket.moduleId, ticket.id)}
-                  className="text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors shrink-0"
+                  className="text-xs px-3 py-1.5 rounded-lg bg-accent text-white hover:bg-accent-hover transition-colors shrink-0"
                 >
                   Complete
                 </button>

@@ -81,19 +81,19 @@ export default function AdminProjects() {
     } catch { /* ignore */ }
   }
 
-  const inputClass = 'w-full px-3.5 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors';
+  const inputClass = 'w-full px-3.5 py-2.5 rounded-lg border border-line bg-surface text-sm text-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent transition-colors';
   const labelClass = 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5';
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Project Allocation</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Assign interns to client projects.</p>
+          <h1 className="text-2xl font-bold text-primary">Project Allocation</h1>
+          <p className="text-sm text-secondary mt-1">Assign interns to client projects.</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
+          className="text-xs px-3 py-1.5 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover transition-colors"
         >
           {showForm ? 'Cancel' : 'Allocate Project'}
         </button>
@@ -110,8 +110,8 @@ export default function AdminProjects() {
       )}
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6 max-w-xl space-y-5">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-white">New Project Allocation</h2>
+        <form onSubmit={handleSubmit} className="bg-surface border border-line rounded-xl p-6 max-w-xl space-y-5">
+          <h2 className="text-sm font-semibold text-primary">New Project Allocation</h2>
 
           <div>
             <label className={labelClass}>Intern *</label>
@@ -154,20 +154,20 @@ export default function AdminProjects() {
             <textarea value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))} rows={2} className={inputClass} placeholder="Additional allocation details..." />
           </div>
 
-          <button type="submit" className="w-full py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors text-sm">
+          <button type="submit" className="w-full py-2.5 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors text-sm">
             Allocate
           </button>
         </form>
       )}
 
       {/* Allocations table */}
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
-        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Allocations</h2>
+      <div className="bg-surface border border-line rounded-xl overflow-hidden">
+        <div className="px-4 py-3 border-b border-line bg-surface-alt flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-primary">Allocations</h2>
         </div>
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            <div className="w-5 h-5 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : allocations.length === 0 ? (
           <div className="text-center py-12 text-sm text-gray-400 dark:text-gray-500">No project allocations yet.</div>
@@ -178,10 +178,10 @@ export default function AdminProjects() {
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50">
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{a.internName || 'Unknown'}</p>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">{a.role}</span>
+                      <p className="text-sm font-medium text-primary">{a.internName || 'Unknown'}</p>
+                      <span className="text-xs text-secondary">{a.role}</span>
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    <p className="text-xs text-secondary mt-0.5">
                       {a.projectName} — {a.clientName}
                       {' \u2022 '}Started {new Date(a.startDate).toLocaleDateString()}
                       {a.endDate && ` \u2022 Ends ${new Date(a.endDate).toLocaleDateString()}`}
@@ -191,7 +191,7 @@ export default function AdminProjects() {
                     value={a.status}
                     onClick={e => e.stopPropagation()}
                     onChange={e => handleStatusChange(a.id, e.target.value as DbProjectAllocation['status'])}
-                    className="text-xs px-2 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="text-xs px-2 py-1.5 rounded-lg border border-line bg-surface text-primary"
                   >
                     {STATUS_OPTIONS.map(s => (
                       <option key={s} value={s}>{s}</option>
@@ -240,11 +240,11 @@ function ProjectOutcomeForm({ allocationId, internId }: { allocationId: string; 
     }
   }
 
-  const inputClass = 'w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-white';
-  const labelClass = 'block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1';
+  const inputClass = 'w-full px-3 py-2 rounded-lg border border-line bg-surface text-sm text-primary';
+  const labelClass = 'block text-xs font-medium text-secondary mb-1';
 
   return (
-    <div className="px-6 py-4 bg-gray-50 dark:bg-gray-900/30 border-t border-gray-100 dark:border-gray-700 space-y-3">
+    <div className="px-6 py-4 bg-surface-alt border-t border-line space-y-3">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div>
           <label className={labelClass}>Outcome</label>
@@ -277,7 +277,7 @@ function ProjectOutcomeForm({ allocationId, internId }: { allocationId: string; 
       <button
         onClick={handleSave}
         disabled={saving}
-        className="text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+        className="text-xs px-3 py-1.5 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover disabled:opacity-50 transition-colors"
       >
         {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Outcome'}
       </button>

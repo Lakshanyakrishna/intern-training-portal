@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { getUserSettings, upsertUserSettings } from '../lib/db';
+import { roleHomePath } from '../utils/roleHome';
 import Sidebar from './Sidebar';
 import NotificationBell from './NotificationBell';
 
@@ -36,37 +37,39 @@ export default function Layout() {
   }, [darkMode, user]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen bg-background text-primary">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} compact={isModuleRoute} />
       <div className={`transition-all duration-300 ease-in-out ${isModuleRoute ? 'lg:ml-16' : 'lg:ml-64'}`}>
-        <header className="sticky top-0 z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur border-b border-gray-200 dark:border-gray-800">
+        <header className="sticky top-0 z-10 bg-surface/80 backdrop-blur border-b border-line">
           <div className="flex items-center justify-between px-4 h-14">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="lg:hidden p-2 rounded-lg hover:bg-surface-alt"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <div className="lg:hidden font-semibold text-sm text-gray-800 dark:text-white">Intern Readiness Program</div>
+            <div className="lg:hidden font-semibold text-sm text-primary">Intern Readiness Program</div>
             <div className="hidden lg:block">
-              <Link to="/dashboard" className="text-sm font-semibold text-gray-800 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              <Link to={roleHomePath(user?.role)} className="text-sm font-semibold text-primary hover:text-accent transition-colors">
                 Intern Readiness Program
               </Link>
             </div>
             <div className="flex items-center gap-2 ml-auto">
-              <Link
-                to="/mentor"
-                className="hidden sm:flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              >
-                <span>🔒</span>
-                <span>Mentor</span>
-              </Link>
+              {(user?.role === 'mentor' || user?.role === 'admin') && (
+                <Link
+                  to="/mentor"
+                  className="hidden sm:flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-surface-alt transition-colors"
+                >
+                  <span>🔒</span>
+                  <span>Mentor</span>
+                </Link>
+              )}
               <NotificationBell />
               <button
                 onClick={() => setDarkMode(p => !p)}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="p-2 rounded-lg hover:bg-surface-alt transition-colors"
                 title="Toggle theme"
               >
                 {darkMode ? <span className="text-lg">☀️</span> : <span className="text-lg">🌙</span>}

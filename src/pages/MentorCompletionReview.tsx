@@ -78,22 +78,22 @@ export default function MentorCompletionReview() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Completion Review</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Review and approve intern completion status.</p>
+        <h1 className="text-2xl font-bold text-primary">Completion Review</h1>
+        <p className="text-sm text-secondary mt-1">Review and approve intern completion status.</p>
       </div>
 
       {actionMsg && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-4 py-3 text-sm text-blue-700 dark:text-blue-300">
+        <div className="bg-neutral-50 dark:bg-neutral-900/20 border border-neutral-200 dark:border-neutral-800 rounded-lg px-4 py-3 text-sm text-neutral-700 dark:text-neutral-300">
           {actionMsg}
         </div>
       )}
 
       {loading ? (
         <div className="flex items-center justify-center py-16">
-          <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-5 h-5 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : mentees.length === 0 ? (
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-8 text-center">
+        <div className="bg-surface border border-line rounded-xl p-8 text-center">
           <p className="text-sm text-gray-400 dark:text-gray-500">No active mentees assigned.</p>
         </div>
       ) : (
@@ -101,12 +101,12 @@ export default function MentorCompletionReview() {
           {mentees.map(mentee => (
             <div
               key={mentee.id}
-              className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5"
+              className="bg-surface border border-line rounded-xl p-5"
             >
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{mentee.internName || 'Intern'}</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Assigned {new Date(mentee.assignedAt).toLocaleDateString()}</p>
+                  <h3 className="text-sm font-semibold text-primary">{mentee.internName || 'Intern'}</h3>
+                  <p className="text-xs text-secondary">Assigned {new Date(mentee.assignedAt).toLocaleDateString()}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
@@ -130,13 +130,13 @@ export default function MentorCompletionReview() {
                 </button>
                 <button
                   onClick={() => handleIssueTrainingCert(mentee.internId)}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   Issue Training Cert
                 </button>
                 <button
                   onClick={() => handleIssueInternshipCert(mentee.internId)}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
                   Issue Internship Cert
                 </button>
