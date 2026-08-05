@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { motion, useInView, useMotionValue } from 'motion/react';
+import { Link } from 'react-router-dom';
 import Header from '../../components/Header';
 import IntroLogo from '../../components/IntroLogo';
 import Ferrofluid from '../../components/Ferrofluid';
@@ -389,7 +390,7 @@ export default function Team() {
         <Header />
 
         {/* ─── HERO SECTION ─── */}
-        <section className="mx-auto max-w-7xl px-8 pt-32 pb-20 md:pt-40 md:pb-32 text-center">
+        <section className="mx-auto max-w-7xl px-8 pt-32 pb-4 md:pt-40 md:pb-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -416,7 +417,7 @@ export default function Team() {
         </section>
 
         {/* ─── LEADERSHIP GRID ─── */}
-        <section className="mx-auto max-w-7xl px-8 py-20">
+        <section className="mx-auto max-w-7xl px-8 pt-6 pb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -563,9 +564,9 @@ export default function Team() {
               Join our mission to transform how students launch their careers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-4 rounded-full bg-[#F1F2EE] text-[#050505] font-light hover:bg-[#F1F2EE]/90 transition-all hover:scale-[1.02]" style={{ fontFamily: 'Inter, -apple-system, Segoe UI, sans-serif' }}>
+              <Link to="/careers" className="px-8 py-4 rounded-full bg-[#F1F2EE] text-[#050505] font-light hover:bg-[#F1F2EE]/90 transition-all hover:scale-[1.02] inline-flex items-center justify-center text-center" style={{ fontFamily: 'Inter, -apple-system, Segoe UI, sans-serif' }}>
                 Join Our Team
-              </button>
+              </Link>
               <button className="px-8 py-4 rounded-full border border-[#2A2A2A] text-[#F1F2EE] font-light hover:bg-[#1A1A1A]/50 hover:border-[#3A3A3A] transition-all hover:scale-[1.02]" style={{ fontFamily: 'Inter, -apple-system, Segoe UI, sans-serif' }}>
                 Contact Us
               </button>

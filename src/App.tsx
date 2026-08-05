@@ -14,6 +14,12 @@ const Opportunities = lazy(() => import('./pages/public/Opportunities'));
 const OpportunityDetail = lazy(() => import('./pages/public/OpportunityDetail'));
 const Team = lazy(() => import('./pages/public/Team'));
 const Contact = lazy(() => import('./pages/public/Contact'));
+const ProjectsInfo = lazy(() => import('./pages/public/ProjectsInfo'));
+const OpportunitiesInfo = lazy(() => import('./pages/public/OpportunitiesInfo'));
+const MentorshipInfo = lazy(() => import('./pages/public/MentorshipInfo'));
+const PortfolioInfo = lazy(() => import('./pages/public/PortfolioInfo'));
+const CareersInfo = lazy(() => import('./pages/public/CareersInfo'));
+const CommunityInfo = lazy(() => import('./pages/public/CommunityInfo'));
 const Onboarding = lazy(() => import('./pages/Onboarding'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const ModulePage = lazy(() => import('./pages/ModulePage'));
@@ -77,6 +83,12 @@ export default function App() {
             <Route path="/apply" element={<Apply />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/projects-info" element={<ProjectsInfo />} />
+            <Route path="/opportunities-info" element={<OpportunitiesInfo />} />
+            <Route path="/mentorship-info" element={<MentorshipInfo />} />
+            <Route path="/portfolio-info" element={<PortfolioInfo />} />
+            <Route path="/careers" element={<CareersInfo />} />
+            <Route path="/community-info" element={<CommunityInfo />} />
 
             {/* Onboarding (intern+ only -- training-specific, not relevant pre-acceptance) */}
             <Route path="/onboarding" element={

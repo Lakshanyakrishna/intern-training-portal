@@ -300,20 +300,24 @@ export default function Opportunities() {
     <div className="relative min-h-screen bg-[#0A0A0B] text-white overflow-hidden font-sans">
       <div className="fixed inset-0 pointer-events-none">
         <Ferrofluid
-          colors={['#9AA1A3', '#C6CAC9', '#F1F2EE']}
-          speed={0.5}
-          scale={1.6}
+          className="w-full h-full"
+          dpr={window.devicePixelRatio || 1}
+          colors={['#7d7b7b', '#ffffff', '#ffffff']}
+          speed={0.7}
+          scale={1}
           turbulence={1}
-          fluidity={0.15}
-          rimWidth={0.22}
-          sharpness={2.5}
-          shimmer={1.2}
-          glow={1.0}
+          fluidity={0.13}
+          rimWidth={0.2}
+          sharpness={3}
+          shimmer={1.8}
+          glow={2}
           flowDirection="down"
-          opacity={0.7}
-          mouseInteraction
-          mouseStrength={0.8}
-          mouseRadius={0.35}
+          opacity={0.15}
+          mouseInteraction={true}
+          mouseStrength={1}
+          mouseRadius={0.3}
+          mouseDampening={0.15}
+          mixBlendMode="screen"
         />
       </div>
 

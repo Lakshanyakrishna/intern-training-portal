@@ -4,9 +4,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import IntroLogo from '../../components/IntroLogo';
 import Header from '../../components/Header';
 import Ferrofluid from '../../components/Ferrofluid';
-import Prism from '../../components/Prism';
-import TrueFocus from '../../components/TrueFocus';
-import TargetCursor from '../../components/TargetCursor';
 import Footer from '../../components/Footer';
 import DomainPathCard from '../../components/DomainPathCard';
 import DomainBackground from '../../components/DomainBackground';
@@ -22,7 +19,8 @@ const WHY_LUMORA = [
         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
       </svg>
     ),
-    accent: '#10B981'
+    accent: '#10B981',
+    link: '/projects-info'
   },
   { 
     title: 'Verified Internship Opportunities', 
@@ -34,7 +32,8 @@ const WHY_LUMORA = [
         <circle cx="12" cy="12" r="2"/>
       </svg>
     ),
-    accent: '#F59E0B'
+    accent: '#F59E0B',
+    link: '/opportunities-info'
   },
   { 
     title: 'Expert Mentorship', 
@@ -47,7 +46,8 @@ const WHY_LUMORA = [
         <path d="M9 16h6"/>
       </svg>
     ),
-    accent: '#3B82F6'
+    accent: '#3B82F6',
+    link: '/mentorship-info'
   },
   { 
     title: 'Global Developer Community', 
@@ -59,7 +59,8 @@ const WHY_LUMORA = [
         <circle cx="12" cy="12" r="12" strokeDasharray="2 4"/>
       </svg>
     ),
-    accent: '#8B5CF6'
+    accent: '#8B5CF6',
+    link: '/community-info'
   },
   { 
     title: 'Career-Focused Learning', 
@@ -70,7 +71,8 @@ const WHY_LUMORA = [
         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
       </svg>
     ),
-    accent: '#06B6D4'
+    accent: '#06B6D4',
+    link: '/projects-info'
   },
   { 
     title: 'Build a Portfolio That Stands Out', 
@@ -82,7 +84,8 @@ const WHY_LUMORA = [
         <path d="M9 21V9"/>
       </svg>
     ),
-    accent: '#EF4444'
+    accent: '#EF4444',
+    link: '/portfolio-info'
   }
 ];
 
@@ -185,15 +188,6 @@ export default function Home() {
       <IntroLogo animate={false} />
       <Header />
       <div className="relative z-10">
-        <TargetCursor 
-          targetSelector=".cursor-target"
-          spinDuration={3}
-          hideDefaultCursor={false}
-          hoverDuration={0.3}
-          parallaxOn={true}
-          cursorColor="#ffffff"
-          cursorColorOnTarget="#ffffff"
-        />
       
       {/* ─── HERO SECTION ─── */}
       <section className="mx-auto max-w-7xl px-8 pt-32 pb-20 md:pt-40 md:pb-32 relative">
@@ -265,15 +259,16 @@ export default function Home() {
                   letterSpacing: '-0.02em'
                 }}
               >
-                <TrueFocus 
-                  sentence="Launch Your Career."
-                  manualMode={false}
-                  blurAmount={3}
-                  borderColor="white"
-                  glowColor="rgba(255, 255, 255, 0.4)"
-                  animationDuration={0.5}
-                  pauseBetweenAnimations={2}
-                />
+                {"Launch Your Career.".split("").map((char, index) => (
+                  <motion.span
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.05, delay: index * 0.03 }}
+                  >
+                    {char === " " ? "\u00A0" : char}
+                  </motion.span>
+                ))}
               </motion.h1>
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
@@ -346,27 +341,6 @@ export default function Home() {
                 Browse Programs
               </Link>
             </motion.div>
-          </motion.div>
-
-          {/* Scroll Indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: showcasePhase === 'complete' ? 1 : 0 }}
-            transition={{ duration: 0.8, delay: 1 }}
-            className="mt-16 flex flex-col items-center gap-2"
-          >
-            <motion.span
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="text-[11px] uppercase tracking-[0.2em] text-[#A0A0A0]"
-            >
-              Scroll
-            </motion.span>
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-px h-8 bg-gradient-to-b from-[#A0A0A0] to-transparent"
-            />
           </motion.div>
         </motion.div>
 
@@ -531,7 +505,7 @@ export default function Home() {
                 </svg>
               ),
               accentColor: '#7C3AED',
-              url: '/opportunities?domain=AI%20%26%20ML'
+              url: '/apply/frontend-developer-intern'
             }}
           />
           <DomainPathCard 
@@ -549,7 +523,7 @@ export default function Home() {
                 </svg>
               ),
               accentColor: '#3B82F6',
-              url: '/opportunities?domain=Frontend'
+              url: '/apply/frontend-developer-intern'
             }}
           />
           <DomainPathCard 
@@ -572,7 +546,7 @@ export default function Home() {
                 </svg>
               ),
               accentColor: '#10B981',
-              url: '/opportunities?domain=Backend'
+              url: '/apply/frontend-developer-intern'
             }}
           />
           <DomainPathCard 
@@ -589,7 +563,7 @@ export default function Home() {
                 </svg>
               ),
               accentColor: '#06B6D4',
-              url: '/opportunities?domain=Cloud'
+              url: '/apply/frontend-developer-intern'
             }}
           />
           <DomainPathCard 
@@ -608,7 +582,7 @@ export default function Home() {
                 </svg>
               ),
               accentColor: '#EC4899',
-              url: '/opportunities?domain=Data%20Science'
+              url: '/apply/frontend-developer-intern'
             }}
           />
           <DomainPathCard 
@@ -625,7 +599,7 @@ export default function Home() {
                 </svg>
               ),
               accentColor: '#EF4444',
-              url: '/opportunities?domain=Cyber%20Security'
+              url: '/apply/frontend-developer-intern'
             }}
           />
           <DomainPathCard 
@@ -645,7 +619,7 @@ export default function Home() {
                 </svg>
               ),
               accentColor: '#F59E0B',
-              url: '/opportunities?domain=UI%2FUX%20Design'
+              url: '/apply/frontend-developer-intern'
             }}
           />
         </div>
@@ -695,21 +669,6 @@ export default function Home() {
 
       {/* ─── FINAL CTA ─── */}
       <section className="mx-auto max-w-7xl px-8 py-12 pt-8 relative">
-        <div className="absolute inset-0 pointer-events-none">
-          <Prism
-            animationType="rotate"
-            timeScale={0.5}
-            height={3.5}
-            baseWidth={5.5}
-            scale={3.6}
-            hueShift={0}
-            colorFrequency={0.1}
-            noise={0}
-            glow={2}
-            bloom={1.5}
-            transparent={true}
-          />
-        </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
