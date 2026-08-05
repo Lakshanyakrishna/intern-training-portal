@@ -8,10 +8,15 @@ interface TimelineCopy {
 
 // Stage-aware time expectations. Keyed off the same Stage single source of
 // truth as everything else on the page, so this card tracks applicantStage
-// changes automatically with no hardcoding. no_application intentionally
-// renders nothing -- there is no timeline to show before an application exists.
+// changes automatically with no hardcoding. no_application shows the general
+// expectation (not a specific application's timeline) so that dashboard
+// stats referencing "average review time" always have real content to point
+// to, even before someone has applied.
 const STAGE_TIMELINE: Record<Stage, TimelineCopy> = {
-  no_application: { timeline: '', note: '' },
+  no_application: {
+    timeline: '1–3 business days',
+    note: "That's how long it typically takes us to review a new application once you apply.",
+  },
   application_submitted: {
     timeline: '1–2 business days',
     note: 'Your application has been received and is waiting for an initial review.',
@@ -43,11 +48,10 @@ const STAGE_TIMELINE: Record<Stage, TimelineCopy> = {
 };
 
 export default function EstimatedTimeline({ stage }: { stage: Stage }) {
-  if (stage === 'no_application') return null;
   const copy = STAGE_TIMELINE[stage];
 
   return (
-    <section aria-label="Estimated timeline" className="bg-surface border border-line rounded-2xl shadow-sm shadow-black/[0.03] p-5">
+    <section id="estimated-timeline" aria-label="Estimated timeline" className="bg-surface border border-line rounded-2xl shadow-sm shadow-black/[0.03] p-5 scroll-mt-20">
       <div className="flex items-center gap-2.5 mb-3">
         <div className="w-7 h-7 rounded-full bg-surface-alt flex items-center justify-center text-secondary shrink-0">
           <Clock className="w-3.5 h-3.5" />
