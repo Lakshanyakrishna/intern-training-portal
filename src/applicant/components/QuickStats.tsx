@@ -36,7 +36,7 @@ export default function QuickStats({ stats }: { stats: QuickStat[] }) {
 
         if (stat.action.type === 'link') {
           return (
-            <Link key={stat.id} to={stat.action.href} className={CARD_CLASSES}>
+            <Link key={stat.id} to={stat.action.href} state={stat.action.state} className={CARD_CLASSES}>
               {body}
             </Link>
           );
