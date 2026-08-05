@@ -98,7 +98,7 @@ export default function Apply() {
       const applicationId = await submitApplication({
         ...form,
         userId: user?.id,
-        opportunityId: opportunityId || undefined,
+        opportunityId: opportunity?.id || undefined,
         answers: questions.length > 0 ? answers : undefined,
       });
       if (profileResume && !useFullForm) {
@@ -282,7 +282,9 @@ export default function Apply() {
               {user && (
                 <div className="bg-neutral-50 dark:bg-neutral-900/20 border border-neutral-200 dark:border-neutral-800 rounded-lg px-4 py-3 text-sm text-neutral-700 dark:text-neutral-300 flex items-center gap-2">
                   <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                  Signed in as <strong>{user.email}</strong>. Your application will be linked to your account.
+                  <span className="flex-1">
+                    Signed in as <strong>{user.email}</strong>. Your application will be linked to your account.
+                  </span>
                   {profileResume === null && (
                     <Link to="/profile" className="ml-auto text-accent hover:underline shrink-0">Complete profile for one-click apply →</Link>
                   )}

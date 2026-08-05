@@ -1,10 +1,11 @@
 // @ts-nocheck
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Dither from '../../components/Dither';
 import Radar from '../../components/Radar';
 import Lightfall from '../../components/Lightfall';
 import CountUp from '../../components/CountUp';
+import ElectricBorder from '../../components/react-bits/ElectricBorder/ElectricBorder';
 import Ferrofluid from '../../components/Ferrofluid';
 import Header from '../../components/Header';
 import IntroLogo from '../../components/IntroLogo';
@@ -19,11 +20,10 @@ import OrbitImages from '../../components/react-bits/OrbitImages/OrbitImages';
 
 import ClickSpark from '../../components/ClickSpark';
 import FadeContent from '../../components/FadeContent';
-import ElectricBorder from '../../components/react-bits/ElectricBorder/ElectricBorder';
 import {
   Code, Laptop, Users, Rocket, Box, Target, Quote,
   Check, X, ArrowRight, ChevronRight,
-  FileCheck, Sparkles, ShieldCheck, Mail
+  FileCheck, Sparkles, ShieldCheck, PenTool, Mail
 } from 'lucide-react';
 
 // TODO: replace with real data before launch
@@ -88,6 +88,8 @@ function ComingSoonLink({ label }: { label: string }) {
 }
 
 export default function About() {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [orbitPaused, setOrbitPaused] = useState(false);
   const [supportsOffsetPath, setSupportsOffsetPath] = useState(true);
 
   useEffect(() => {
@@ -134,13 +136,13 @@ export default function About() {
                 delay={100}
                 from={{ opacity: 0, transform: 'translate3d(0,50px,0)' }}
                 to={{ opacity: 1, transform: 'translate3d(0,0,0)' }}
-                ease="easeOutCubic"
+                easing="easeOutCubic"
                 threshold={0.2}
                 rootMargin="-50px"
               />
             </h1>
             <div className="text-gray-400 text-lg mb-8 leading-relaxed">
-              <BlurText text="Every expert was once a beginner. We just make the path shorter." delay={50} className="justify-center" />
+              <BlurText text="Every expert was once a beginner. We just make the path shorter." delay={50} />
             </div>
             <div className="flex flex-wrap justify-center gap-3">
               {HERO_BADGES.map((b, i) => (
@@ -212,9 +214,6 @@ export default function About() {
                 </div>
                 <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0A0A0B] border border-white/20 items-center justify-center z-10">
                   <ArrowRight className="w-4 h-4 text-gray-300" />
-                </div>
-                <div className="flex md:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0A0A0B] border border-white/20 items-center justify-center z-10">
-                  <ArrowRight className="w-4 h-4 text-gray-300 rotate-90" />
                 </div>
                 <ElectricBorder
                   color="#C6CAC9"
@@ -368,16 +367,12 @@ export default function About() {
                   </div>
                   <div className="flex flex-wrap justify-center gap-3">
                     {WHAT_YOULL_GAIN.map((item, i) => (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: i * 0.1, duration: 0.4 }}
+                      <div
                         key={i}
                         className="flex items-center gap-2 bg-[#111114] border border-white/10 rounded-full px-4 py-2 text-sm text-gray-300 shadow-lg"
                       >
                         <Check className="w-4 h-4 text-[#C6CAC9] shrink-0" /> {item}
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 </>
@@ -462,10 +457,9 @@ export default function About() {
                     mouseRadius={0.8}
                   />
                 </div>
-                <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'rgba(10,10,11,0.75)', borderRadius: 'inherit', pointerEvents: 'none' }} />
-                <div className="flex flex-col md:flex-row items-center gap-6" style={{ position: 'relative', zIndex: 2 }}>
-                  <div className="w-20 h-20 rounded-full bg-[#6D777C] overflow-hidden shrink-0 shadow-lg border border-white/10">
-                    <img src="/priya_portrait.jpg" alt={TESTIMONIAL.name} className="w-full h-full object-cover" />
+                <div className="flex flex-col md:flex-row items-center gap-6" style={{ position: 'relative', zIndex: 1 }}>
+                  <div className="w-20 h-20 rounded-full bg-[#6D777C] flex items-center justify-center text-xl font-bold text-[#F1F2EE] shrink-0">
+                    {TESTIMONIAL.name.split(' ').map((n) => n[0]).join('')}
                   </div>
                   <div>
                     <Quote className="w-6 h-6 text-[#6D777C] mb-3" />
@@ -502,7 +496,7 @@ export default function About() {
               </div>
               <div style={{ position: 'relative', zIndex: 1 }}>
                 <h2 className="text-3xl sm:text-4xl font-bold mb-3">Your future self is already proud of you for starting.</h2>
-                <p className="text-gray-200 mb-8">Join Lumora and turn your potential into professional impact.</p>
+                <p className="text-gray-400 mb-8">Join Lumora and turn your potential into professional impact.</p>
                 <ClickSpark sparkColor="#fff" sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
                   <Link
                     to="/signup"

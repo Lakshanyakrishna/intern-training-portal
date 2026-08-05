@@ -5,7 +5,18 @@ import { AnimatePresence, motion } from 'motion/react';
 
 import './Dock.css';
 
-function DockLabel({ children, visible }) {
+function DockLabel({ children, visible, alignment }) {
+  let originClass = 'dock-label-center';
+  let xOffset = '-50%';
+  
+  if (alignment === 'right') {
+    originClass = 'dock-label-right';
+    xOffset = '0%';
+  } else if (alignment === 'left') {
+    originClass = 'dock-label-left';
+    xOffset = '0%';
+  }
+
   return (
     <AnimatePresence>
       {visible && (
@@ -14,9 +25,9 @@ function DockLabel({ children, visible }) {
           animate={{ opacity: 1, y: -10 }}
           exit={{ opacity: 0, y: 0 }}
           transition={{ duration: 0.15 }}
-          className="dock-label"
+          className={`dock-label ${originClass}`}
           role="tooltip"
-          style={{ x: '-50%' }}
+          style={{ x: xOffset }}
         >
           {children}
         </motion.div>
@@ -37,6 +48,9 @@ export default function Dock({
       <div className="dock-panel" role="toolbar" aria-label="Application dock">
         {items.map((item, index) => {
           const isHovered = hoveredIndex === index;
+          let alignment = 'center';
+          if (index === items.length - 1) alignment = 'right';
+
           return (
             <div
               key={index}
@@ -56,7 +70,7 @@ export default function Dock({
               <div className={`dock-icon ${isHovered ? 'dock-icon--active' : ''}`}>
                 {item.icon}
               </div>
-              <DockLabel visible={isHovered}>{item.label}</DockLabel>
+              <DockLabel visible={isHovered} alignment={alignment}>{item.label}</DockLabel>
             </div>
           );
         })}
