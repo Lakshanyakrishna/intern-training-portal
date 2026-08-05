@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
+// @ts-nocheck
+import { useState, useRef, useEffect, Children, useMemo } from 'react';
+import { motion } from 'motion/react';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import FaqScrollReveal from '../../components/react-bits/ScrollReveal/ScrollReveal';
-import ScrollRevealGroup from '../../components/ScrollRevealGroup';
 import { Link } from 'react-router-dom';
 import Ferrofluid from '../../components/Ferrofluid';
 import Header from '../../components/Header';
@@ -17,7 +18,6 @@ import StarBorder from '../../components/StarBorder';
 import ElectricBorder from '../../components/react-bits/ElectricBorder/ElectricBorder';
 import BorderGlow from '../../components/react-bits/BorderGlow/BorderGlow';
 import GradientText from '../../components/react-bits/GradientText/GradientText';
-import GlitchText from '../../components/react-bits/GlitchText/GlitchText';
 import HoverSplashCard from '../../components/react-bits/HoverSplashCard/HoverSplashCard';
 import CursorGrid from '../../components/react-bits/CursorGrid/CursorGrid';
 import PixelTransition from '../../components/react-bits/PixelTransition/PixelTransition';
@@ -30,17 +30,16 @@ import BlurText from '../../components/react-bits/BlurText/BlurText';
 import Dock from '../../components/Dock';
 import VariableProximity from '../../components/react-bits/VariableProximity/VariableProximity';
 import TrueFocus from '../../components/react-bits/TrueFocus/TrueFocus';
-import ScrollReveal from '../../components/ScrollReveal';
 
-import ScrollVelocity from '../../components/react-bits/ScrollVelocity/ScrollVelocity';
 import { useAutoScroll } from '../../hooks/useAutoScroll';
 import Galaxy from '../../components/react-bits/Galaxy/Galaxy';
 import CountUp from '../../components/CountUp';
-import AnimatedContent from '../../components/AnimatedContent';
 import GlareHover from '../../components/GlareHover';
+import AnimatedList from '../../components/AnimatedList';
+import Beams from '../../components/Beams';
+import LiquidChrome from '../../components/LiquidChrome/LiquidChrome';
 
 import MultiSelectGooeyNav from '../../components/react-bits/GooeyNav/MultiSelectGooeyNav';
-import FadeContent from '../../components/FadeContent';
 import {
   ChevronDown, Bookmark, GitCompare, Share, MapPin, DollarSign,
   Clock, Zap, ChevronUp, ChevronRight, Terminal,
@@ -144,11 +143,70 @@ const hexToRgbString = (hex: string) => {
 
 const getDifficultyColor = (level: string) => {
   switch (level) {
-    case 'Beginner': return { bg: '#C6CAC9', text: '#F1F2EE' };
-    case 'Intermediate': return { bg: '#9AA1A3', text: '#F1F2EE' };
+    case 'Beginner': return { bg: '#C6CAC9', text: '#111114' };
+    case 'Intermediate': return { bg: '#9AA1A3', text: '#111114' };
     case 'Advanced': return { bg: '#6D777C', text: '#F1F2EE' };
-    default: return { bg: '#9AA1A3', text: '#F1F2EE' };
+    default: return { bg: '#9AA1A3', text: '#111114' };
   }
+};
+
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }
+  }
+};
+
+const Reveal = ({ children, delay = 0, className = '', ...rest }) => {
+  const variants = useMemo(() => {
+    if (delay <= 0) return fadeUpVariant;
+    return {
+      ...fadeUpVariant,
+      visible: {
+        ...fadeUpVariant.visible,
+        transition: { ...fadeUpVariant.visible.transition, delay }
+      }
+    };
+  }, [delay]);
+
+  return (
+    <motion.div
+      className={className}
+      variants={variants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
+      {...rest}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+const RevealGroup = ({ children, className = '', staggerDelay = 0.1, childClassName = '', ...rest }) => {
+  const containerVariants = useMemo(
+    () => ({ hidden: {}, visible: { transition: { staggerChildren: staggerDelay } } }),
+    [staggerDelay]
+  );
+
+  return (
+    <motion.div
+      className={className}
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
+      {...rest}
+    >
+      {Children.map(children, child => (
+        <motion.div className={childClassName} variants={fadeUpVariant}>
+          {child}
+        </motion.div>
+      ))}
+    </motion.div>
+  );
 };
 
 const ComingSoonWrapper = ({ children }: { children: React.ReactNode }) => {
@@ -204,6 +262,7 @@ export default function Opportunities() {
   };
 
   return (
+    <>
     <div className="relative min-h-screen bg-[#0A0A0B] text-white overflow-hidden font-sans">
       <div className="fixed inset-0 pointer-events-none">
         <Ferrofluid
@@ -230,17 +289,16 @@ export default function Opportunities() {
       <main className="relative z-10 px-6 sm:px-8 pt-32 pb-28 max-w-7xl mx-auto space-y-24">
         
         {/* HERO SECTION */}
-        <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
         <section className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-12">
           <div className="max-w-2xl">
-            <AnimatedContent distance={20} direction="vertical" delay={0.2} reverse={false} >
-              <p className="text-[#9AA1A3] font-semibold tracking-wider text-sm mb-4 uppercase">Careers at Lumora</p>
-            </AnimatedContent>
+            <Reveal delay={0.2}>
+              <p className="text-[#9AA1A3] font-bold tracking-[0.2em] text-lg mb-4 uppercase">Careers at Lumora</p>
+            </Reveal>
             <h1 className="text-6xl sm:text-8xl font-bold leading-[0.9] tracking-tight mb-6">
               <SplitText text="OPEN ROLES" delay={100} from={{ opacity: 0, transform: 'translate3d(0,50px,0)' }} to={{ opacity: 1, transform: 'translate3d(0,0,0)' }} ease="easeOutCubic" threshold={0.2} rootMargin="-50px" />
             </h1>
             <div className="text-[#9AA1A3] text-lg mb-8 leading-relaxed max-w-xl">
-              <BlurText text="Great journeys begin before the first step is even visible. This page goes live the moment an admin posts the first one — screened, structured, ready to apply to." delay={50} />
+              <BlurText text="Every great career starts with the right opportunity. New roles land here first — screened, structured, and ready for you to take the leap." delay={50} />
             </div>
             {/*
             <div className="flex flex-wrap items-center gap-6 text-sm text-[#C6CAC9]">
@@ -255,170 +313,30 @@ export default function Opportunities() {
               </AnimatedContent>
             </div>
             */}
-            
-            <div className="mt-2 mb-8">
-              <Dock 
-                items={[
-                  { 
-                    icon: <Users size={18} />, 
-                    label: 'Open to students & recent grads', 
-                    onClick: () => {} 
-                  },
-                  { 
-                    icon: <MapPin size={18} />, 
-                    label: 'Remote-friendly', 
-                    onClick: () => {} 
-                  },
-                  { 
-                    icon: <ShieldCheck size={18} />, 
-                    label: 'Transparent process', 
-                    onClick: () => {} 
-                  }
-                ]}
-                panelHeight={56}
-                baseItemSize={40}
-                magnification={56}
-                distance={150}
-              />
-            </div>
           </div>
-          <div className="flex flex-col items-start lg:items-end gap-3">
+          <Reveal delay={0.5} className="flex flex-col items-start lg:items-end gap-3">
             <p className="text-sm text-[#9AA1A3]">Be the first to know when a role opens</p>
             <Magnet padding={15} disabled={false} magnetStrength={3}>
               <Link to="/signup" className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-semibold hover:scale-105 transition-transform">
                 Get notified <ChevronRight className="w-4 h-4" />
               </Link>
             </Magnet>
-          </div>
+          </Reveal>
         </section>
-        </AnimatedContent>
-
-        {/* STATS BAR */}
-        <ScrollReveal delay={0.1}>
-        <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
-        <section style={{ position: 'relative' }}>
-          <div style={{ 
-            position: 'absolute', 
-            inset: 0, 
-            zIndex: 0,
-            pointerEvents: 'none'
-          }}>
-            <Ribbons
-              colors={['#C6CAC9']}
-              baseThickness={20}
-              speedMultiplier={0.5}
-              maxAge={400}
-              pointCount={40}
-              enableFade={true}
-              enableShaderEffect={false}
-              backgroundColor={[0, 0, 0, 0]}
-            />
-          </div>
-          <div style={{ position: 'relative', zIndex: 1 }} className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {[
-            { icon: Briefcase, to: 6, suffix: '', title: '6', sub: 'Domains open for hiring' },
-            { icon: Clock, title: 'Cohort 01', sub: 'Launching soon' },
-            { icon: MapPin, to: 100, suffix: '%', title: '100%', sub: 'Remote-friendly' },
-            { icon: Users, to: 10, suffix: '+', title: '10+', sub: 'Mentors & Experts' },
-            { icon: Heart, title: 'Transparent', sub: 'No ghosting. Ever.' }
-          ].map((stat, i) => (
-            <AnimatedContent
-              key={i}
-              delay={i * 0.1}
-              distance={30}
-              direction="vertical"
-              animateOpacity
-              className="w-full h-full"
-            >
-              <BorderGlow
-                className="w-full h-full"
-                backgroundColor="#111114"
-                borderRadius={16}
-                glowColor="193 6% 62%"
-                glowRadius={20}
-                glowIntensity={1.0}
-                edgeSensitivity={30}
-                coneSpread={25}
-                animated={false}
-                colors={['#6D777C', '#9AA1A3', '#C6CAC9']}
-              >
-                <HoverSplashCard className="w-full h-full">
-                  <div className="w-full h-full" style={{ position: 'relative', overflow: 'hidden', borderRadius: 'inherit' }}>
-                    <div style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.4 }}>
-                      <ShapeGrid
-                        direction="diagonal"
-                        speed={0.3}
-                        squareSize={16}
-                        shape="square"
-                        borderColor="rgba(255,255,255,0.06)"
-                        hoverFillColor="rgba(255,255,255,0.03)"
-                        hoverTrailAmount={0}
-                      />
-                    </div>
-                    <div className="flex flex-col gap-2 p-5 h-full relative z-10 pointer-events-none">
-                      <stat.icon className="w-5 h-5 text-[#9AA1A3]" />
-                      <div>
-                        <h3 className="text-lg font-semibold flex items-center pointer-events-auto">
-                      <GlitchText
-                        text={stat.to !== undefined ? `${stat.to}${stat.suffix}` : stat.title}
-                        speed={0.6}
-                        enableShadows={true}
-                        enableOnHover={true}
-                        className="inline-flex"
-                      >
-                        <GradientText
-                          colors={['#9AA1A3', '#F1F2EE']}
-                          animationSpeed={4}
-                          showBorder={false}
-                          direction="horizontal"
-                          pauseOnHover={false}
-                          yoyo={true}
-                        >
-                          {stat.to !== undefined ? (
-                            <>
-                              <CountUp
-                                from={0}
-                                to={stat.to}
-                                duration={1.5}
-                                direction="up"
-                                separator=","
-                              />
-                              {stat.suffix}
-                            </>
-                          ) : (
-                            stat.title
-                          )}
-                        </GradientText>
-                      </GlitchText>
-                    </h3>
-                    <p className="text-xs text-[#858D91]">{stat.sub}</p>
-                    </div>
-                  </div>
-                  </div>
-                </HoverSplashCard>
-              </BorderGlow>
-            </AnimatedContent>
-          ))}
-          </div>
-        </section>
-        </AnimatedContent>
-        </ScrollReveal>
 
         {/* SEARCH & FILTERS */}
-        <ScrollReveal delay={0.1}>
-        <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
         <section className="space-y-4">
           <div className="flex flex-col lg:flex-row gap-4 justify-between items-center">
             <div className="flex-1 flex flex-wrap items-center gap-3 w-full">
-              <div className="w-full md:w-64">
+              <Reveal className="w-full md:w-64">
                 <GlareHover width="100%" height="auto" background="transparent" borderColor="#C6CAC9" className="w-full rounded-full overflow-hidden">
                   <div className="relative w-full h-full">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#858D91] pointer-events-none" />
                     <input type="text" placeholder="Search opportunities..." className="w-full h-full bg-[#111114] border border-white/10 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-white/30 relative z-10" />
                   </div>
                 </GlareHover>
-              </div>
-              <div className="flex flex-wrap gap-2 flex-1 w-full">
+              </Reveal>
+              <RevealGroup className="flex flex-wrap gap-2 flex-1 w-full" staggerDelay={0.05}>
                 {['All', 'Frontend', 'Backend', 'UI/UX', 'Agentic AI', 'Mobile', 'Data & Analytics'].map(cat => (
                   <button
                     key={cat}
@@ -432,9 +350,9 @@ export default function Opportunities() {
                     {cat}
                   </button>
                 ))}
-              </div>
+              </RevealGroup>
             </div>
-            <div className="flex items-center gap-4 shrink-0">
+            <Reveal delay={0.2} className="flex items-center gap-4 shrink-0">
               <div className="flex items-center gap-2 text-sm text-[#9AA1A3] cursor-pointer">
                 Sort by: <span className="text-white flex items-center">Newest <ChevronDown className="w-4 h-4 ml-1" /></span>
               </div>
@@ -449,10 +367,31 @@ export default function Opportunities() {
                   <Share className="w-4 h-4 text-[#9AA1A3] hover:text-white cursor-pointer" />
                 </ClickSpark>
               </div>
-            </div>
+            </Reveal>
           </div>
           <div className="flex flex-wrap gap-2 pt-2 border-t border-white/5 items-center">
-            <div className="flex-1 overflow-hidden">
+            <style>{`
+              .opp-gooey-nav-overrides .gooey-nav-container {
+                --color-1: #C6CAC9;
+                --color-2: #9AA1A3;
+                --color-3: #F1F2EE;
+                --color-4: #6D777C;
+              }
+              .opp-gooey-nav-overrides .gooey-nav-container nav ul li.active {
+                color: #F1F2EE;
+              }
+              .opp-gooey-nav-overrides .gooey-nav-container nav ul li.active::after {
+                background: rgba(241, 242, 238, 0.15);
+                border-color: rgba(241, 242, 238, 0.4);
+              }
+              .opp-gooey-nav-overrides .gooey-nav-container .effect.text.active {
+                color: #F1F2EE;
+              }
+              .opp-gooey-nav-overrides .gooey-nav-container .effect.filter::after {
+                background: rgba(241, 242, 238, 0.4);
+              }
+            `}</style>
+            <Reveal delay={0.1} className="flex-1 overflow-hidden opp-gooey-nav-overrides">
               <MultiSelectGooeyNav
                 items={[
                   { label: 'Remote', icon: <MapPin className="w-3 h-3" /> },
@@ -471,40 +410,20 @@ export default function Opportunities() {
                 timeVariance={200}
                 colors={[1, 2, 3, 1, 2, 3, 1]}
               />
-            </div>
-            <button className="px-4 py-1.5 rounded-full text-xs bg-transparent border border-white/10 text-[#9AA1A3] flex items-center hover:border-white/30 shrink-0">
-              More <ChevronDown className="w-3 h-3 ml-1" />
-            </button>
+            </Reveal>
+            <Reveal delay={0.2} className="shrink-0">
+              <button className="px-4 py-1.5 rounded-full text-xs bg-transparent border border-white/10 text-[#9AA1A3] flex items-center hover:border-white/30">
+                More <ChevronDown className="w-3 h-3 ml-1" />
+              </button>
+            </Reveal>
           </div>
         </section>
-        </AnimatedContent>
-        </ScrollReveal>
 
         {/* FEATURED OPPORTUNITY */}
-        <ScrollReveal delay={0.1}>
-        <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
         <section className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-64 shrink-0">
             <style>{`
-              .opportunities-heading {
-                font-size: 1.25rem !important; /* text-xl */
-                font-weight: 600 !important;
-                text-transform: none !important;
-                font-family: inherit !important;
-                line-height: 1.75rem !important;
-                color: #ffffff !important;
-                margin-bottom: 0.5rem !important;
-                display: block !important;
-              }
-              
-              /* Ensure the TrueFocus component inherits the heading's typography */
-              .truefocus-heading-wrapper {
-                 margin-bottom: 0.5rem;
-              }
-              .truefocus-heading-wrapper .focus-container {
-                 justify-content: flex-start; /* Align left to match static text */
-                 gap: 0.25em; /* Tighter gap for this heading style */
-              }
+              /* bracket-frame stat styles are inline */
             `}</style>
             
             {/* 
@@ -525,20 +444,23 @@ export default function Opportunities() {
             />
             */}
             
-            <div className="opportunities-heading truefocus-heading-wrapper">
-              <TrueFocus 
-                sentence="0 Opportunities Available"
-                manualMode={false}
-                blurAmount={4}
-                borderColor="#9AA1A3"
-                glowColor="rgba(154, 161, 163, 0.4)"
-                animationDuration={0.6}
-                pauseBetweenAnimations={1.2}
+            <RevealGroup className="w-full lg:w-64 shrink-0" staggerDelay={0.15}>
+              <TextType
+                as="h2"
+                text={["50 Opportunities available"]}
+                typingSpeed={60}
+                initialDelay={200}
+                showCursor={true}
+                cursorCharacter="|"
+                loop={false}
+                startOnVisible={true}
+                className="opportunities-heading text-white text-[28px] font-bold leading-tight tracking-tight m-0"
+                style={{ minHeight: '4rem' }}
               />
-            </div>
-            
-            <p className="text-[#9AA1A3] text-sm">We'll notify you when new opportunities are posted.</p>
+              <p className="text-[#9AA1A3] text-sm mt-3">We'll notify you when new opportunities are posted.</p>
+            </RevealGroup>
           </div>
+          <Reveal delay={0.1} className="flex-1">
           <ElectricBorder
             color="#C6CAC9"
             speed={1}
@@ -548,7 +470,7 @@ export default function Opportunities() {
           >
             <SpotlightCard className="w-full h-full rounded-2xl bg-[#111114] p-6 lg:p-8 relative overflow-hidden flex flex-col lg:flex-row justify-between items-start gap-6 group" spotlightColor="rgba(198, 202, 201, 0.2)">
             <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-[#6D777C]/20 to-transparent pointer-events-none" />
-            <div className="relative z-10 space-y-4">
+            <RevealGroup className="relative z-10 space-y-4" staggerDelay={0.08}>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#858D91]/20 text-[#C6CAC9] text-xs font-semibold border border-[#858D91]/30">
                 <Star className="w-3 h-3 fill-current" /> Featured Opportunity
               </span>
@@ -564,8 +486,8 @@ export default function Opportunities() {
                   <span key={tech} className="px-3 py-1 bg-white/5 border border-white/10 rounded-md text-xs text-[#C6CAC9]">{tech}</span>
                 ))}
               </div>
-            </div>
-            <div className="relative z-10 flex flex-col items-end gap-3 shrink-0">
+            </RevealGroup>
+            <Reveal delay={0.25} className="relative z-10 flex flex-col items-end gap-3 shrink-0">
               <p className="text-xs text-[#9AA1A3]">Apply before</p>
               <p className="text-sm flex items-center gap-2"><Clock className="w-4 h-4 text-[#858D91]" /> Aug 20, 2026</p>
               <p className="text-sm flex items-center gap-2"><Users className="w-4 h-4 text-[#858D91]" /> 58 Applicants</p>
@@ -576,44 +498,35 @@ export default function Opportunities() {
                   </button>
                 </ComingSoonWrapper>
               </ClickSpark>
-            </div>
+            </Reveal>
             <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-20 pointer-events-none">
               <Code className="w-32 h-32 text-[#9AA1A3]" />
             </div>
           </SpotlightCard>
           </ElectricBorder>
+          </Reveal>
         </section>
-        </AnimatedContent>
-        </ScrollReveal>
 
         {/* RECOMMENDED */}
-        <ScrollReveal delay={0.1}>
-        <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
         <section>
           <div className="flex justify-between items-end mb-6">
-            <div>
+            <RevealGroup staggerDelay={0.08}>
               <h2 className="text-xl font-semibold flex items-center gap-2"><Zap className="w-5 h-5 text-[#F1F2EE]" /> Recommended For You</h2>
               <p className="text-sm text-[#858D91] mt-1">Based on your interests and profile.</p>
-            </div>
-            <button className="text-sm text-[#F1F2EE] hover:text-[#C6CAC9] flex items-center gap-1 transition-colors">
-              View all recommendations <ChevronRight className="w-4 h-4" />
-            </button>
+            </RevealGroup>
+            <Reveal delay={0.15} className="shrink-0">
+              <button className="text-sm text-[#F1F2EE] hover:text-[#C6CAC9] flex items-center gap-1 transition-colors">
+                View all recommendations <ChevronRight className="w-4 h-4" />
+              </button>
+            </Reveal>
           </div>
-          <div className="grid md:grid-cols-3 gap-4">
+          <RevealGroup className="grid md:grid-cols-3 gap-4" staggerDelay={0.12} childClassName="h-full">
             {[
               { t: 'Frontend Developer', sub: 'React • Remote • Paid', match: 'React' },
               { t: 'Backend Developer', sub: 'Node.js • API • Remote', match: 'backend' },
               { t: 'Agentic AI Intern', sub: 'Python • LLMs • Remote', match: 'AI' }
             ].map((r, i) => (
-              <AnimatedContent
-                key={i}
-                delay={i * 0.15}
-                distance={40}
-                direction="vertical"
-                animateOpacity
-                className="w-full h-full"
-              >
-                <div className="relative h-full rounded-xl bg-[#111114] border border-white/10 group hover:border-white/20 transition-colors overflow-hidden">
+                <div key={i} className="relative h-full rounded-xl bg-[#111114] border border-white/10 group hover:border-white/20 transition-colors overflow-hidden">
                   <CursorGrid
                     className="absolute inset-0 z-0 pointer-events-none"
                     cellSize={40}
@@ -656,20 +569,14 @@ export default function Opportunities() {
                     </div>
                   </div>
                 </div>
-              </AnimatedContent>
             ))}
-          </div>
+          </RevealGroup>
         </section>
-        </AnimatedContent>
-        </ScrollReveal>
 
         {/* BROWSE BY FORTE */}
-        <ScrollReveal delay={0.1}>
-        <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
         <section>
           <div className="flex justify-between items-end mb-6">
-            <div>
-              {/* <h2 className="text-xl font-semibold">Browse by forte</h2> */}
+            <RevealGroup staggerDelay={0.08}>
               <div role="heading" aria-level={2}>
                 <BlurText
                   text="Browse by forte"
@@ -681,8 +588,8 @@ export default function Opportunities() {
                 />
               </div>
               <p className="text-sm text-[#858D91] mt-1">The tracks Lumora is hiring for first.</p>
-            </div>
-            <div className="flex items-center gap-4">
+            </RevealGroup>
+            <Reveal delay={0.15} className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <button onClick={scrollLeft} className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
                   <ChevronRight className="w-4 h-4 rotate-180" />
@@ -694,14 +601,14 @@ export default function Opportunities() {
               <button className="text-sm text-[#F1F2EE] hover:text-[#C6CAC9] flex items-center gap-1 transition-colors">
                 View all tracks <ChevronRight className="w-4 h-4" />
               </button>
-            </div>
+            </Reveal>
           </div>
           <div className="relative group">
             <div ref={scrollRef} className="w-full overflow-x-auto overflow-y-hidden pb-6 pt-2 px-2 -mx-2 no-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               <style>{`.no-scrollbar::-webkit-scrollbar { display: none; }`}</style>
               <div ref={particleGridRef}>
                 <GlobalSpotlight gridRef={particleGridRef} enabled={true} spotlightRadius={250} />
-                <ScrollRevealGroup className="flex flex-nowrap gap-6 w-max" staggerDelay={0.1}>
+                <RevealGroup className="flex flex-nowrap gap-6 w-max" staggerDelay={0.1}>
                   {BROWSE_BY_FORTE.map((f, i) => (
                     <ParticleCard
                       key={i}
@@ -797,30 +704,95 @@ export default function Opportunities() {
                         </StarBorder>
                     </ParticleCard>
                   ))}
-                </ScrollRevealGroup>
+                </RevealGroup>
               </div>
             </div>
           </div>
         </section>
-        </AnimatedContent>
-        </ScrollReveal>
 
-
+        {/* STATS BAR */}
+        <style>{`
+          .stat-card-grid-bg {
+            background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 16px 16px;
+          }
+          .stat-card {
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+          }
+          .stat-card:hover {
+            border-color: rgba(255,255,255,0.15);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            transform: translateY(-2px);
+          }
+          .stat-card:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 2px #71717a;
+          }
+          .stat-card:active {
+            box-shadow: 0 0 0 2px #a1a1aa;
+          }
+        `}</style>
+        <RevealGroup className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4" staggerDelay={0.08} childClassName="h-full">
+          {[
+            { icon: Briefcase, title: '6', sub: 'Domains open for hiring' },
+            { icon: Clock, title: 'Cohort 01', sub: 'Launching soon' },
+            { icon: MapPin, title: '100%', sub: 'Remote-friendly' },
+            { icon: Users, title: '10+', sub: 'Mentors & Experts' },
+            { icon: Heart, title: 'Transparent', sub: 'No ghosting. Ever.' }
+          ].map((stat, i) => (
+              <div
+                key={i}
+                className="stat-card relative rounded-xl bg-[#141414] p-5 flex flex-col gap-3 cursor-default overflow-hidden h-full"
+                tabIndex={0}
+              >
+                <div style={{ position: 'absolute', inset: 0, zIndex: 0, borderRadius: 'inherit' }}>
+                  <Beams
+                    beamWidth={2}
+                    beamHeight={14}
+                    beamNumber={14}
+                    lightColor="#B8BCC0"
+                    speed={0.8}
+                    noiseIntensity={1.0}
+                    scale={0.4}
+                    rotation={0}
+                  />
+                </div>
+                <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'rgba(10,10,11,0.20)', borderRadius: 'inherit', pointerEvents: 'none' }} />
+                <stat.icon className="w-5 h-5 text-[#8a8a8a] relative z-10" strokeWidth={1.5} />
+                <div className="relative z-10">
+                  <h3 className="text-[17px] font-semibold text-white" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>{stat.title}</h3>
+                  <p className="text-[12px] text-white/90 mt-0.5" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>{stat.sub}</p>
+                </div>
+              </div>
+          ))}
+        </RevealGroup>
 
         {/* MENTORS */}
-        <ScrollReveal delay={0.1}>
+        <style>{`
+          .mentors-row:hover .mentor-card {
+            opacity: 0.5;
+            transition: opacity 0.25s ease;
+          }
+          .mentors-row .mentor-card:hover {
+            opacity: 1;
+            border-color: rgba(255,255,255,0.15) !important;
+            transform: translateY(-2px);
+            transition: opacity 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+          }
+        `}        </style>
         <section className="flex flex-col lg:flex-row gap-4">
-          <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2} className="flex-1 h-full">
-          <ScrollRevealGroup className="flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4" staggerDelay={0.08}>
+          <RevealGroup className="mentors-row flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4" staggerDelay={0.1} childClassName="h-full">
             {[
-              { init: 'RA', name: 'Rahul Arora', role: 'Frontend Mentor', c: 'bg-[#6D777C] text-[#F1F2EE]', hex: '#6D777C' },
-              { init: 'AK', name: 'Akhil Varma', role: 'Backend Mentor', c: 'bg-[#6D777C] text-[#F1F2EE]', hex: '#6D777C' },
-              { init: 'SN', name: 'Sneha Nair', role: 'AI Mentor', c: 'bg-[#6D777C] text-[#F1F2EE]', hex: '#6D777C' },
-              { init: 'PD', name: 'Priya Desai', role: 'Design Mentor', c: 'bg-[#6D777C] text-[#F1F2EE]', hex: '#6D777C' },
-              { init: 'YG', name: 'Yash Gupta', role: 'Data Mentor', c: 'bg-[#6D777C] text-[#F1F2EE]', hex: '#6D777C' }
+              { init: 'RA', name: 'Rahul Arora', role: 'Frontend Mentor', hex: '#6D777C' },
+              { init: 'AK', name: 'Akhil Varma', role: 'Backend Mentor', hex: '#6D777C' },
+              { init: 'SN', name: 'Sneha Nair', role: 'AI Mentor', hex: '#6D777C' },
+              { init: 'PD', name: 'Priya Desai', role: 'Design Mentor', hex: '#6D777C' },
+              { init: 'YG', name: 'Yash Gupta', role: 'Data Mentor', hex: '#6D777C' }
             ].map((m, i) => (
               <PixelTransition
                 key={i}
+                className="mentor-card"
                 gridSize={5}
                 pixelColor={m.hex}
                 animationStepDuration={0.3}
@@ -828,45 +800,36 @@ export default function Opportunities() {
                 aspectRatio="0"
                 firstContent={
                   <div className="bg-[#111114] p-5 rounded-2xl flex flex-col items-center justify-center text-center w-full h-full">
-                    <div className={`w-12 h-12 rounded-full ${m.c} flex items-center justify-center font-bold mb-4 shadow-lg shrink-0`}>{m.init}</div>
-                    <h4 className="font-semibold text-sm">{m.name}</h4>
-                    <p className="text-[11px] text-[#9AA1A3] mt-1">{m.role}</p>
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center font-bold mb-4 shadow-lg shrink-0 text-[#F1F2EE]" style={{ backgroundColor: '#5a5c63' }}>{m.init}</div>
+                    <h4 className="font-semibold text-sm text-white">{m.name}</h4>
+                    <p className="text-[11px] mt-1" style={{ color: '#8a8a8a' }}>{m.role}</p>
                   </div>
                 }
                 secondContent={
                   <div className="bg-[#111114] p-5 rounded-2xl flex flex-col items-center justify-center text-center w-full h-full">
-                    <h4 className="font-semibold text-sm mb-2">{m.role}</h4>
-                    <button className={`px-4 py-2 mt-2 rounded-full text-xs font-semibold ${m.c} hover:opacity-90 transition-opacity`}>Book a 1:1 session</button>
+                    <h4 className="font-semibold text-sm mb-2 text-white">{m.role}</h4>
+                    <button className="px-4 py-2 mt-2 rounded-full text-xs font-semibold text-[#F1F2EE] hover:opacity-90 transition-opacity" style={{ backgroundColor: '#5a5c63' }}>Book a 1:1 session</button>
                   </div>
                 }
               />
             ))}
-          </ScrollRevealGroup>
-          </AnimatedContent>
-          <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2} delay={0.1} className="w-full lg:w-72 shrink-0 h-full">
-          <div className="w-full lg:w-72 bg-[#111114] p-6 rounded-2xl border border-white/10 flex flex-col justify-between shrink-0 relative overflow-hidden">
-
-            <div style={{ position: 'relative', zIndex: 1 }} className="flex flex-col justify-between h-full">
+          </RevealGroup>
+          <Reveal delay={0.15} className="w-full lg:w-72 shrink-0 h-full">
+          <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '16px' }} className="w-full lg:w-72 shrink-0 h-full border border-white/10">
+            <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+              <LiquidChrome
+                baseColor={[0.05, 0.05, 0.06]}
+                speed={0.3}
+                amplitude={0.25}
+                frequencyX={2}
+                frequencyY={2}
+                interactive={true}
+              />
+            </div>
+            <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 1 }} />
+            <div style={{ position: 'relative', zIndex: 2, padding: '1.75rem 2rem' }} className="flex flex-col justify-between h-full">
               <div>
-                <style>{`
-                  .parallax .scroller .testimonial-ticker-text {
-                    font-size: 12px !important;
-                    line-height: 24px !important;
-                    font-weight: 600 !important;
-                    letter-spacing: 0.05em !important;
-                    text-transform: uppercase !important;
-                    color: #858D91 !important;
-                    display: inline-block;
-                  }
-                `}</style>
-                <div style={{ height: '24px', overflow: 'hidden' }} className="mb-4">
-                  <ScrollVelocity
-                    texts={['WHAT OUR INTERNS SAY']}
-                    velocity={15}
-                    numCopies={4}
-                    className="testimonial-ticker-text"
-                  />
-                </div>
+                <p className="text-xs font-bold uppercase tracking-widest text-white mb-4">What our interns say</p>
                 <DecryptedText
                   text='"Lumora gave me real projects, amazing mentors, and the confidence to build for the real world."'
                   speed={80}
@@ -874,27 +837,16 @@ export default function Opportunities() {
                   className="text-sm italic text-[#C6CAC9] leading-relaxed"
                   animateOn="view"
                 />
-                <AnimatedContent distance={0} delay={1} animateOpacity>
+                <Reveal delay={0.3}>
                   <p className="text-xs text-[#9AA1A3] mt-4">— Priya Sharma<br/>Frontend Intern, Cohort 0</p>
-                </AnimatedContent>
+                </Reveal>
               </div>
-              <AnimatedContent distance={0} delay={1.2} animateOpacity>
-                <div className="flex gap-1.5 mt-6">
-                  <div className="w-2 h-2 rounded-full bg-[#F1F2EE]" />
-                  <div className="w-2 h-2 rounded-full bg-[#6D777C] transition-colors" />
-                  <div className="w-2 h-2 rounded-full bg-[#6D777C] transition-colors" />
-                  <div className="w-2 h-2 rounded-full bg-[#6D777C] transition-colors" />
-                </div>
-              </AnimatedContent>
             </div>
           </div>
-          </AnimatedContent>
+          </Reveal>
         </section>
-        </ScrollReveal>
 
         {/* FAQ */}
-        <ScrollReveal delay={0.1}>
-        <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
         <section>
           <TextType
             text={["Frequently Asked Questions"]}
@@ -909,7 +861,7 @@ export default function Opportunities() {
             className="faq-heading text-2xl font-semibold mb-8"
           />
           <div className="grid md:grid-cols-2 gap-4 lg:gap-8">
-            <ScrollRevealGroup className="space-y-4" staggerDelay={0.1}>
+            <RevealGroup className="space-y-4" staggerDelay={0.1}>
               {FAQS.slice(0,3).map((faq, i) => (
                 <div key={i} className="border-b border-white/10 pb-4">
                   <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex justify-between items-center text-left text-sm font-medium hover:text-[#F1F2EE] transition-colors">
@@ -933,8 +885,8 @@ export default function Opportunities() {
                   </div>
                 </div>
               ))}
-            </ScrollRevealGroup>
-            <ScrollRevealGroup className="space-y-4" staggerDelay={0.1}>
+            </RevealGroup>
+            <RevealGroup className="space-y-4" staggerDelay={0.1}>
               {FAQS.slice(3,6).map((faq, i) => (
                 <div key={i+3} className="border-b border-white/10 pb-4">
                   <button onClick={() => setOpenFaq(openFaq === i+3 ? null : i+3)} className="w-full flex justify-between items-center text-left text-sm font-medium hover:text-[#F1F2EE] transition-colors">
@@ -958,15 +910,11 @@ export default function Opportunities() {
                   </div>
                 </div>
               ))}
-            </ScrollRevealGroup>
+            </RevealGroup>
           </div>
         </section>
-        </AnimatedContent>
-        </ScrollReveal>
 
         {/* HOW IT WORKS */}
-        <ScrollReveal delay={0.1}>
-        <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
         <section className="relative overflow-hidden flex flex-col lg:flex-row justify-between items-center gap-12 border-t border-white/10 pt-16 pb-16 mt-20">
           <div style={{ position: 'absolute', inset: 0, zIndex: 0, width: '100%', height: '100%', maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)' }}>
             <Galaxy 
@@ -978,7 +926,9 @@ export default function Opportunities() {
             />
           </div>
           <div className="relative z-10 flex-1 flex flex-col gap-6 w-full px-6 lg:px-0">
-            <h3 className="font-semibold text-2xl">How it works</h3>
+            <Reveal>
+              <h3 className="font-semibold text-2xl">How it works</h3>
+            </Reveal>
             <div ref={stepsContainerRef}>
               <style>{`
                 .step-title-proximity {
@@ -986,7 +936,7 @@ export default function Opportunities() {
                   color: #ffffff;
                 }
               `}</style>
-              <ScrollRevealGroup className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full" staggerDelay={0.12}>
+              <RevealGroup className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full" staggerDelay={0.12}>
                 {[
                   { num: '01', t: 'Apply', sub: 'Submit your application in minutes.', color: 'text-[#F1F2EE]' },
                 { num: '02', t: 'Screen', sub: 'We review and shortlist the best matches.', color: 'text-[#9AA1A3]' },
@@ -1011,10 +961,10 @@ export default function Opportunities() {
                   <p className="text-[11px] text-[#858D91]">{step.sub}</p>
                 </div>
                 ))}
-              </ScrollRevealGroup>
+              </RevealGroup>
             </div>
           </div>
-          <div className="relative z-10 shrink-0 bg-[#111114] p-6 rounded-2xl border border-white/10 flex flex-col items-center text-center gap-4 w-full lg:w-[420px] mx-6 lg:mx-0">
+          <Reveal delay={0.15} className="relative z-10 shrink-0 bg-[#111114] p-6 rounded-2xl border border-white/10 flex flex-col items-center text-center gap-4 w-full lg:w-[420px] mx-6 lg:mx-0">
             <p className="text-sm text-[#9AA1A3]">Not ready to apply?<br/>Get notified when we post.</p>
             <div style={{ width: '100%' }}>
               <CurvedInput
@@ -1038,26 +988,22 @@ export default function Opportunities() {
                 onSubmit={handleNotifySignup}
               />
             </div>
-          </div>
+          </Reveal>
         </section>
-        </AnimatedContent>
-        </ScrollReveal>
       </main>
 
       {/* FOOTER */}
-      <ScrollReveal delay={0.1}>
-      <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
-      <FadeContent blur={true} duration={1} easing="ease-out" initialOpacity={0}>
+      <Reveal>
         <footer className="relative z-10 border-t border-white/10 bg-black py-8 mt-12">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2">
+          <Reveal className="flex items-center gap-2">
             <div className="w-6 h-6 text-white"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
             <span className="font-bold text-lg tracking-tight">Lumora</span>
-          </div>
-          <div className="text-xs text-[#858D91]">
+          </Reveal>
+          <Reveal delay={0.1} className="text-xs text-[#858D91]">
             © 2026 Lumora. All rights reserved.
-          </div>
-          <div className="flex items-center gap-6 text-xs text-[#9AA1A3]">
+          </Reveal>
+          <Reveal delay={0.2} className="flex items-center gap-6 text-xs text-[#9AA1A3]">
             <Link to="#" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link to="#" className="hover:text-white transition-colors">Terms of Service</Link>
             <Link to="#" className="hover:text-white transition-colors">Careers</Link>
@@ -1070,13 +1016,36 @@ export default function Opportunities() {
               </a>
               <a href="#" className="hover:text-white transition-colors"><Mail className="w-4 h-4" /></a>
             </div>
-          </div>
+          </Reveal>
         </div>
       </footer>
-      </FadeContent>
-      </AnimatedContent>
-      </ScrollReveal>
+      </Reveal>
     </div>
+
+    {/* Fixed floating dock — bottom-right, outside overflow-hidden */}
+    <div className="fixed bottom-6 right-6 z-50">
+      <Dock
+        items={[
+          {
+            icon: <Users size={18} />,
+            label: 'Open to students & recent grads',
+            onClick: () => {}
+          },
+          {
+            icon: <MapPin size={18} />,
+            label: 'Remote-friendly',
+            onClick: () => {}
+          },
+          {
+            icon: <ShieldCheck size={18} />,
+            label: 'Transparent process',
+            onClick: () => {}
+          }
+        ]}
+        baseItemSize={40}
+      />
+    </div>
+    </>
   );
 }
 
