@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { getUserSettings, upsertUserSettings, getApplicationByUserId, acceptOffer } from '../lib/db';
 import { Sun, Moon, XCircle, ChevronDown, LogOut } from '../components/Icons';
@@ -10,9 +10,7 @@ import CurrentMission from './components/CurrentMission';
 import EstimatedTimeline from './components/EstimatedTimeline';
 import WhatsNext from './components/WhatsNext';
 import StageContent from './components/StageContent';
-import ActivityFeed from './components/ActivityFeed';
-import NotificationPreview from './components/NotificationPreview';
-import HelpPanel from './components/HelpPanel';
+import QuickAccessDock from './components/QuickAccessDock';
 import QuickStats from './components/QuickStats';
 import { MOCK_OPPORTUNITIES } from './mock/opportunities';
 import { applicationForStage } from './mock/application';
@@ -175,6 +173,8 @@ function useApplicantJourney(userId: string | undefined) {
 
 export default function ApplicantExperience() {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window === 'undefined') return false;
     return localStorage.getItem('theme') === 'dark' ||
@@ -182,6 +182,19 @@ export default function ApplicantExperience() {
   });
   const [devPanelOpen, setDevPanelOpen] = useState(false);
   const { loading, stage, setStage, application, scheduledInterview, actions } = useApplicantJourney(user?.id);
+
+  // Picks up an "apply" initiated from /applicant/opportunities (the full
+  // browse page), which can't reach this route's local journey state
+  // directly. Replacing the history entry clears the state so a refresh or
+  // back-navigation doesn't silently re-trigger the apply.
+  useEffect(() => {
+    const opportunityId = (location.state as { applyToOpportunityId?: string } | null)?.applyToOpportunityId;
+    if (opportunityId) {
+      actions.onApply(opportunityId);
+      navigate('/applicant', { replace: true, state: null });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state]);
 
   useEffect(() => {
     if (!user) return;
@@ -215,7 +228,7 @@ export default function ApplicantExperience() {
         </div>
       </header>
 
-      <main id="main-content" className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+      <main id="main-content" className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-36 space-y-6">
         <div className="relative overflow-hidden rounded-2xl bg-sidebar-bg text-sidebar-text px-6 py-8 sm:px-10 sm:py-10 shadow-lg shadow-black/10">
           <DotGrid dotSize={3} gap={16} proximity={80} shockRadius={120} baseColor="#2A2A2A" activeColor="#F1F2EE" />
           <img
@@ -239,15 +252,20 @@ export default function ApplicantExperience() {
 
         {loading ? (
           <>
+            <SkeletonBlock className="h-20" />
             <SkeletonBlock className="h-72" />
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-              <SkeletonBlock className="h-40" />
-              <SkeletonBlock className="h-40" />
-              <SkeletonBlock className="h-40" />
+            <div className="grid sm:grid-cols-2 gap-6 mt-6">
+              <SkeletonBlock className="h-24" />
+              <SkeletonBlock className="h-24" />
             </div>
           </>
         ) : (
           <>
+            {/* Highest-priority guidance right after the hero -- the answer
+                to "what happens now" shouldn't compete for attention with
+                Quick Stats and Help in the grid below. */}
+            <WhatsNext stage={stage} />
+
             {/* Full width -- just the current stage's content (opportunity
                 grid, interview scheduler, etc). Everything else (timeline,
                 notifications, activity, help) sits below in its own row
@@ -264,17 +282,17 @@ export default function ApplicantExperience() {
               />
             </CurrentMission>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            <div className="space-y-4 mt-6">
               <EstimatedTimeline stage={stage} />
-              <WhatsNext stage={stage} />
-              <NotificationPreview notifications={notificationsForStage(stage)} />
-              <ActivityFeed items={activityForStage(stage)} />
               <QuickStats stats={MOCK_QUICK_STATS} />
-              <HelpPanel />
             </div>
           </>
         )}
       </main>
+
+      {!loading && (
+        <QuickAccessDock notifications={notificationsForStage(stage)} activity={activityForStage(stage)} />
+      )}
 
       {/* Dev-only preview switcher -- this route currently runs entirely on
           mock data (no backend integration per spec), so this is how every
