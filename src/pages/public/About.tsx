@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Dither from '../../components/Dither';
 import Radar from '../../components/Radar';
 import Lightfall from '../../components/Lightfall';
@@ -62,6 +62,7 @@ const STATS = [
   { to: 12, suffix: '+', label: 'Domain Tracks' },
   { to: 150, suffix: '+', label: 'Mentor Experts' },
   { to: 200, suffix: '+', label: 'Mentor-Reviewed Capstones' },
+  { to: 95, suffix: '%', label: 'Placement Rate' },
 ];
 
 // TODO: replace with real placement companies before launch
@@ -89,6 +90,19 @@ function ComingSoonLink({ label }: { label: string }) {
 
 export default function About() {
   const [supportsOffsetPath, setSupportsOffsetPath] = useState(true);
+  const location = useLocation();
+
+  // Supports deep links like /about#stats (e.g. the applicant dashboard's
+  // "Our promise" stat card) -- delayed so it fires after this page's
+  // entrance animations have laid content out, not mid-mount.
+  useEffect(() => {
+    if (!location.hash) return;
+    const id = location.hash.slice(1);
+    const timeout = setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 400);
+    return () => clearTimeout(timeout);
+  }, [location.hash]);
 
   useEffect(() => {
     // Check if browser supports offset-path with path() - required for OrbitImages
@@ -389,7 +403,7 @@ export default function About() {
         {/* STATS STRIP */}
         <ScrollReveal delay={0.1}>
           <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
-            <section className="bg-[#111114] border border-white/10 rounded-2xl grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
+            <section id="stats" className="bg-[#111114] border border-white/10 rounded-2xl grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-x divide-white/10 scroll-mt-24">
               {STATS.map((s) => (
                 <div key={s.label} className="p-6 text-center">
                   {/* TODO: real numbers */}
