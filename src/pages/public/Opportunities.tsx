@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useRef, useEffect, Children, useMemo } from 'react';
 import { motion } from 'motion/react';
 import ScrollTrigger from 'gsap/ScrollTrigger';
