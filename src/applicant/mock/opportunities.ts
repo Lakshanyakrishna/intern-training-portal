@@ -2,9 +2,9 @@
 // getOpportunities() API response so swapping this for a real fetch later
 // is a one-line change, not a rewrite of any component below this file.
 import type { Opportunity } from '../types';
-import feImg from '../../assets/forte-placeholders/fe.png';
-import beImg from '../../assets/forte-placeholders/be.png';
-import aiImg from '../../assets/forte-placeholders/ai.png';
+import feImg from '../../assets/forte-placeholders/fe.jpg';
+import beImg from '../../assets/forte-placeholders/be.jpg';
+import aiImg from '../../assets/forte-placeholders/ai.jpg';
 
 export const MOCK_OPPORTUNITIES: Opportunity[] = [
   {
