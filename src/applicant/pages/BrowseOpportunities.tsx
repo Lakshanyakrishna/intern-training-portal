@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Grid, Search } from '../../components/Icons';
 import lumoraLogo from '../../assets/lumora-logo.png';
 import EmptyState from '../components/EmptyState';
@@ -26,13 +26,32 @@ function useSyncThemeClass() {
 export default function BrowseOpportunities() {
   useSyncThemeClass();
   const navigate = useNavigate();
+  const location = useLocation();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('All');
+  const [filtersHighlighted, setFiltersHighlighted] = useState(false);
+  const filtersRef = useRef<HTMLDivElement>(null);
 
   const categories = useMemo(
     () => ['All', ...Array.from(new Set(MOCK_OPPORTUNITIES.map(o => o.category)))],
     []
   );
+
+  // "Find your fit" (QuickStats, dashboard) sends applicants here wanting to
+  // narrow by domain, not just see the raw list -- distinct from "Explore
+  // now," which lands on the same page with no special behavior. Replacing
+  // history clears the state so a refresh/back-nav doesn't re-trigger it.
+  useEffect(() => {
+    const shouldFocusFilters = (location.state as { focusFilters?: boolean } | null)?.focusFilters;
+    if (shouldFocusFilters) {
+      filtersRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setFiltersHighlighted(true);
+      const timeout = setTimeout(() => setFiltersHighlighted(false), 2000);
+      navigate('/applicant/opportunities', { replace: true, state: null });
+      return () => clearTimeout(timeout);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -89,7 +108,12 @@ export default function BrowseOpportunities() {
               className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-line bg-surface text-sm text-primary placeholder:text-secondary outline-none focus-visible:ring-2 focus-visible:ring-accent"
             />
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div
+            ref={filtersRef}
+            className={`flex flex-wrap gap-2 p-1.5 -m-1.5 rounded-xl transition-shadow duration-500 ${
+              filtersHighlighted ? 'ring-2 ring-accent ring-offset-2 ring-offset-background' : ''
+            }`}
+          >
             {categories.map(cat => (
               <button
                 key={cat}
