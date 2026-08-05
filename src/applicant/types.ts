@@ -73,12 +73,20 @@ export interface NotificationItem {
 
 export type QuickStatIcon = 'briefcase' | 'users' | 'clock' | 'award';
 
+// A QuickStat either routes elsewhere (link) or brings an already-visible
+// section on this page into view (scroll) -- e.g. "Quick response" jumps to
+// the What's Next banner rather than duplicating its content here.
+export type QuickStatAction =
+  | { type: 'link'; href: string }
+  | { type: 'scroll'; targetId: string };
+
 export interface QuickStat {
   id: string;
   icon: QuickStatIcon;
   value: string;
   label: string;
   linkLabel: string;
+  action: QuickStatAction;
 }
 
 export interface JourneyStepDef {
