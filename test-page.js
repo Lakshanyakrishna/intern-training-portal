@@ -14,7 +14,7 @@ import puppeteer from 'puppeteer';
   );
 
   try {
-    await page.goto('http://localhost:5175/opportunities', { waitUntil: 'networkidle0' });
+    await page.goto('http://localhost:5173/opportunities', { waitUntil: 'networkidle0' });
   } catch (e) {
     console.log('Nav error:', e);
   }

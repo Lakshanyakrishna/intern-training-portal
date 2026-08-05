@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Dither from '../../components/Dither';
 import Radar from '../../components/Radar';
@@ -14,7 +14,7 @@ import BlurText from '../../components/react-bits/BlurText/BlurText';
 import AnimatedContent from '../../components/AnimatedContent';
 import ScrollReveal from '../../components/ScrollReveal';
 import ScrollRevealGroup from '../../components/ScrollRevealGroup';
-import CurvedLoop from '../../components/react-bits/CurvedLoop/CurvedLoop';
+import { motion } from 'motion/react';
 import LogoLoop from '../../components/react-bits/LogoLoop/LogoLoop';
 import OrbitImages from '../../components/react-bits/OrbitImages/OrbitImages';
 
@@ -162,15 +162,13 @@ export default function About() {
           <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
             <section className="grid lg:grid-cols-2 gap-8 items-start">
               <div>
-                <div className="[&>.curved-loop-jacket]:!min-h-[120px] [&>.curved-loop-jacket]:!h-[120px] flex items-center overflow-hidden" style={{ height: '120px' }}>
-                  <CurvedLoop 
-                    marqueeText="OUR MISSION ✦"
-                    speed={1.5}
-                    curveAmount={200}
-                    direction="left"
-                    interactive={true}
-                  />
-                </div>
+                <BlurText
+                  text="✦ OUR MISSION ✦"
+                  delay={150}
+                  animateBy="words"
+                  direction="top"
+                  className="text-2xl mb-8"
+                />
                 <h2 className="text-3xl font-bold leading-tight mb-4">
                   Your degree taught you the theory. We help you earn the confidence.
                 </h2>
@@ -217,16 +215,23 @@ export default function About() {
                 <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0A0A0B] border border-white/20 items-center justify-center z-10">
                   <ArrowRight className="w-4 h-4 text-gray-300" />
                 </div>
-                <div className="bg-[#111114] border border-white/10 rounded-2xl p-6">
-                  <h3 className="text-lg font-semibold text-[#F1F2EE] mb-4">After Lumora</h3>
-                  <ul className="space-y-3">
-                    {['Has shipped real, mentor-reviewed work', 'Collaborates and communicates like a pro', "Walks into interviews with proof, not just promises"].map((t) => (
-                      <li key={t} className="flex items-start gap-2 text-sm text-gray-300">
-                        <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#C6CAC9]" /> {t}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <ElectricBorder
+                  color="#C6CAC9"
+                  speed={1}
+                  chaos={0.08}
+                  borderRadius={16}
+                >
+                  <div className="bg-[#111114] rounded-2xl p-6">
+                    <h3 className="text-lg font-semibold text-[#F1F2EE] mb-4">After Lumora</h3>
+                    <ul className="space-y-3">
+                      {['Has shipped real, mentor-reviewed work', 'Collaborates and communicates like a pro', "Walks into interviews with proof, not just promises"].map((t) => (
+                        <li key={t} className="flex items-start gap-2 text-sm text-gray-300">
+                          <Check className="w-4 h-4 mt-0.5 shrink-0 text-[#C6CAC9]" /> {t}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </ElectricBorder>
               </div>
             </section>
           </AnimatedContent>
@@ -242,8 +247,17 @@ export default function About() {
                 <div className="hidden md:block absolute top-5 left-[12.5%] right-[12.5%] h-px border-t border-dashed border-white/15" />
                 <ScrollRevealGroup className="grid md:grid-cols-4 gap-6" staggerDelay={0.1}>
                   {HOW_IT_WORKS.map((step) => (
-                    <div key={step.num} className="relative bg-[#111114] border border-white/10 rounded-2xl p-6 flex flex-col overflow-hidden h-full">
-                      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+                    <motion.div
+                      key={step.num}
+                      layout
+                      whileHover={{ scale: 1.03 }}
+                      transition={{
+                        layout: { duration: 0.3, ease: 'easeOut' },
+                        scale: { duration: 0.3, ease: 'easeOut' }
+                      }}
+                      className="relative bg-[#111114] border border-white/10 rounded-2xl p-6 flex flex-col overflow-hidden h-full"
+                    >
+                      <div layout style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
                         <Radar
                           speed={0.6}
                           scale={0.6}
@@ -256,13 +270,13 @@ export default function About() {
                           sweepLobes={1}
                           color="#6b6f76"
                           backgroundColor="#000000"
-                          falloff={2.2}
-                          brightness={0.5}
+                          falloff={1.6}
+                          brightness={1.2}
                           enableMouseInteraction={true}
                           mouseInfluence={0.08}
                         />
                       </div>
-                      <div style={{ position: 'relative', zIndex: 1 }} className="flex flex-col h-full">
+                      <div layout style={{ position: 'relative', zIndex: 1 }} className="flex flex-col h-full">
                         <div className="flex justify-between items-center mb-4">
                           <div className="w-9 h-9 rounded-full bg-[#6D777C] flex items-center justify-center text-sm font-bold text-[#F1F2EE] shrink-0">
                             {step.num}
@@ -272,7 +286,7 @@ export default function About() {
                         <h3 className="font-semibold mb-2">{step.title}</h3>
                         <p className="text-xs text-gray-400 leading-relaxed">{step.desc}</p>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </ScrollRevealGroup>
               </div>
@@ -305,28 +319,46 @@ export default function About() {
         {/* WHAT YOU'LL GAIN */}
         <ScrollReveal delay={0.1}>
           <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
-            <section className="flex flex-col items-center justify-center text-center max-w-4xl mx-auto px-4">
+            <section className="flex flex-col items-center justify-center text-center max-w-4xl mx-auto px-4 overflow-hidden">
               {supportsOffsetPath ? (
-                <OrbitImages
-                  items={WHAT_YOULL_GAIN.map((item, i) => (
-                    <div key={i} className="flex items-center gap-2 bg-[#111114] border border-white/10 rounded-full px-4 py-2 text-sm text-[#C6CAC9] shadow-lg whitespace-nowrap">
-                      <Check className="w-4 h-4 text-[#C6CAC9] shrink-0" /> {item}
-                    </div>
-                  ))}
-                  shape="ellipse"
-                  radiusX={340}
-                  radiusY={140}
-                  rotation={0}
-                  duration={30}
-                  itemSize={180}
-                  responsive={true}
-                  centerContent={
-                    <div className="text-center">
+                <>
+                  <div className="hidden md:block w-full">
+                    <OrbitImages
+                      items={WHAT_YOULL_GAIN.map((item, i) => (
+                        <div key={i} className="flex items-center gap-2 bg-[#111114] border border-white/10 rounded-full px-4 py-2 text-sm text-[#C6CAC9] shadow-lg max-w-[190px] whitespace-normal">
+                          <Check className="w-4 h-4 text-[#C6CAC9] shrink-0" /> {item}
+                        </div>
+                      ))}
+                      shape="circle"
+                      radius={300}
+                      rotation={0}
+                      duration={30}
+                      responsive={true}
+                      centerContent={
+                        <div className="text-center">
+                          <p className="text-[#9AA1A3] font-semibold tracking-wider text-xs uppercase mb-2">What You'll Gain</p>
+                          <h3 className="text-2xl font-bold text-[#F1F2EE]">Everything you walk away with</h3>
+                        </div>
+                      }
+                    />
+                  </div>
+                  <div className="md:hidden">
+                    <div className="mb-10">
                       <p className="text-[#9AA1A3] font-semibold tracking-wider text-xs uppercase mb-2">What You'll Gain</p>
-                      <h3 className="text-2xl font-bold text-[#F1F2EE]">Everything you walk away with</h3>
+                      <h3 className="text-2xl font-bold">Everything you walk away with</h3>
                     </div>
-                  }
-                />
+                    <div className="flex flex-wrap justify-center gap-3">
+                      {WHAT_YOULL_GAIN.map((item, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center gap-2 bg-[#111114] border border-white/10 rounded-full px-4 py-2 text-sm text-gray-300 shadow-lg"
+                        >
+                          <Check className="w-4 h-4 text-[#C6CAC9] shrink-0" /> {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
               ) : (
                 <>
                   <div className="mb-10">

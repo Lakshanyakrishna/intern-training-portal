@@ -1,7 +1,7 @@
 // Component created by Dominik Koch
 // https://x.com/dominikkoch
 
-import { useMemo, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { useMemo, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { motion, useMotionValue, useTransform, animate, type MotionValue } from 'motion/react';
 import './OrbitImages.css';
 
@@ -148,6 +148,37 @@ function OrbitItem({ item, index, totalItems, path, itemSize, rotation, progress
   );
 }
 
+interface OrbitalItemProps {
+  item: ReactNode;
+  index: number;
+  totalItems: number;
+  radiusX: number;
+  radiusY: number;
+  startRad: number;
+  counterSpinStyle: CSSProperties;
+}
+
+function OrbitalItem({ item, index, totalItems, radiusX, radiusY, startRad, counterSpinStyle }: OrbitalItemProps) {
+  const angle = startRad + (index / totalItems) * Math.PI * 2;
+  const x = radiusX * Math.cos(angle);
+  const y = radiusY * Math.sin(angle);
+
+  return (
+    <div
+      className="orbit-item"
+      style={{
+        left: '50%',
+        top: '50%',
+        transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,
+      }}
+    >
+      <div className="orbit-item-inner" style={counterSpinStyle}>
+        {item}
+      </div>
+    </div>
+  );
+}
+
 export default function OrbitImages({
   images = [],
   items: contentItems = [],
@@ -178,6 +209,9 @@ export default function OrbitImages({
 }: OrbitImagesProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState<number | null>(null);
+  const [containerSize, setContainerSize] = useState<{ w: number; h: number } | null>(null);
+
+  const isOrbital = shape === 'ellipse' || shape === 'circle';
 
   const designCenterX = baseWidth / 2;
   const designCenterY = baseWidth / 2;
@@ -210,21 +244,25 @@ export default function OrbitImages({
   }, [shape, customPath, designCenterX, designCenterY, radiusX, radiusY, radius, starPoints, starInnerRatio]);
 
   useLayoutEffect(() => {
-    if (!responsive || !containerRef.current) return;
-    const updateScale = () => {
-      if (!containerRef.current) return;
-      setScale(containerRef.current.clientWidth / baseWidth);
+    if (!containerRef.current) return;
+    const update = () => {
+      const el = containerRef.current;
+      if (!el) return;
+      const w = el.clientWidth;
+      const h = el.clientHeight;
+      setContainerSize({ w, h });
+      setScale(w / baseWidth);
     };
-    updateScale();
-    const observer = new ResizeObserver(updateScale);
+    update();
+    const observer = new ResizeObserver(update);
     observer.observe(containerRef.current);
     return () => observer.disconnect();
-  }, [responsive, baseWidth]);
+  }, [baseWidth]);
 
   const progress = useMotionValue(0);
 
   useEffect(() => {
-    if (paused) return;
+    if (isOrbital || paused) return;
     const controls = animate(progress, direction === 'reverse' ? -100 : 100, {
       duration,
       ease: easing,
@@ -232,13 +270,13 @@ export default function OrbitImages({
       repeatType: 'loop',
     });
     return () => controls.stop();
-  }, [progress, duration, easing, direction, paused]);
+  }, [progress, duration, easing, direction, paused, isOrbital]);
 
-  const containerWidth = responsive ? '100%' : (typeof width === 'number' ? width : '100%');
-  const containerHeight = responsive ? 'auto' : (typeof height === 'number' ? height : (typeof width === 'number' ? width : 'auto'));
+  const containerWidthStyle = responsive ? '100%' : (typeof width === 'number' ? width : '100%');
+  const containerHeightStyle = responsive ? 'auto' : (typeof height === 'number' ? height : (typeof width === 'number' ? width : 'auto'));
 
-  const items = contentItems.length > 0 
-    ? contentItems 
+  const items = contentItems.length > 0
+    ? contentItems
     : images.map((src, index) => (
         <img
           key={src}
@@ -249,13 +287,82 @@ export default function OrbitImages({
         />
       ));
 
+  const startRad = (rotation * Math.PI) / 180;
+
+  const ringStyle: CSSProperties = {
+    animation: `orbit-spin ${duration}s linear infinite${direction === 'reverse' ? ' reverse' : ''}`,
+    animationPlayState: paused ? 'paused' : undefined,
+  };
+
+  const itemSpinStyle: CSSProperties = {
+    animation: `orbit-spin ${duration}s linear infinite${direction === 'reverse' ? ' normal' : ' reverse'}`,
+    animationPlayState: paused ? 'paused' : undefined,
+  };
+
+  if (isOrbital) {
+    const baseRadius = shape === 'circle' ? radius : radiusX;
+    const ry = shape === 'circle' ? baseRadius : radiusY;
+    const fitted = containerSize
+      ? Math.max(160, Math.min(baseRadius, containerSize.w / 2 - 105, containerSize.h / 2 - 45))
+      : baseRadius;
+
+    return (
+      <div
+        ref={containerRef}
+        className={`orbit-container ${className}`}
+        style={{
+          width: containerWidthStyle,
+          height: containerHeightStyle,
+          aspectRatio: responsive ? '1 / 1' : undefined,
+          visibility: containerSize === null ? 'hidden' : undefined,
+        }}
+        aria-hidden="true"
+      >
+        <div className="orbit-rotation-wrapper" style={ringStyle}>
+          <svg className="orbit-path-svg" aria-hidden="true">
+            {shape === 'circle' ? (
+              <>
+                <circle cx="50%" cy="50%" r={fitted} className="orbit-guide-ring" />
+                <circle cx="50%" cy="50%" r={fitted * 0.82} className="orbit-guide-ring" />
+              </>
+            ) : (
+              <>
+                <ellipse cx="50%" cy="50%" rx={fitted} ry={ry} className="orbit-guide-ring" />
+                <ellipse cx="50%" cy="50%" rx={fitted * 0.82} ry={ry * 0.82} className="orbit-guide-ring" />
+              </>
+            )}
+          </svg>
+
+          {items.map((item, index) => (
+            <OrbitalItem
+              key={index}
+              item={item}
+              index={index}
+              totalItems={items.length}
+              radiusX={fitted}
+              radiusY={ry}
+              startRad={startRad}
+              counterSpinStyle={itemSpinStyle}
+            />
+          ))}
+        </div>
+
+        {centerContent && (
+          <div className="orbit-center-content">
+            {centerContent}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div
       ref={containerRef}
       className={`orbit-container ${className}`}
       style={{
-        width: containerWidth,
-        height: containerHeight,
+        width: containerWidthStyle,
+        height: containerHeightStyle,
         aspectRatio: responsive ? '1 / 1' : undefined,
       }}
       aria-hidden="true"

@@ -251,6 +251,11 @@ export interface AuthUser {
   role: UserRole;
   college?: string;
   yearOfStudy?: string;
+  phone?: string;
+  major?: string;
+  githubUrl?: string;
+  linkedinUrl?: string;
+  portfolioUrl?: string;
   batch: string;
   joinedDate: string;
   onboardingComplete: boolean;
