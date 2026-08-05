@@ -77,7 +77,7 @@ export type QuickStatIcon = 'briefcase' | 'users' | 'clock' | 'award';
 // section on this page into view (scroll) -- e.g. "Quick response" jumps to
 // the What's Next banner rather than duplicating its content here.
 export type QuickStatAction =
-  | { type: 'link'; href: string }
+  | { type: 'link'; href: string; state?: Record<string, unknown> }
   | { type: 'scroll'; targetId: string };
 
 export interface QuickStat {
