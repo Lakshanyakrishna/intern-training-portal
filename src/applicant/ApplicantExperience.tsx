@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { getUserSettings, upsertUserSettings, getApplicationByUserId, acceptOffer } from '../lib/db';
+import { notifyEvent } from '../lib/notifications';
 import { Sun, Moon, XCircle, ChevronDown, LogOut } from '../components/Icons';
 import NotificationBell from '../components/NotificationBell';
 import lumoraLogo from '../assets/lumora-logo.png';
@@ -115,7 +116,7 @@ function UserMenu({ name, darkMode, onToggleTheme, onSignOut }: {
 // mock -- this is the one write that has a real, safe, narrowly-scoped
 // backend path already, and the whole point of the "Selected" stage
 // existing is to give the applicant genuine say over becoming an intern.
-function useApplicantJourney(userId: string | undefined) {
+function useApplicantJourney(userId: string | undefined, userName: string | undefined) {
   const [loading, setLoading] = useState(true);
   const [stage, setStage] = useState<Stage>('no_application');
   const [opportunityTitle, setOpportunityTitle] = useState(MOCK_OPPORTUNITIES[0]?.title ?? '');
@@ -153,14 +154,20 @@ function useApplicantJourney(userId: string | undefined) {
     onRescheduleInterview: () => setStage('interview_scheduling'),
     onCancelInterview: () => setStage('application_submitted'),
     onAcceptOffer: () => {
-      if (!realApplicationId) return;
+      if (!realApplicationId || !userId) return;
       // Best-effort: this route's `stage` is local mock state, so previewing
       // "Selected" via the dev switcher won't line up with a real accepted
       // application for most accounts -- the RPC correctly rejects that
       // (022_offer_acceptance.sql), and the mock journey still advances
       // regardless. Only a genuinely accepted application actually gets
-      // written.
-      acceptOffer(realApplicationId).catch(err => {
+      // written -- the confirmation email only fires alongside that real
+      // write, never off the mock stage switcher.
+      acceptOffer(realApplicationId).then(() => {
+        notifyEvent('offer_accepted', userId, {
+          name: userName ?? 'there',
+          opportunity: 'the program',
+        }).catch(() => {});
+      }).catch(err => {
         console.warn('accept_offer: no real write applied (expected unless this application is actually accepted)', err);
       });
     },
@@ -181,7 +188,7 @@ export default function ApplicantExperience() {
       (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
   });
   const [devPanelOpen, setDevPanelOpen] = useState(false);
-  const { loading, stage, setStage, application, scheduledInterview, actions } = useApplicantJourney(user?.id);
+  const { loading, stage, setStage, application, scheduledInterview, actions } = useApplicantJourney(user?.id, user?.name);
 
   // Picks up an "apply" initiated from /applicant/opportunities (the full
   // browse page), which can't reach this route's local journey state
@@ -254,7 +261,9 @@ export default function ApplicantExperience() {
           <>
             <SkeletonBlock className="h-20" />
             <SkeletonBlock className="h-72" />
-            <div className="grid sm:grid-cols-2 gap-6 mt-6">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
+              <SkeletonBlock className="h-24" />
+              <SkeletonBlock className="h-24" />
               <SkeletonBlock className="h-24" />
               <SkeletonBlock className="h-24" />
             </div>
@@ -263,8 +272,10 @@ export default function ApplicantExperience() {
           <>
             {/* Highest-priority guidance right after the hero -- the answer
                 to "what happens now" shouldn't compete for attention with
-                Quick Stats and Help in the grid below. */}
-            <WhatsNext stage={stage} />
+                Quick Stats and Help in the grid below. Estimated Timeline
+                rides along as a compact trailing badge here instead of
+                repeating as its own full-width card at every stage. */}
+            <WhatsNext stage={stage} trailing={<EstimatedTimeline stage={stage} />} />
 
             {/* Full width -- just the current stage's content (opportunity
                 grid, interview scheduler, etc). Everything else (timeline,
@@ -282,8 +293,7 @@ export default function ApplicantExperience() {
               />
             </CurrentMission>
 
-            <div className="space-y-4 mt-6">
-              <EstimatedTimeline stage={stage} />
+            <div className="mt-6">
               <QuickStats stats={MOCK_QUICK_STATS} />
             </div>
           </>
