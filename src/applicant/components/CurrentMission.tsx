@@ -11,7 +11,7 @@ export default function CurrentMission({ children }: { children: ReactNode }) {
     <section aria-label="Next up" aria-live="polite" className="animate-[fadeIn_0.25s_ease-out]">
       <div className="inline-flex items-center gap-1.5 mb-3">
         <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-        <span className="text-xs font-bold uppercase tracking-wider text-accent">Next Up</span>
+        <span className="text-xs font-bold uppercase tracking-wider text-primary">Next Up</span>
       </div>
       {children}
     </section>

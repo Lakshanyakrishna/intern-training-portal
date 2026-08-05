@@ -31,14 +31,18 @@ export default function WhatsNext({ stage }: { stage: Stage }) {
   const Icon = ICONS[stage];
 
   return (
-    <section aria-label="What's next" className="bg-surface border border-line rounded-2xl shadow-sm shadow-black/[0.03] p-5">
-      <div className="flex items-center gap-2.5 mb-3">
-        <div className="w-7 h-7 rounded-full bg-surface-alt flex items-center justify-center text-secondary shrink-0">
-          <Icon className="w-3.5 h-3.5" />
-        </div>
-        <h3 className="text-sm font-semibold text-primary">What&apos;s Next?</h3>
+    <section
+      id="whats-next"
+      aria-label="What's next"
+      className="flex items-center gap-4 rounded-2xl border border-line bg-surface pl-5 pr-5 sm:pr-6 py-5 shadow-sm shadow-black/[0.03] border-l-4 border-l-accent scroll-mt-20"
+    >
+      <div className="w-11 h-11 rounded-xl bg-accent text-accent-text flex items-center justify-center shrink-0">
+        <Icon className="w-5 h-5" />
       </div>
-      <p className="text-sm text-secondary leading-relaxed">{STAGE_GUIDANCE[stage]}</p>
+      <div className="min-w-0">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-primary mb-1">What&apos;s next</h2>
+        <p className="text-sm text-primary leading-relaxed">{STAGE_GUIDANCE[stage]}</p>
+      </div>
     </section>
   );
 }
