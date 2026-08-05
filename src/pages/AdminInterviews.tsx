@@ -20,6 +20,11 @@ export default function AdminInterviews() {
   const [interviewers, setInterviewers] = useState('');
   const [meetLink, setMeetLink] = useState('');
 
+  // Reschedule -- inline per-row, not a separate tab, since it's a quick
+  // one-field edit on an existing row rather than a new record.
+  const [reschedulingId, setReschedulingId] = useState<string | null>(null);
+  const [newScheduledAt, setNewScheduledAt] = useState('');
+
   // Evaluation
   const [evalInterviewId, setEvalInterviewId] = useState('');
   const [evalData, setEvalData] = useState({
@@ -98,6 +103,22 @@ export default function AdminInterviews() {
     } catch { /* ignore */ }
   }
 
+  async function handleReschedule(iv: DbInterview) {
+    if (!newScheduledAt) return;
+    const isoScheduledAt = new Date(newScheduledAt).toISOString();
+    await updateInterview(iv.id, { scheduledAt: isoScheduledAt });
+    setReschedulingId(null);
+    setNewScheduledAt('');
+    await refresh();
+    notifyEvent('interview_rescheduled', iv.applicantId, {
+      name: applications.find(a => a.id === iv.applicationId)?.name || 'Applicant',
+      date: new Date(isoScheduledAt).toLocaleDateString(),
+      time: new Date(isoScheduledAt).toLocaleTimeString(),
+      meet_link: iv.meetLink || '',
+      opportunity: 'the program',
+    }).catch(() => {});
+  }
+
   function startEvaluation(iv: DbInterview) {
     setEvalInterviewId(iv.id);
     getInterviewEvaluation(iv.id).then(existing => {
@@ -151,7 +172,8 @@ export default function AdminInterviews() {
               ) : (
                 <div className="divide-y divide-gray-100 dark:divide-gray-700">
                   {interviews.map(iv => (
-                    <div key={iv.id} className="flex items-center justify-between p-4">
+                    <div key={iv.id} className="p-4">
+                    <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <p className="text-sm font-medium text-primary">
                           {new Date(iv.scheduledAt).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
@@ -172,6 +194,15 @@ export default function AdminInterviews() {
                         }`}>{iv.status}</span>
                         {iv.status === 'scheduled' && (
                           <>
+                            <button
+                              onClick={() => {
+                                setReschedulingId(reschedulingId === iv.id ? null : iv.id);
+                                setNewScheduledAt('');
+                              }}
+                              className="text-xs px-2.5 py-1.5 rounded-lg border border-line text-secondary hover:text-primary hover:bg-surface-alt transition-colors"
+                            >
+                              Reschedule
+                            </button>
                             <button onClick={() => startEvaluation(iv)} className="text-xs px-2.5 py-1.5 rounded-lg bg-accent text-white hover:bg-accent-hover transition-colors">Evaluate</button>
                             <button onClick={async () => {
                               if (!user) return;
@@ -207,6 +238,31 @@ export default function AdminInterviews() {
                           </>
                         )}
                       </div>
+                    </div>
+
+                    {reschedulingId === iv.id && (
+                      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-line">
+                        <input
+                          type="datetime-local"
+                          value={newScheduledAt}
+                          onChange={e => setNewScheduledAt(e.target.value)}
+                          className={`${inputClass} max-w-xs`}
+                        />
+                        <button
+                          onClick={() => handleReschedule(iv)}
+                          disabled={!newScheduledAt}
+                          className="text-xs px-2.5 py-1.5 rounded-lg bg-accent text-white hover:bg-accent-hover transition-colors disabled:opacity-40 disabled:pointer-events-none shrink-0"
+                        >
+                          Save new time
+                        </button>
+                        <button
+                          onClick={() => { setReschedulingId(null); setNewScheduledAt(''); }}
+                          className="text-xs px-2.5 py-1.5 rounded-lg text-secondary hover:text-primary transition-colors shrink-0"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
                     </div>
                   ))}
                 </div>
