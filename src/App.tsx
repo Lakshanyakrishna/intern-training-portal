@@ -30,6 +30,7 @@ const InternManagement = lazy(() => import('./pages/InternManagement'));
 const MentorReviews = lazy(() => import('./pages/MentorReviews'));
 const ProjectReadiness = lazy(() => import('./pages/ProjectReadiness'));
 const ApplicantExperience = lazy(() => import('./applicant/ApplicantExperience'));
+const BrowseOpportunities = lazy(() => import('./applicant/pages/BrowseOpportunities'));
 const AdminApplications = lazy(() => import('./pages/AdminApplications'));
 const AdminInterviews = lazy(() => import('./pages/AdminInterviews'));
 const AdminConversion = lazy(() => import('./pages/AdminConversion'));
@@ -87,6 +88,9 @@ export default function App() {
                 that owns its own minimal header. */}
             <Route path="/applicant" element={
               <ProtectedRoute><ApplicantExperience /></ProtectedRoute>
+            } />
+            <Route path="/applicant/opportunities" element={
+              <ProtectedRoute><BrowseOpportunities /></ProtectedRoute>
             } />
 
             {/* Any authenticated user, regardless of lifecycle stage */}
