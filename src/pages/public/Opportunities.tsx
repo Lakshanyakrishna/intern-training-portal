@@ -16,27 +16,21 @@ import { ParticleCard, GlobalSpotlight } from '../../components/react-bits/Parti
 import StarBorder from '../../components/StarBorder';
 
 import ElectricBorder from '../../components/react-bits/ElectricBorder/ElectricBorder';
-import BorderGlow from '../../components/react-bits/BorderGlow/BorderGlow';
-import GradientText from '../../components/react-bits/GradientText/GradientText';
-import HoverSplashCard from '../../components/react-bits/HoverSplashCard/HoverSplashCard';
 import CursorGrid from '../../components/react-bits/CursorGrid/CursorGrid';
 import PixelTransition from '../../components/react-bits/PixelTransition/PixelTransition';
-import ShapeGrid from '../../components/react-bits/ShapeGrid/ShapeGrid';
 import Orb from '../../components/react-bits/Orb/Orb';
 import CurvedInput from '../../components/react-bits/CurvedInput/CurvedInput';
-import Ribbons from '../../components/react-bits/Ribbons/Ribbons';
 import TextType from '../../components/TextType';
 import BlurText from '../../components/react-bits/BlurText/BlurText';
 import Dock from '../../components/Dock';
 import VariableProximity from '../../components/react-bits/VariableProximity/VariableProximity';
-import TrueFocus from '../../components/react-bits/TrueFocus/TrueFocus';
 
 import { useAutoScroll } from '../../hooks/useAutoScroll';
 import Galaxy from '../../components/react-bits/Galaxy/Galaxy';
-import CountUp from '../../components/CountUp';
 import GlareHover from '../../components/GlareHover';
-import AnimatedList from '../../components/AnimatedList';
+// @ts-ignore
 import Beams from '../../components/Beams';
+// @ts-ignore
 import LiquidChrome from '../../components/LiquidChrome/LiquidChrome';
 
 import MultiSelectGooeyNav from '../../components/react-bits/GooeyNav/MultiSelectGooeyNav';
@@ -150,7 +144,7 @@ const getDifficultyColor = (level: string) => {
   }
 };
 
-const fadeUpVariant = {
+const fadeUpVariant: any = {
   hidden: { opacity: 0, y: 24 },
   visible: {
     opacity: 1,
@@ -159,7 +153,7 @@ const fadeUpVariant = {
   }
 };
 
-const Reveal = ({ children, delay = 0, className = '', ...rest }) => {
+const Reveal = ({ children, delay = 0, className = '', ...rest }: any) => {
   const variants = useMemo(() => {
     if (delay <= 0) return fadeUpVariant;
     return {
@@ -185,7 +179,7 @@ const Reveal = ({ children, delay = 0, className = '', ...rest }) => {
   );
 };
 
-const RevealGroup = ({ children, className = '', staggerDelay = 0.1, childClassName = '', ...rest }) => {
+const RevealGroup = ({ children, className = '', staggerDelay = 0.1, childClassName = '', ...rest }: any) => {
   const containerVariants = useMemo(
     () => ({ hidden: {}, visible: { transition: { staggerChildren: staggerDelay } } }),
     [staggerDelay]
