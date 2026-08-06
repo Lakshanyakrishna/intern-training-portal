@@ -62,12 +62,12 @@ export default function BrowseOpportunities() {
     });
   }, [query, category]);
 
-  // Apply from here hands off to the applicant dashboard's own mock-state
-  // hook (useApplicantJourney) via router state, rather than duplicating
-  // application logic on this page -- ApplicantExperience picks this up on
-  // mount and advances the stage there.
-  const handleApply = (opportunityId: string) => {
-    navigate('/applicant', { state: { applyToOpportunityId: opportunityId } });
+  // Routes straight to the real application form -- these cards are still
+  // placeholder content until real opportunity data exists, but "Apply"
+  // itself must never fake a submission. /apply works with no specific
+  // opportunity attached; once real listings exist this can pass a real id.
+  const handleApply = (_opportunityId: string) => {
+    navigate('/apply');
   };
 
   return (
