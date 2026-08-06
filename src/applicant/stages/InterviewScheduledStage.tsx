@@ -72,10 +72,12 @@ export default function InterviewScheduledStage({
   interview,
   onRescheduleInterview,
   onCancelInterview,
+  isLive,
 }: {
   interview: ScheduledInterview;
   onRescheduleInterview: () => void;
   onCancelInterview: () => void;
+  isLive?: boolean;
 }) {
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [confirmingCancel, setConfirmingCancel] = useState(false);
@@ -181,29 +183,38 @@ export default function InterviewScheduledStage({
         </div>
       </div>
 
-      <div className="flex items-center gap-3 mt-4">
-        <button onClick={onRescheduleInterview} className="text-xs font-medium text-accent hover:underline">
-          Reschedule
-        </button>
-        <span className="text-line">·</span>
-        {confirmingCancel ? (
-          <span className="flex items-center gap-2 text-xs">
-            <span className="text-secondary">Cancel this interview?</span>
-            <button onClick={() => setConfirmingCancel(false)} className="font-medium text-secondary hover:text-primary">No</button>
-            <button onClick={onCancelInterview} className="font-medium text-red-500 hover:text-red-600">Yes, cancel</button>
-          </span>
-        ) : (
-          <button onClick={() => setConfirmingCancel(true)} className="text-xs font-medium text-secondary hover:text-red-500 transition-colors">
-            Cancel Interview
+      {isLive ? (
+        // Reschedule/cancel are admin-driven in the real system -- there's
+        // no self-serve endpoint for either yet, so this stays informational
+        // rather than offering controls that wouldn't persist.
+        <p className="text-xs text-secondary mt-4">
+          Need to reschedule or cancel? Reach out and we'll help.
+        </p>
+      ) : (
+        <div className="flex items-center gap-3 mt-4">
+          <button onClick={onRescheduleInterview} className="text-xs font-medium text-accent hover:underline">
+            Reschedule
           </button>
-        )}
-      </div>
+          <span className="text-line">·</span>
+          {confirmingCancel ? (
+            <span className="flex items-center gap-2 text-xs">
+              <span className="text-secondary">Cancel this interview?</span>
+              <button onClick={() => setConfirmingCancel(false)} className="font-medium text-secondary hover:text-primary">No</button>
+              <button onClick={onCancelInterview} className="font-medium text-red-500 hover:text-red-600">Yes, cancel</button>
+            </span>
+          ) : (
+            <button onClick={() => setConfirmingCancel(true)} className="text-xs font-medium text-secondary hover:text-red-500 transition-colors">
+              Cancel Interview
+            </button>
+          )}
+        </div>
+      )}
 
       {added && (
         <div role="status" aria-live="polite" className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-[slideUp_0.2s_ease-out]">
           <div className="flex items-center gap-2.5 bg-surface border border-line rounded-full px-4 py-2.5 shadow-lg shadow-black/10">
             <CheckCircle className="w-4 h-4 text-accent shrink-0" />
-            <p className="text-sm font-medium text-primary">Interview added to your calendar (Demo)</p>
+            <p className="text-sm font-medium text-primary">Interview added to your calendar</p>
           </div>
         </div>
       )}

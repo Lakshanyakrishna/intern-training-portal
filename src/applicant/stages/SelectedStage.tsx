@@ -8,14 +8,20 @@ export default function SelectedStage({
   trainingDuration,
   onAcceptOffer,
   onBeginTraining,
+  initiallyAccepted,
 }: {
   mentor: string;
   startDate: string;
   trainingDuration: string;
   onAcceptOffer: () => void;
   onBeginTraining: () => void;
+  initiallyAccepted?: boolean;
 }) {
-  const [accepted, setAccepted] = useState(false);
+  // Without this, a real applicant who already accepted their offer and
+  // comes back to this page would see "Accept Internship Offer" again --
+  // harmless (the RPC is idempotent) but confusing, since it looks like
+  // their acceptance never happened.
+  const [accepted, setAccepted] = useState(!!initiallyAccepted);
 
   return (
     <div>

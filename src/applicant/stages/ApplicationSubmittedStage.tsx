@@ -6,10 +6,12 @@ export default function ApplicationSubmittedStage({
   application,
   onEditApplication,
   onWithdrawApplication,
+  isLive,
 }: {
   application: ApplicationSummary;
   onEditApplication: (newWhyJoin: string) => void;
   onWithdrawApplication: () => void;
+  isLive?: boolean;
 }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState('');
@@ -81,13 +83,17 @@ export default function ApplicationSubmittedStage({
           </div>
         ) : (
           <div className="flex gap-2 mt-4 pt-4 border-t border-line">
-            <button
-              onClick={() => setEditing(true)}
-              className="text-xs font-medium text-accent hover:underline"
-            >
-              Edit Application
-            </button>
-            <span className="text-line">·</span>
+            {!isLive && (
+              <>
+                <button
+                  onClick={() => setEditing(true)}
+                  className="text-xs font-medium text-accent hover:underline"
+                >
+                  Edit Application
+                </button>
+                <span className="text-line">·</span>
+              </>
+            )}
             <button
               onClick={() => setConfirmingWithdraw(true)}
               className="text-xs font-medium text-secondary hover:text-red-500 transition-colors"
