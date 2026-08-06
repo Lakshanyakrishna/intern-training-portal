@@ -16,10 +16,13 @@ import ScrollRevealGroup from '../../components/ScrollRevealGroup';
 import { motion } from 'motion/react';
 import LogoLoop from '../../components/react-bits/LogoLoop/LogoLoop';
 import OrbitImages from '../../components/react-bits/OrbitImages/OrbitImages';
+import Logo from '../../components/Logo';
 
 import ClickSpark from '../../components/ClickSpark';
 import FadeContent from '../../components/FadeContent';
 import ElectricBorder from '../../components/react-bits/ElectricBorder/ElectricBorder';
+import MinimalFooter from '../../components/MinimalFooter';
+import ComingSoonLink from '../../components/ComingSoonLink';
 import {
   Code, Laptop, Users, Rocket, Box, Target, Quote,
   Check, X, ArrowRight, ChevronRight,
@@ -76,17 +79,7 @@ const TESTIMONIAL = {
 };
 
 
-function ComingSoonLink({ label }: { label: string }) {
-  const handleClick = () => alert(`${label} — coming soon.`);
-  return (
-    <button
-      onClick={handleClick}
-      className="text-sm text-[#F1F2EE] hover:text-[#C6CAC9] flex items-center gap-1 transition-colors"
-    >
-      {label} <ChevronRight className="w-4 h-4" />
-    </button>
-  );
-}
+
 
 export default function About() {
   const [supportsOffsetPath, setSupportsOffsetPath] = useState(true);
@@ -535,45 +528,9 @@ export default function About() {
         </ScrollReveal>
       </main>
 
-      {/* FOOTER — kept identical to Opportunities.tsx for consistency */}
+      {/* FOOTER */}
       <ScrollReveal delay={0.1}>
-        <AnimatedContent distance={30} direction="vertical" animateOpacity duration={0.6} threshold={0.2}>
-          <FadeContent blur={true} duration={1} easing="ease-out" initialOpacity={0}>
-            <footer className="relative z-10 border-t border-white/10 bg-black py-8 mt-12">
-              <div className="max-w-7xl mx-auto px-6 sm:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 text-white">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                    </svg>
-                  </div>
-                  <span className="font-bold text-lg tracking-tight">Lumora</span>
-                </div>
-                <div className="text-xs text-gray-500">© 2026 Lumora. All rights reserved.</div>
-                <div className="flex items-center gap-6 text-xs text-gray-400">
-                  <Link to="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-                  <Link to="#" className="hover:text-white transition-colors">Terms of Service</Link>
-                  <Link to="#" className="hover:text-white transition-colors">Careers</Link>
-                  <div className="flex gap-4 ml-4">
-                    <a href="#" className="hover:text-white transition-colors">
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                        <rect x="2" y="9" width="4" height="12" />
-                        <circle cx="4" cy="4" r="2" />
-                      </svg>
-                    </a>
-                    <a href="#" className="hover:text-white transition-colors">
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
-                      </svg>
-                    </a>
-                    <a href="#" className="hover:text-white transition-colors"><Mail className="w-4 h-4" /></a>
-                  </div>
-                </div>
-              </div>
-            </footer>
-          </FadeContent>
-        </AnimatedContent>
+        <MinimalFooter />
       </ScrollReveal>
     </div>
   );

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Grid, Search } from '../../components/Icons';
-import lumoraLogo from '../../assets/lumora-logo.png';
+import { ArrowLeft, Search, Grid } from '../../components/Icons';
+import Logo from '../../components/Logo';
 import EmptyState from '../components/EmptyState';
 import OpportunityCard from '../components/OpportunityCard';
 import { MOCK_OPPORTUNITIES } from '../mock/opportunities';
@@ -82,7 +82,7 @@ export default function BrowseOpportunities() {
         </Link>
         <span className="w-px h-4 bg-line" />
         <div className="flex items-center gap-2">
-          <img src={lumoraLogo} alt="" className="w-5 h-5 invert dark:invert-0" />
+          <Logo withText={false} className="" iconClassName="w-5 h-5 text-primary" />
           <span className="text-sm font-bold text-primary tracking-tight">Lumora <span className="text-secondary font-normal">· Internship Program</span></span>
         </div>
       </header>
