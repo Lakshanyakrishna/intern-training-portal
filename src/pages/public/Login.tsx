@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { roleHomePath } from '../../utils/roleHome';
 
 export default function Login() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -20,7 +22,11 @@ export default function Login() {
     if (result.error) {
       setError(result.error);
     } else {
-      navigate(roleHomePath(result.user?.role));
+      // When coming from the apply flow (e.g. the "Sign In" link on the
+      // Create Account gate), return the user to the application form
+      // instead of their role home. We check both query params and location state.
+      const redirect = searchParams.get('redirect') || (location.state as any)?.from?.pathname;
+      navigate(redirect && redirect.startsWith('/') ? redirect : roleHomePath(result.user?.role));
     }
   };
 
@@ -75,7 +81,7 @@ export default function Login() {
 
           <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
             Don't have an account?{' '}
-            <Link to="/signup" className="text-accent hover:underline font-medium">Sign Up</Link>
+            <Link to={searchParams.has('redirect') ? `/signup?redirect=${encodeURIComponent(searchParams.get('redirect')!)}` : (location.state as any)?.from?.pathname ? `/signup?redirect=${encodeURIComponent((location.state as any).from.pathname)}` : '/signup'} className="text-accent hover:underline font-medium">Sign Up</Link>
           </p>
         </form>
       </div>

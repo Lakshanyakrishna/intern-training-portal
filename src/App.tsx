@@ -8,6 +8,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 const Home = lazy(() => import('./pages/public/Home'));
 const About = lazy(() => import('./pages/public/About'));
 const Apply = lazy(() => import('./pages/public/Apply'));
+const CreateAccount = lazy(() => import('./pages/public/CreateAccount'));
 const Login = lazy(() => import('./pages/public/Login'));
 const SignUp = lazy(() => import('./pages/public/SignUp'));
 const Opportunities = lazy(() => import('./pages/public/Opportunities'));
@@ -79,6 +80,7 @@ export default function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/opportunities" element={<Opportunities />} />
             <Route path="/opportunities/:opportunityId" element={<OpportunityDetail />} />
+            <Route path="/apply/:opportunityId/create-account" element={<CreateAccount />} />
             <Route path="/apply/:opportunityId" element={<Apply />} />
             <Route path="/apply" element={<Apply />} />
             <Route path="/login" element={<Login />} />

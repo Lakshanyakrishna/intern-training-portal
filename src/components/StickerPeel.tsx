@@ -7,7 +7,7 @@ import './StickerPeel.css';
 gsap.registerPlugin(Draggable);
 
 interface StickerPeelProps {
-  imageSrc: string;
+  children: React.ReactNode;
   rotate?: number;
   peelBackHoverPct?: number;
   peelBackActivePct?: number;
@@ -22,7 +22,7 @@ interface StickerPeelProps {
 }
 
 const StickerPeel = ({
-  imageSrc,
+  children,
   rotate = 30,
   peelBackHoverPct = 30,
   peelBackActivePct = 40,
@@ -250,25 +250,17 @@ const StickerPeel = ({
       <div className="sticker-container" ref={containerRef}>
         <div className="sticker-main">
           <div className="sticker-lighting">
-            <img
-              src={imageSrc}
-              alt=""
-              className="sticker-image animate-none"
-              draggable="false"
-              onContextMenu={e => e.preventDefault()}
-            />
+            <div className="sticker-image animate-none w-full h-full flex items-center justify-center">
+              {children}
+            </div>
           </div>
         </div>
 
         <div className="flap">
           <div className="flap-lighting">
-            <img
-              src={imageSrc}
-              alt=""
-              className="flap-image animate-none"
-              draggable="false"
-              onContextMenu={e => e.preventDefault()}
-            />
+            <div className="flap-image animate-none w-full h-full flex items-center justify-center">
+              {children}
+            </div>
           </div>
         </div>
       </div>

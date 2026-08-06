@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import Logo from './Logo';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -10,9 +11,11 @@ export default function Footer() {
           {/* Logo & Info column */}
           <div className="col-span-2 space-y-6">
             <div className="flex items-center gap-3">
-              <span className="text-[20px] font-semibold tracking-wide text-[#1A1A1A]">
-                Lumora
-              </span>
+              <Logo 
+                className="flex items-center gap-2 text-[20px] font-semibold tracking-wide text-[#1A1A1A]"
+                iconClassName="w-6 h-6"
+                textClassName=""
+              />
             </div>
             <p className="max-w-xs text-[13px] leading-relaxed">
               A premium internship platform built for ambitious students and high-growth startups to launch careers and build real products.

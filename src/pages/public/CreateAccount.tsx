@@ -1,20 +1,49 @@
-import { useState } from 'react';
-import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { getOpportunity } from '../../lib/db';
+import type { DbOpportunity } from '../../lib/db';
 import { ArrowRight } from '../../components/Icons';
-import { roleHomePath } from '../../utils/roleHome';
 
-export default function SignUp() {
-  const { signUp } = useAuth();
+// Gate page placed in front of the application form: applying now requires
+// an account, so every unauthenticated "Apply" click lands here first and
+// the chosen opportunity is carried through the URL (/apply/:slug/
+// create-account). Signup reuses the exact same AuthContext.signUp path as
+// the existing /signup page (which assigns the lowest-privilege 'applicant'
+// role), and on success the user is dropped straight onto
+// /apply/:slug -- pre-filled from the account they just created.
+export default function CreateAccount() {
+  const { opportunityId } = useParams<{ opportunityId: string }>();
+  const { signUp, user, loading } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const [searchParams] = useSearchParams();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [opportunity, setOpportunity] = useState<DbOpportunity | null | undefined>(undefined);
+
+  useEffect(() => {
+    if (!opportunityId) return;
+    let cancelled = false;
+    getOpportunity(opportunityId)
+      .then(o => { if (!cancelled) setOpportunity(o); })
+      .catch(() => { if (!cancelled) setOpportunity(null); });
+    return () => { cancelled = true; };
+  }, [opportunityId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-6 h-6 border-2 border-line border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (user) {
+    return <Navigate to={opportunityId ? `/apply/${opportunityId}` : '/opportunities'} replace />;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,15 +74,7 @@ export default function SignUp() {
     if (result.error) {
       setError(result.error);
     } else {
-      // Onboarding is training-specific -- only relevant once promoted to
-      // intern. A still-'applicant' account (the common case) goes straight
-      // to their application-status view instead.
-      const redirect = searchParams.get('redirect') || (location.state as any)?.from?.pathname;
-      if (redirect && redirect.startsWith('/')) {
-        navigate(redirect);
-      } else {
-        navigate(result.user?.role === 'intern' ? '/onboarding' : roleHomePath(result.user?.role));
-      }
+      navigate(opportunityId ? `/apply/${opportunityId}` : '/opportunities');
     }
   };
 
@@ -63,7 +84,9 @@ export default function SignUp() {
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-primary">Create Your Account</h1>
           <p className="text-sm text-secondary mt-1">
-            Join the Intern Readiness Program and begin your training journey.
+            {opportunity
+              ? `Create an account to apply for ${opportunity.title}.`
+              : 'Create an account to apply to the Intern Readiness Program.'}
           </p>
         </div>
 
@@ -131,7 +154,12 @@ export default function SignUp() {
 
           <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
             Already have an account?{' '}
-            <Link to={searchParams.has('redirect') ? `/login?redirect=${encodeURIComponent(searchParams.get('redirect')!)}` : (location.state as any)?.from?.pathname ? `/login?redirect=${encodeURIComponent((location.state as any).from.pathname)}` : '/login'} className="text-accent hover:underline font-medium">Sign In</Link>
+            <Link
+              to={opportunityId ? `/login?redirect=${encodeURIComponent(`/apply/${opportunityId}`)}` : '/login'}
+              className="text-accent hover:underline font-medium"
+            >
+              Sign In
+            </Link>
           </p>
         </form>
       </div>

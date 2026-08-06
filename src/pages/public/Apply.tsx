@@ -1,5 +1,5 @@
 import { useState, useId, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Navigate, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import {
   submitApplication, uploadResumeFile, getApplicationByUserId, getOpportunity, getOpportunityQuestions,
@@ -35,7 +35,8 @@ const initialForm: FormData = {
 export default function Apply() {
   const headingId = useId();
   const { opportunityId } = useParams<{ opportunityId: string }>();
-  const { user } = useAuth();
+  const { user, loading, signOut } = useAuth();
+  const navigate = useNavigate();
   const [form, setForm] = useState<FormData>(() =>
     user
       ? { ...initialForm, name: user.name, email: user.email, phone: user.phone || '', college: user.college || '', major: user.major || '', yearOfStudy: user.yearOfStudy || '' }
@@ -94,26 +95,28 @@ export default function Apply() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
+    if (!user) {
+      setError('You must be signed in to apply.');
+      return;
+    }
     setSending(true);
     try {
       const applicationId = await submitApplication({
         ...form,
-        userId: user?.id,
+        userId: user.id,
         opportunityId: opportunity?.id || undefined,
         answers: questions.length > 0 ? answers : undefined,
       });
       if (profileResume && !useFullForm) {
         await attachResumeToApplication(profileResume.id, applicationId);
       } else if (resumeFile) {
-        await uploadResumeFile(applicationId, resumeFile, user?.id || 'anonymous');
+        await uploadResumeFile(applicationId, resumeFile, user.id);
       }
       setSubmitted(true);
-      if (user?.id) {
-        notifyEvent('application_submitted', user.id, {
-          name: form.name,
-          opportunity: opportunity?.title || 'the program',
-        }).catch(() => {});
-      }
+      notifyEvent('application_submitted', user.id, {
+        name: form.name,
+        opportunity: opportunity?.title || 'the program',
+      }).catch(() => {});
     } catch (err: any) {
       console.error('Submission error:', err);
       setError(err?.message || 'Submission failed');
@@ -122,7 +125,19 @@ export default function Apply() {
     }
   }
 
+  function handleSignOut() {
+    signOut();
+    navigate('/opportunities');
+  }
+
   const canFastApply = !!user && !!profileResume && !useFullForm;
+
+  // Anonymous applications are no longer allowed: an unauthenticated visitor
+  // who lands directly on the application form is routed to the account
+  // creation gate first, keeping the opportunity they were applying to.
+  if (!loading && !user) {
+    return <Navigate to={opportunityId ? `/apply/${opportunityId}/create-account` : '/opportunities'} replace />;
+  }
 
   if (existingApplication !== undefined && existingApplication !== null) {
     const statusLabels: Record<string, string> = {
@@ -145,6 +160,7 @@ export default function Apply() {
             <div className="flex items-center gap-3">
               <Link to="/about" className="text-xs text-secondary hover:text-gray-700 dark:hover:text-gray-200 transition-colors">About</Link>
               <Link to={roleHomePath(user?.role)} className="text-xs px-3 py-1.5 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover transition-colors">Dashboard</Link>
+              <button onClick={handleSignOut} className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">Sign Out</button>
             </div>
           </div>
         </motion.header>
@@ -227,6 +243,9 @@ export default function Apply() {
               <Link to={user ? roleHomePath(user.role) : '/login'} className="text-xs px-3 py-1.5 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover transition-colors">
                 {user ? 'Dashboard' : 'Sign In'}
               </Link>
+              {user && (
+                <button onClick={handleSignOut} className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">Sign Out</button>
+              )}
             </div>
           </div>
         </motion.header>
@@ -314,6 +333,9 @@ export default function Apply() {
             <Link to={user ? roleHomePath(user.role) : '/login'} className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
               {user ? 'Dashboard' : 'Login'}
             </Link>
+            {user && (
+              <button onClick={handleSignOut} className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">Sign Out</button>
+            )}
           </div>
         </div>
       </motion.header>
@@ -389,7 +411,8 @@ export default function Apply() {
 
                 <div>
                   <label htmlFor="email" className={labelClass}>Email *</label>
-                  <input id="email" type="email" required value={form.email} onChange={e => set('email', e.target.value)} className={inputClass} placeholder="john@example.com" />
+                  <input id="email" type="email" required value={form.email} readOnly={!!user} onChange={e => set('email', e.target.value)} className={inputClass} placeholder="john@example.com" />
+                  {user && <p className="text-[11px] text-secondary mt-1">Your application is submitted under your account email.</p>}
                 </div>
 
                 <div>

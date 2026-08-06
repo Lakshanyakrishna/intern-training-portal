@@ -9,7 +9,7 @@ import type { DbApplication, DbInterview } from '../lib/db';
 import { notifyEvent } from '../lib/notifications';
 import { Sun, Moon, XCircle, ChevronDown, LogOut } from '../components/Icons';
 import NotificationBell from '../components/NotificationBell';
-import lumoraLogo from '../assets/lumora-logo.png';
+import Logo from '../components/Logo';
 import DotGrid from './components/DotGrid';
 import CurrentMission from './components/CurrentMission';
 import EstimatedTimeline from './components/EstimatedTimeline';
@@ -366,7 +366,11 @@ export default function ApplicantExperience() {
       </a>
       <header className="sticky top-0 z-30 bg-surface/80 backdrop-blur border-b border-line px-4 sm:px-6 h-14 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <img src={lumoraLogo} alt="" className="w-5 h-5 invert dark:invert-0" />
+          <Logo 
+            withText={false} 
+            className="" 
+            iconClassName="w-5 h-5 text-primary" 
+          />
           <span className="text-sm font-bold text-primary tracking-tight">Lumora <span className="text-secondary font-normal">· Internship Program</span></span>
         </div>
         <div className="flex items-center gap-2">
@@ -378,13 +382,17 @@ export default function ApplicantExperience() {
       <main id="main-content" className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-36 space-y-6">
         <div className="relative overflow-hidden rounded-2xl bg-sidebar-bg text-sidebar-text px-6 py-8 sm:px-10 sm:py-10 shadow-lg shadow-black/10">
           <DotGrid dotSize={3} gap={16} proximity={80} shockRadius={120} baseColor="#2A2A2A" activeColor="#F1F2EE" />
-          <img
-            src={lumoraLogo}
-            alt=""
-            className="absolute -right-10 -top-10 w-64 h-64 opacity-[0.18] pointer-events-none select-none"
+          <Logo 
+            withText={false}
+            className="absolute -right-10 -top-10 opacity-[0.18] pointer-events-none select-none text-sidebar-text"
+            iconClassName="w-64 h-64"
           />
           <div className="relative flex items-center gap-2 mb-5">
-            <img src={lumoraLogo} alt="" className="w-5 h-5" />
+            <Logo 
+              withText={false} 
+              className="" 
+              iconClassName="w-5 h-5 text-sidebar-text" 
+            />
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-sidebar-text-secondary">
               Lumora · Internship Program
             </span>

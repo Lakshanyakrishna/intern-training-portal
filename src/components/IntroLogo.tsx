@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import lumoraLogo from '../assets/lumora-logo.png';
+import Logo from './Logo';
 import DecryptedText from './DecryptedText';
 import StickerPeel from './StickerPeel';
 
@@ -55,7 +55,6 @@ export default function IntroLogo({ animate = true }: IntroLogoProps) {
       {settled ? (
         <div style={{ width: '52px', height: '52px', position: 'relative' }} className="shrink-0">
           <StickerPeel
-            imageSrc={lumoraLogo}
             width={52}
             rotate={15}
             peelBackHoverPct={25}
@@ -63,13 +62,15 @@ export default function IntroLogo({ animate = true }: IntroLogoProps) {
             shadowIntensity={0.5}
             lightingIntensity={0.15}
             initialPosition="center"
-          />
+          >
+            <Logo withText={false} className="w-full h-full flex items-center justify-center text-[#F1F2EE]" iconClassName="w-10 h-10" />
+          </StickerPeel>
         </div>
       ) : (
-        <img
-          src={lumoraLogo}
-          alt="Lumora"
-          className="transition-all ease-[cubic-bezier(0.22,1,0.36,1)] shrink-0"
+        <Logo
+          withText={false}
+          className="transition-all ease-[cubic-bezier(0.22,1,0.36,1)] shrink-0 flex items-center justify-center text-[#F1F2EE]"
+          iconClassName="w-10 h-10"
           style={{
             width: '56px',
             height: '56px',

@@ -182,8 +182,8 @@ export default function About() {
                   Your degree taught you the theory. We help you earn the confidence.
                 </h2>
                 <p className="text-gray-400 leading-relaxed">
-                  Most students graduate knowing the concepts but not the craft. Lumora closes that gap —
-                  through real projects, real mentors, and real feedback — so that on day one of your
+                  Most students graduate knowing the concepts but not the craft. Lumora closes that gap,
+                  through real projects, real mentors, and real feedback, so that on day one of your
                   first job, you don't just show up, you belong there.
                 </p>
               </div>
