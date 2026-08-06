@@ -144,7 +144,7 @@ export default function Apply() {
             <Link to="/" className="text-sm font-bold text-primary">Intern Readiness Program</Link>
             <div className="flex items-center gap-3">
               <Link to="/about" className="text-xs text-secondary hover:text-gray-700 dark:hover:text-gray-200 transition-colors">About</Link>
-              <Link to="/dashboard" className="text-xs px-3 py-1.5 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover transition-colors">Dashboard</Link>
+              <Link to={roleHomePath(user?.role)} className="text-xs px-3 py-1.5 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover transition-colors">Dashboard</Link>
             </div>
           </div>
         </motion.header>
@@ -195,7 +195,7 @@ export default function Apply() {
               transition={{ duration: 0.5, delay: 0.7 }}
               className="flex items-center justify-center gap-3"
             >
-              <Link to="/dashboard" className="px-6 py-2.5 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors text-sm">
+              <Link to={roleHomePath(user?.role)} className="px-6 py-2.5 bg-accent text-white font-medium rounded-lg hover:bg-accent-hover transition-colors text-sm">
                 Go to Dashboard
               </Link>
               <Link to="/" className="px-6 py-2.5 border border-line text-secondary font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm">
@@ -553,7 +553,7 @@ export default function Apply() {
             className="text-xs text-gray-400 dark:text-gray-500 text-center"
           >
             {user ? (
-              <Link to="/dashboard" className="text-accent hover:underline">Back to Dashboard</Link>
+              <Link to={roleHomePath(user.role)} className="text-accent hover:underline">Back to Dashboard</Link>
             ) : (
               <>Already have an account? <Link to="/login" className="text-accent hover:underline">Sign in</Link></>
             )}
