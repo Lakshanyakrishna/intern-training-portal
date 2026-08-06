@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getUnreadNotificationsCount, getNotifications, markNotificationRead, markAllNotificationsRead } from '../lib/db';
+import { stripHtml } from '../lib/notifications';
 import type { DbNotification } from '../lib/db';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -145,7 +146,7 @@ export default function NotificationBell() {
                       {n.title}
                     </p>
                     <p className="text-xs text-secondary truncate mt-0.5">
-                      {n.message}
+                      {stripHtml(n.message)}
                     </p>
                     <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-1">
                       {timeAgo(n.createdAt)}

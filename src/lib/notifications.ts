@@ -12,6 +12,20 @@ export function renderTemplate(template: string, vars: Record<string, string>): 
   return template.replace(/\{\{(\w+)\}\}/g, (_, key: string): string => vars[key] ?? `{{${key}}}`);
 }
 
+// Templates store the email body as HTML (`<p>...</p>`), which is correct
+// for the actual email but wrong for the in-app notification list -- that
+// renders as plain text, so without this the tags show up literally.
+// Exported so the two notification display components can apply it
+// defensively to rows written before this existed.
+export function stripHtml(html: string): string {
+  return html
+    .replace(/<\/p>\s*<p>/gi, ' ')
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 export async function notifyEvent(
   eventType: string,
   recipientId: string,
@@ -32,13 +46,13 @@ export async function notifyEvent(
   }
 
   const title = renderTemplate(template.inAppTemplate ?? '', vars);
-  const message = renderTemplate(template.emailBody ?? '', vars);
+  const emailBody = renderTemplate(template.emailBody ?? '', vars);
 
   await createNotification({
     recipientId,
     eventType,
     title,
-    message,
+    message: stripHtml(emailBody),
     metadata,
   });
 
@@ -53,7 +67,7 @@ export async function notifyEvent(
     recipientEmail: user.email,
     eventType,
     subject: title,
-    body: message,
+    body: emailBody,
   });
 
   await sendEmail(emailLogId);

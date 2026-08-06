@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getNotifications, markNotificationRead, markAllNotificationsRead } from '../lib/db';
+import { stripHtml } from '../lib/notifications';
 import type { DbNotification } from '../lib/db';
 
 const PAGE_SIZE = 20;
@@ -134,7 +135,7 @@ export default function NotificationCenter() {
                         {n.title}
                       </p>
                       <p className="text-xs text-secondary mt-0.5 line-clamp-2">
-                        {n.message}
+                        {stripHtml(n.message)}
                       </p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
