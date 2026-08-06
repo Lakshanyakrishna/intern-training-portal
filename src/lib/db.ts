@@ -699,16 +699,17 @@ export async function uploadResumeFile(
     .eq('application_id', applicationId)
     .order('uploaded_at', { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
+    
   return {
-    id: inserted.id,
-    applicationId: inserted.application_id,
-    filePath: inserted.file_path,
-    fileName: inserted.file_name,
-    fileSize: inserted.file_size,
-    mimeType: inserted.mime_type,
-    extractedText: inserted.extracted_text,
-    uploadedAt: inserted.uploaded_at,
+    id: inserted?.id || '',
+    applicationId: inserted?.application_id || applicationId,
+    filePath: inserted?.file_path || filePath,
+    fileName: inserted?.file_name || file.name,
+    fileSize: inserted?.file_size || file.size,
+    mimeType: inserted?.mime_type || file.type,
+    extractedText: inserted?.extracted_text || null,
+    uploadedAt: inserted?.uploaded_at || new Date().toISOString(),
   };
 }
 

@@ -96,10 +96,6 @@ export default function Apply() {
     setError('');
     setSending(true);
     try {
-      if (resumeFile && !user?.id) {
-        throw new Error('You must be signed in to apply with a resume. Please log in first.');
-      }
-      
       const applicationId = await submitApplication({
         ...form,
         userId: user?.id,
@@ -109,7 +105,7 @@ export default function Apply() {
       if (profileResume && !useFullForm) {
         await attachResumeToApplication(profileResume.id, applicationId);
       } else if (resumeFile) {
-        await uploadResumeFile(applicationId, resumeFile, user!.id);
+        await uploadResumeFile(applicationId, resumeFile, user?.id || 'anonymous');
       }
       setSubmitted(true);
       if (user?.id) {
