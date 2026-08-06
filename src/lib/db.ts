@@ -499,6 +499,7 @@ export interface DbApplication {
   reviewerNotes?: string;
   screeningStatus?: 'pending' | 'processing' | 'analyzed' | 'failed';
   offerAcceptedAt?: string;
+  withdrawnAt?: string;
 }
 
 export async function submitApplication(data: {
@@ -563,6 +564,7 @@ export async function getApplications(): Promise<DbApplication[]> {
     reviewerNotes: r.reviewer_notes as string | undefined,
     screeningStatus: r.screening_status as DbApplication['screeningStatus'],
     offerAcceptedAt: r.offer_accepted_at as string | undefined,
+    withdrawnAt: r.withdrawn_at as string | undefined,
   }));
 }
 
@@ -602,6 +604,7 @@ export async function getApplicationByUserId(userId: string): Promise<DbApplicat
     reviewerNotes: data.reviewer_notes,
     screeningStatus: data.screening_status,
     offerAcceptedAt: data.offer_accepted_at,
+    withdrawnAt: data.withdrawn_at,
   };
 }
 
@@ -630,6 +633,7 @@ export async function getApplication(id: string): Promise<DbApplication | null> 
     reviewerNotes: data.reviewer_notes,
     screeningStatus: data.screening_status,
     offerAcceptedAt: data.offer_accepted_at,
+    withdrawnAt: data.withdrawn_at,
   };
 }
 
@@ -657,6 +661,12 @@ export async function updateApplication(
 export async function acceptOffer(applicationId: string): Promise<void> {
   const supabase = requireSupabase();
   const { error } = await supabase.rpc('accept_offer', { p_application_id: applicationId });
+  if (error) throw error;
+}
+
+export async function withdrawApplication(applicationId: string): Promise<void> {
+  const supabase = requireSupabase();
+  const { error } = await supabase.rpc('withdraw_application', { p_application_id: applicationId });
   if (error) throw error;
 }
 
