@@ -20,6 +20,8 @@ export default function StageContent({
   interview,
   selectedInfo,
   actions,
+  isLive,
+  offerAccepted,
 }: {
   stage: Stage;
   opportunities: Opportunity[];
@@ -28,6 +30,13 @@ export default function StageContent({
   interview: ScheduledInterview;
   selectedInfo: { mentor: string; startDate: string; trainingDuration: string };
   actions: JourneyActions;
+  // True once this page is showing the applicant's genuine current status
+  // (not the dev "Preview stage" override). Stage components use it to
+  // hide/replace interactive controls that don't have a real backend yet
+  // (self-serve interview scheduling, reschedule/cancel) rather than
+  // silently faking success for a real applicant.
+  isLive?: boolean;
+  offerAccepted?: boolean;
 }) {
   switch (stage) {
     case 'no_application':
@@ -38,18 +47,20 @@ export default function StageContent({
           application={application}
           onEditApplication={actions.onEditApplication}
           onWithdrawApplication={actions.onWithdrawApplication}
+          isLive={isLive}
         />
       );
     case 'resume_screening':
       return <ResumeScreeningStage application={application} />;
     case 'interview_scheduling':
-      return <InterviewSchedulingStage slotGroups={slotGroups} onConfirmSlot={actions.onScheduleInterview} />;
+      return <InterviewSchedulingStage slotGroups={slotGroups} onConfirmSlot={actions.onScheduleInterview} isLive={isLive} />;
     case 'interview_scheduled':
       return (
         <InterviewScheduledStage
           interview={interview}
           onRescheduleInterview={actions.onRescheduleInterview}
           onCancelInterview={actions.onCancelInterview}
+          isLive={isLive}
         />
       );
     case 'interview_completed':
@@ -62,6 +73,7 @@ export default function StageContent({
           trainingDuration={selectedInfo.trainingDuration}
           onAcceptOffer={actions.onAcceptOffer}
           onBeginTraining={actions.onBeginTraining}
+          initiallyAccepted={offerAccepted}
         />
       );
     case 'rejected':
