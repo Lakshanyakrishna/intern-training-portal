@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { getUserSettings, upsertUserSettings, getApplicationByUserId, acceptOffer } from '../lib/db';
+import {
+  getUserSettings, upsertUserSettings, getApplicationByUserId, getInterviewsByApplicant,
+  acceptOffer, withdrawApplication, getNotifications,
+} from '../lib/db';
+import type { DbApplication, DbInterview } from '../lib/db';
 import { notifyEvent } from '../lib/notifications';
 import { Sun, Moon, XCircle, ChevronDown, LogOut } from '../components/Icons';
 import NotificationBell from '../components/NotificationBell';
@@ -19,7 +23,80 @@ import { MOCK_INTERVIEW_SLOTS, MOCK_SCHEDULED_INTERVIEW } from './mock/interview
 import { activityForStage } from './mock/activity';
 import { notificationsForStage } from './mock/notifications';
 import { MOCK_QUICK_STATS } from './mock/stats';
-import type { JourneyActions, ScheduledInterview, Stage } from './types';
+import type {
+  ActivityItem, ApplicationSummary, JourneyActions, NotificationItem, NotificationKind,
+  ScheduledInterview, Stage,
+} from './types';
+
+// Real application status -> Stage. Only reachable states from the real
+// admin-driven pipeline: no self-serve interview booking exists yet, so
+// "shortlisted with no interview row" maps to interview_scheduling (an
+// admin needs to book it), not a state the applicant can act on directly.
+function deriveStageFromReal(app: DbApplication, interview: DbInterview | null): Stage {
+  if (app.status === 'rejected') return 'rejected';
+  if (app.status === 'accepted') return 'selected';
+  if (app.status === 'shortlisted') {
+    if (!interview || interview.status === 'cancelled') return 'interview_scheduling';
+    if (interview.status === 'completed') return 'interview_completed';
+    return 'interview_scheduled'; // 'scheduled' or 'rescheduled'
+  }
+  if (app.status === 'reviewed') return 'resume_screening';
+  return 'application_submitted'; // 'pending'
+}
+
+function eventTypeToKind(eventType: string): NotificationKind {
+  if (eventType.startsWith('interview')) return 'interview';
+  if (eventType.startsWith('application') || eventType === 'offer_accepted') return 'application';
+  return 'progress';
+}
+
+function formatRelativeTime(dateStr: string): string {
+  const diffMs = Date.now() - new Date(dateStr).getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return new Date(dateStr).toLocaleDateString();
+}
+
+// Built from the same real fields the rest of the page already fetches --
+// not a fabricated timeline, just those events rendered as a feed.
+function buildRealActivity(app: DbApplication, interview: DbInterview | null): ActivityItem[] {
+  const items: ActivityItem[] = [
+    { id: 'real-submitted', icon: 'submitted', title: 'Application submitted', description: 'Your application was received', timestamp: app.appliedAt },
+  ];
+  if (app.reviewedAt) {
+    items.push({
+      id: 'real-reviewed',
+      icon: 'mentor',
+      title: app.status === 'shortlisted' ? 'Shortlisted for interview' : 'Application reviewed',
+      description: app.status === 'shortlisted' ? "You've moved to the interview round" : 'Your application was reviewed',
+      timestamp: app.reviewedAt,
+    });
+  }
+  if (interview) {
+    items.push({
+      id: 'real-interview-scheduled',
+      icon: 'interview',
+      title: 'Interview scheduled',
+      description: new Date(interview.scheduledAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      timestamp: interview.createdAt,
+    });
+    if (interview.status === 'completed') {
+      items.push({ id: 'real-interview-completed', icon: 'decision', title: 'Interview completed', description: 'Awaiting a decision', timestamp: interview.scheduledAt });
+    }
+  }
+  if (app.status === 'accepted') {
+    items.push({ id: 'real-selected', icon: 'training', title: 'Selected', description: "You've been offered a spot", timestamp: app.reviewedAt ?? app.appliedAt });
+  }
+  if (app.offerAcceptedAt) {
+    items.push({ id: 'real-offer-accepted', icon: 'training', title: 'Offer accepted', description: 'Welcome to the team', timestamp: app.offerAcceptedAt });
+  }
+  return items.slice().reverse();
+}
 
 const STAGE_LABELS: Record<Stage, string> = {
   no_application: 'No application',
@@ -105,23 +182,23 @@ function UserMenu({ name, darkMode, onToggleTheme, onSignOut }: {
 }
 
 // The single hook-shaped piece of state + business logic for this whole
-// experience. Every Stage component downstream is pure; all mock-state
-// mutation happens here so that swapping mock data for real API calls
-// later means rewriting this function only, not any component.
-//
-// One deliberate exception to "pure mock": onAcceptOffer is wired to the
-// real accept_offer() RPC (022_offer_acceptance.sql) against whatever real
-// application this user actually has, fetched quietly in the background.
-// The rest of the journey (stage, opportunities, interview slots) stays
-// mock -- this is the one write that has a real, safe, narrowly-scoped
-// backend path already, and the whole point of the "Selected" stage
-// existing is to give the applicant genuine say over becoming an intern.
+// experience. `stage` defaults to real data the moment it loads (isLive
+// true) -- application status + interview status, derived above -- so a
+// real applicant always sees their genuine current status, not a stale
+// mock default. The dev "Preview stage" switcher can still override it for
+// design QA (via previewStage), which drops isLive to false; every stage
+// component downstream uses that flag to hide interactive controls that
+// have no real backend yet (self-serve interview booking/reschedule)
+// instead of silently faking success for a real applicant.
 function useApplicantJourney(userId: string | undefined, userName: string | undefined) {
   const [loading, setLoading] = useState(true);
-  const [stage, setStage] = useState<Stage>('no_application');
-  const [opportunityTitle, setOpportunityTitle] = useState(MOCK_OPPORTUNITIES[0]?.title ?? '');
+  const [stage, setStageState] = useState<Stage>('no_application');
+  const [isLive, setIsLive] = useState(false);
+  const [opportunityTitle] = useState(MOCK_OPPORTUNITIES[0]?.title ?? '');
   const [scheduledInterview, setScheduledInterview] = useState<ScheduledInterview>(MOCK_SCHEDULED_INTERVIEW);
-  const [realApplicationId, setRealApplicationId] = useState<string | null>(null);
+  const [realApplication, setRealApplication] = useState<DbApplication | null>(null);
+  const [realInterview, setRealInterview] = useState<DbInterview | null>(null);
+  const [realNotifications, setRealNotifications] = useState<NotificationItem[] | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -131,38 +208,102 @@ function useApplicantJourney(userId: string | undefined, userName: string | unde
 
   useEffect(() => {
     if (!userId) return;
-    getApplicationByUserId(userId).then(app => setRealApplicationId(app?.id ?? null)).catch(() => {});
+    let cancelled = false;
+    getApplicationByUserId(userId).then(async app => {
+      if (cancelled) return;
+      setRealApplication(app);
+      if (!app || app.withdrawnAt) {
+        setStageState('no_application');
+        setIsLive(true);
+        return;
+      }
+      const interviews = await getInterviewsByApplicant(userId).catch(() => []);
+      if (cancelled) return;
+      const interview = interviews[0] ?? null;
+      setRealInterview(interview);
+      setStageState(deriveStageFromReal(app, interview));
+      setIsLive(true);
+    }).catch(() => {});
+    return () => { cancelled = true; };
   }, [userId]);
 
-  const application = { ...applicationForStage(stage), opportunityTitle };
+  useEffect(() => {
+    if (!userId) return;
+    getNotifications(userId, 10).then(list => {
+      setRealNotifications(list.map(n => ({
+        id: n.id,
+        title: n.title,
+        timestamp: formatRelativeTime(n.createdAt),
+        read: n.isRead,
+        kind: eventTypeToKind(n.eventType),
+      })));
+    }).catch(() => {});
+  }, [userId]);
+
+  // Dev-only override for design QA -- distinct from the internal setter
+  // above so touching it always means "I'm previewing, not looking at my
+  // real status," which drops isLive and makes every gated action fall
+  // back to its harmless local-only behavior.
+  function previewStage(next: Stage) {
+    setStageState(next);
+    setIsLive(false);
+  }
+
+  const realApplicationSummary: ApplicationSummary | null =
+    realApplication && !realApplication.withdrawnAt
+      ? {
+          id: realApplication.id,
+          opportunityTitle: 'the program',
+          submittedAt: realApplication.appliedAt,
+          status: stage,
+          estimatedReviewDays: [1, 3],
+        }
+      : null;
+
+  const application = realApplicationSummary ?? { ...applicationForStage(stage), opportunityTitle };
+
+  const realScheduledInterview: ScheduledInterview | null = realInterview
+    ? {
+        date: new Date(realInterview.scheduledAt).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' }),
+        time: new Date(realInterview.scheduledAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }),
+        mentor: realInterview.interviewers[0] || 'Our team',
+        mentorRole: 'Interviewer',
+        platform: realInterview.meetLink ? 'Video call' : 'Details to follow',
+      }
+    : null;
 
   const actions: JourneyActions = {
-    onApply: (opportunityId) => {
-      const opp = MOCK_OPPORTUNITIES.find(o => o.id === opportunityId);
-      if (opp) setOpportunityTitle(opp.title);
-      setStage('application_submitted');
+    // No real opportunity data to browse/select yet, so this always routes
+    // to the real generic application form rather than faking a submission
+    // against a placeholder opportunity -- whatever a real applicant does
+    // here actually persists.
+    onApply: () => navigate('/apply'),
+    onEditApplication: () => { /* [Placeholder] no real edit endpoint yet -- hidden once isLive */ },
+    onWithdrawApplication: () => {
+      if (isLive && realApplication) {
+        withdrawApplication(realApplication.id).then(() => {
+          setRealApplication(prev => (prev ? { ...prev, withdrawnAt: new Date().toISOString() } : prev));
+          setStageState('no_application');
+        }).catch(err => {
+          console.warn('withdraw_application failed', err);
+        });
+        return;
+      }
+      setStageState('no_application'); // preview/demo mode -- local only
     },
-    onEditApplication: () => { /* [Placeholder] persists once a real applications API backs this route */ },
-    onWithdrawApplication: () => setStage('no_application'),
     onScheduleInterview: (slotId) => {
       const slot = MOCK_INTERVIEW_SLOTS.flatMap(g => g.slots).find(s => s.id === slotId);
       if (slot) {
         setScheduledInterview({ ...MOCK_SCHEDULED_INTERVIEW, date: `${slot.day}, ${slot.date}, 2026`, time: slot.time });
       }
-      setStage('interview_scheduled');
+      setStageState('interview_scheduled');
     },
-    onRescheduleInterview: () => setStage('interview_scheduling'),
-    onCancelInterview: () => setStage('application_submitted'),
+    onRescheduleInterview: () => setStageState('interview_scheduling'),
+    onCancelInterview: () => setStageState('application_submitted'),
     onAcceptOffer: () => {
-      if (!realApplicationId || !userId) return;
-      // Best-effort: this route's `stage` is local mock state, so previewing
-      // "Selected" via the dev switcher won't line up with a real accepted
-      // application for most accounts -- the RPC correctly rejects that
-      // (022_offer_acceptance.sql), and the mock journey still advances
-      // regardless. Only a genuinely accepted application actually gets
-      // written -- the confirmation email only fires alongside that real
-      // write, never off the mock stage switcher.
-      acceptOffer(realApplicationId).then(() => {
+      if (!realApplication || !userId) return;
+      acceptOffer(realApplication.id).then(() => {
+        setRealApplication(prev => (prev ? { ...prev, offerAcceptedAt: new Date().toISOString() } : prev));
         notifyEvent('offer_accepted', userId, {
           name: userName ?? 'there',
           opportunity: 'the program',
@@ -175,33 +316,32 @@ function useApplicantJourney(userId: string | undefined, userName: string | unde
     onUpdateProfile: () => navigate('/profile'),
   };
 
-  return { loading, stage, setStage, application, scheduledInterview, actions };
+  return {
+    loading,
+    stage,
+    previewStage,
+    application,
+    scheduledInterview: realScheduledInterview ?? scheduledInterview,
+    actions,
+    isLive,
+    offerAccepted: !!realApplication?.offerAcceptedAt,
+    realActivity: realApplication ? buildRealActivity(realApplication, realInterview) : null,
+    realNotifications,
+  };
 }
 
 export default function ApplicantExperience() {
   const { user, signOut } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window === 'undefined') return false;
     return localStorage.getItem('theme') === 'dark' ||
       (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
   });
   const [devPanelOpen, setDevPanelOpen] = useState(false);
-  const { loading, stage, setStage, application, scheduledInterview, actions } = useApplicantJourney(user?.id, user?.name);
-
-  // Picks up an "apply" initiated from /applicant/opportunities (the full
-  // browse page), which can't reach this route's local journey state
-  // directly. Replacing the history entry clears the state so a refresh or
-  // back-navigation doesn't silently re-trigger the apply.
-  useEffect(() => {
-    const opportunityId = (location.state as { applyToOpportunityId?: string } | null)?.applyToOpportunityId;
-    if (opportunityId) {
-      actions.onApply(opportunityId);
-      navigate('/applicant', { replace: true, state: null });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.state]);
+  const {
+    loading, stage, previewStage, application, scheduledInterview, actions,
+    isLive, offerAccepted, realActivity, realNotifications,
+  } = useApplicantJourney(user?.id, user?.name);
 
   useEffect(() => {
     if (!user) return;
@@ -290,6 +430,8 @@ export default function ApplicantExperience() {
                 interview={scheduledInterview}
                 selectedInfo={{ mentor: '[Placeholder] Mentor Name', startDate: 'Sep 1, 2026', trainingDuration: '8 weeks' }}
                 actions={actions}
+                isLive={isLive}
+                offerAccepted={offerAccepted}
               />
             </CurrentMission>
 
@@ -301,13 +443,16 @@ export default function ApplicantExperience() {
       </main>
 
       {!loading && (
-        <QuickAccessDock notifications={notificationsForStage(stage)} activity={activityForStage(stage)} />
+        <QuickAccessDock
+          notifications={isLive && realNotifications ? realNotifications : notificationsForStage(stage)}
+          activity={isLive && realActivity ? realActivity : activityForStage(stage)}
+        />
       )}
 
-      {/* Dev-only preview switcher -- this route currently runs entirely on
-          mock data (no backend integration per spec), so this is how every
-          stage gets reviewed/QA'd without hand-driving the full flow each
-          time. Remove once real application/interview state feeds `stage`. */}
+      {/* Dev-only preview switcher -- lets every stage get reviewed/QA'd
+          without hand-driving the full real flow. Touching this always
+          drops isLive to false (see previewStage in useApplicantJourney),
+          so it never risks writing to a real applicant's actual application. */}
       <div className="fixed bottom-5 right-5 z-40">
         {devPanelOpen ? (
           <div className="bg-surface border border-line rounded-2xl shadow-lg shadow-black/5 p-3.5 w-60 animate-[slideUp_0.15s_ease-out]">
@@ -323,14 +468,14 @@ export default function ApplicantExperience() {
             </div>
             <select
               value={stage}
-              onChange={e => setStage(e.target.value as Stage)}
+              onChange={e => previewStage(e.target.value as Stage)}
               className="w-full text-xs px-2.5 py-2 rounded-lg border border-line bg-surface text-primary outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               {(Object.keys(STAGE_LABELS) as Stage[]).map(s => (
                 <option key={s} value={s}>{STAGE_LABELS[s]}</option>
               ))}
             </select>
-            <p className="text-[11px] text-secondary mt-2.5 leading-relaxed">Dev tool — jumps between mock states while this route runs without a backend.</p>
+            <p className="text-[11px] text-secondary mt-2.5 leading-relaxed">Dev tool — previews any stage without touching your real application.</p>
           </div>
         ) : (
           <button
