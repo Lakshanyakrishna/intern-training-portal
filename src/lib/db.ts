@@ -516,7 +516,10 @@ export async function submitApplication(data: {
   answers?: Record<string, string>;
 }): Promise<string> {
   const supabase = requireSupabase();
-  const { data: inserted, error } = await supabase.from('applications').insert({
+  const applicationId = crypto.randomUUID();
+  
+  const { error } = await supabase.from('applications').insert({
+    id: applicationId,
     user_id: data.userId ?? null,
     name: data.name,
     email: data.email,
@@ -530,9 +533,10 @@ export async function submitApplication(data: {
     opportunity_id: data.opportunityId ?? null,
     answers: data.answers ?? null,
     status: 'pending',
-  }).select();
+  });
   if (error) throw error;
-  return inserted?.[0]?.id || '';
+  
+  return applicationId;
 }
 
 export async function getApplications(): Promise<DbApplication[]> {
