@@ -532,7 +532,7 @@ export async function submitApplication(data: {
     status: 'pending',
   }).select();
   if (error) throw error;
-  return inserted![0].id;
+  return inserted?.[0]?.id || '';
 }
 
 export async function getApplications(): Promise<DbApplication[]> {
