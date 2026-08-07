@@ -74,6 +74,23 @@ export default function Apply() {
       setProfileResume(null);
       return;
     }
+    // The lazy useState initializer above only ever runs once, on the very
+    // first render -- on a hard page load (direct link, refresh, bookmark)
+    // AuthContext is still resolving the session at that point, so `user`
+    // was null and every prefilled field (email included) got locked to ''
+    // forever. Submitting with an empty email then failed RLS's `email =
+    // auth.email()` check (037_require_auth_applications.sql) with a bare
+    // 403 and no visible error. Re-sync once the real user profile lands,
+    // without clobbering anything the applicant has since typed.
+    setForm(f => ({
+      ...f,
+      name: f.name || user.name,
+      email: user.email,
+      phone: f.phone || user.phone || '',
+      college: f.college || user.college || '',
+      major: f.major || user.major || '',
+      yearOfStudy: f.yearOfStudy || user.yearOfStudy || '',
+    }));
     getApplicationByUserId(user.id).then(app => {
       // A withdrawn application shouldn't block a fresh one -- withdrawing
       // is meant to clear the way to reapply, matching the real
