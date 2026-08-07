@@ -32,8 +32,8 @@ export default function Assessment() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <Link to={`/training/module/${module.id}`} className="flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary transition-colors w-fit">
+    <div className="max-w-2xl mx-auto space-y-6 animate-[slideUp_0.35s_ease-out]">
+      <Link to={`/training/module/${module.id}`} className="flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary transition-colors w-fit rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
         <ArrowLeft className="w-3.5 h-3.5" />
         Back to {module.title}
       </Link>
@@ -70,12 +70,12 @@ export default function Assessment() {
       {!started ? (
         <button
           onClick={() => setStarted(true)}
-          className="w-full px-5 py-3 rounded-lg bg-accent text-accent-text text-sm font-medium hover:opacity-90 transition-opacity"
+          className="w-full px-5 py-3 rounded-lg bg-accent text-accent-text text-sm font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           Start Assessment
         </button>
       ) : (
-        <>
+        <div className="space-y-6 animate-[slideUp_0.3s_ease-out]">
           <div className="flex flex-col items-center justify-center text-center py-16 px-6 border-2 border-dashed border-line rounded-xl">
             <p className="text-sm text-secondary max-w-sm">
               {assessment.kind === 'mcq' && 'Multiple-choice questions will render here.'}
@@ -86,11 +86,11 @@ export default function Assessment() {
           </div>
           <button
             onClick={handleSubmit}
-            className="w-full px-5 py-3 rounded-lg bg-accent text-accent-text text-sm font-medium hover:opacity-90 transition-opacity"
+            className="w-full px-5 py-3 rounded-lg bg-accent text-accent-text text-sm font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             Submit Assessment
           </button>
-        </>
+        </div>
       )}
     </div>
   );

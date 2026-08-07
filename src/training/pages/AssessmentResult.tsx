@@ -20,7 +20,7 @@ export default function AssessmentResult() {
   const passed = progress.getModuleProgress(module.id).assessmentPassed;
 
   return (
-    <div className="max-w-lg mx-auto text-center space-y-6">
+    <div className="max-w-lg mx-auto text-center space-y-6 animate-[slideUp_0.35s_ease-out]">
       <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent/10 text-accent">
         <CheckCircle className="w-6 h-6" />
       </div>
@@ -29,8 +29,8 @@ export default function AssessmentResult() {
         <p className="text-sm text-secondary mt-1">{assessment.title}</p>
       </div>
 
-      <div className="bg-surface border border-line rounded-xl p-5 text-left">
-        <p className="text-sm font-semibold text-primary mb-1">Feedback</p>
+      <div className="bg-surface border border-line rounded-xl p-5 text-left animate-[slideUp_0.35s_ease-out_0.1s_both]">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-secondary mb-1">Feedback</p>
         <p className="text-sm text-secondary">
           [Placeholder] Detailed, per-question feedback will appear here once real grading exists.
         </p>
@@ -38,7 +38,7 @@ export default function AssessmentResult() {
 
       <Link
         to={`/training/module/${module.id}`}
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       >
         <ArrowLeft className="w-3.5 h-3.5" />
         Back to {module.title}
