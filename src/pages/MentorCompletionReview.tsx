@@ -83,7 +83,7 @@ export default function MentorCompletionReview() {
       </div>
 
       {actionMsg && (
-        <div className="bg-neutral-50 dark:bg-neutral-900/20 border border-neutral-200 dark:border-neutral-800 rounded-lg px-4 py-3 text-sm text-neutral-700 dark:text-neutral-300">
+        <div className="bg-surface-alt border border-line rounded-lg px-4 py-3 text-sm text-primary">
           {actionMsg}
         </div>
       )}
@@ -94,7 +94,7 @@ export default function MentorCompletionReview() {
         </div>
       ) : mentees.length === 0 ? (
         <div className="bg-surface border border-line rounded-xl p-8 text-center">
-          <p className="text-sm text-gray-400 dark:text-gray-500">No active mentees assigned.</p>
+          <p className="text-sm text-secondary">No active mentees assigned.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -130,13 +130,13 @@ export default function MentorCompletionReview() {
                 </button>
                 <button
                   onClick={() => handleIssueTrainingCert(mentee.internId)}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-surface-alt transition-colors"
                 >
                   Issue Training Cert
                 </button>
                 <button
                   onClick={() => handleIssueInternshipCert(mentee.internId)}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-surface-alt transition-colors"
                 >
                   Issue Internship Cert
                 </button>

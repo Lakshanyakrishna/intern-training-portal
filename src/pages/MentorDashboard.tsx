@@ -40,7 +40,7 @@ export default function MentorDashboard() {
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Active Mentees', value: mentees.length, color: 'bg-neutral-50 dark:bg-neutral-900/20 text-accent' },
+          { label: 'Active Mentees', value: mentees.length, color: 'bg-surface-alt text-accent' },
           { label: 'Ready for Project', value: mentees.filter(m => m.readiness === 'ready').length, color: 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400' },
           { label: 'Needs Improvement', value: mentees.filter(m => m.readiness === 'needs_improvement' || m.readiness === 'not_ready').length, color: 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400' },
           { label: 'On Project', value: mentees.filter(m => m.project).length, color: 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400' },
@@ -55,18 +55,18 @@ export default function MentorDashboard() {
       {/* Mentees table */}
       <div className="bg-surface border border-line rounded-xl overflow-hidden">
         <div className="px-4 py-3 border-b border-line bg-surface-alt">
-          <h2 className="text-sm font-semibold text-primary">My Mentees</h2>
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">My Mentees</h2>
         </div>
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="w-5 h-5 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : mentees.length === 0 ? (
-          <div className="text-center py-12 text-sm text-gray-400 dark:text-gray-500">
+          <div className="text-center py-12 text-sm text-secondary">
             No mentees assigned yet.
           </div>
         ) : (
-          <div className="divide-y divide-gray-100 dark:divide-gray-700">
+          <div className="divide-y divide-line">
             {mentees.map(m => (
               <div key={m.id} className="flex items-center justify-between px-4 py-3">
                 <div>
@@ -90,7 +90,7 @@ export default function MentorDashboard() {
                   <Link to={`/mentor/readiness?internId=${m.internId}`} className="text-xs px-3 py-1.5 rounded-lg bg-accent text-white hover:bg-accent-hover transition-colors">
                     Evaluate
                   </Link>
-                  <Link to={`/mentor/interns?internId=${m.internId}`} className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                  <Link to={`/mentor/interns?internId=${m.internId}`} className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary hover:bg-surface-alt transition-colors">
                     View
                   </Link>
                 </div>
