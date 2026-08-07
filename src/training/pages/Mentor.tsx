@@ -13,12 +13,12 @@ export default function Mentor() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <div>
+      <div className="animate-[slideUp_0.35s_ease-out]">
         <h1 className="text-2xl font-bold text-primary">Mentor</h1>
         <p className="text-sm text-secondary mt-1">Your assigned mentor, office hours, and feedback.</p>
       </div>
 
-      <div className="bg-surface border border-line rounded-xl p-5">
+      <div className="bg-surface border border-line rounded-xl p-5 animate-[slideUp_0.35s_ease-out_0.05s_both]">
         <div className="flex items-center gap-3">
           <span className="w-11 h-11 rounded-full bg-surface-alt flex items-center justify-center text-sm font-bold text-primary shrink-0">
             {MOCK_MENTOR.avatarInitial}
@@ -35,14 +35,14 @@ export default function Mentor() {
         <div className="flex gap-2 mt-4">
           <button
             onClick={() => handlePlaceholder('Help request sent (placeholder)')}
-            className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-accent text-accent-text text-sm font-medium hover:opacity-90 transition-opacity"
+            className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-accent text-accent-text text-sm font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
           >
             <MessageSquare className="w-4 h-4" />
             Request Help
           </button>
           <button
             onClick={() => handlePlaceholder('Booking flow coming soon')}
-            className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg border border-line text-sm font-medium text-primary hover:bg-surface-alt transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg border border-line text-sm font-medium text-primary hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
           >
             <Calendar className="w-4 h-4" />
             Book Meeting
@@ -50,9 +50,9 @@ export default function Mentor() {
         </div>
       </div>
 
-      <div className="bg-surface border border-line rounded-xl overflow-hidden">
+      <div className="bg-surface border border-line rounded-xl overflow-hidden animate-[slideUp_0.35s_ease-out_0.1s_both]">
         <div className="px-5 py-3 border-b border-line bg-surface-alt">
-          <h2 className="text-sm font-semibold text-primary">Announcements</h2>
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">Announcements</h2>
         </div>
         {MOCK_ANNOUNCEMENTS.length === 0 ? (
           <EmptyState icon={<Send className="w-4 h-4" />} title="No announcements yet" />
@@ -69,9 +69,9 @@ export default function Mentor() {
         )}
       </div>
 
-      <div className="bg-surface border border-line rounded-xl overflow-hidden">
+      <div className="bg-surface border border-line rounded-xl overflow-hidden animate-[slideUp_0.35s_ease-out_0.15s_both]">
         <div className="px-5 py-3 border-b border-line bg-surface-alt">
-          <h2 className="text-sm font-semibold text-primary">Recent Feedback</h2>
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">Recent Feedback</h2>
         </div>
         {MOCK_MENTOR_FEEDBACK.length === 0 ? (
           <EmptyState icon={<MessageSquare className="w-4 h-4" />} title="No feedback yet" description="Feedback from your mentor will show up here." />
@@ -88,7 +88,7 @@ export default function Mentor() {
       </div>
 
       {toast && (
-        <div role="status" aria-live="polite" className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+        <div role="status" aria-live="polite" className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-[slideUp_0.25s_ease-out]">
           <div className="bg-surface border border-line rounded-full px-4 py-2.5 shadow-lg shadow-black/10 text-sm font-medium text-primary">
             {toast}
           </div>

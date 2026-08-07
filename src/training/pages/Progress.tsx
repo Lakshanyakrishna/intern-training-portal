@@ -31,12 +31,12 @@ export default function TrainingProgress() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="animate-[slideUp_0.4s_ease-out]">
         <h1 className="text-2xl font-bold text-primary">Progress</h1>
         <p className="text-sm text-secondary mt-1">{track.trackName}</p>
       </div>
 
-      <div className="bg-surface border border-line rounded-xl p-6 flex items-center gap-6 flex-wrap">
+      <div className="bg-surface border border-line rounded-xl p-6 flex items-center gap-6 flex-wrap animate-[slideUp_0.4s_ease-out_0.05s_both]">
         <ProgressRing percent={progress.overallPercent} size={88} strokeWidth={6} />
         <div>
           <p className="text-sm font-semibold text-primary">Overall completion</p>
@@ -45,15 +45,15 @@ export default function TrainingProgress() {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatCard icon={<BookOpen className="w-4 h-4" />} label="Lessons Completed" value={`${doneLessons}/${totalLessons}`} />
-        <StatCard icon={<Code className="w-4 h-4" />} label="Practice Completed" value={`${donePractice}/${totalPractice}`} />
-        <StatCard icon={<ClipboardCheck className="w-4 h-4" />} label="Assessments Passed" value={`${passedAssessments}/${totalAssessments}`} />
-        <StatCard icon={<Zap className="w-4 h-4" />} label="Current XP" value={progress.progress.xp} />
+        <StatCard icon={<BookOpen className="w-4 h-4" />} label="Lessons Completed" value={`${doneLessons}/${totalLessons}`} delay={0.1} />
+        <StatCard icon={<Code className="w-4 h-4" />} label="Practice Completed" value={`${donePractice}/${totalPractice}`} delay={0.13} />
+        <StatCard icon={<ClipboardCheck className="w-4 h-4" />} label="Assessments Passed" value={`${passedAssessments}/${totalAssessments}`} delay={0.16} />
+        <StatCard icon={<Zap className="w-4 h-4" />} label="Current XP" value={progress.progress.xp} delay={0.19} />
       </div>
 
       {/* Module completion breakdown */}
-      <div className="bg-surface border border-line rounded-xl p-5">
-        <h2 className="text-sm font-semibold text-primary mb-3">Module Completion</h2>
+      <div className="bg-surface border border-line rounded-xl p-5 animate-[slideUp_0.4s_ease-out_0.2s_both]">
+        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary mb-3">Module Completion</h2>
         <div className="space-y-3">
           {flat.map(({ module }, i) => {
             const mp = progress.getModuleProgress(module.id);
@@ -67,7 +67,7 @@ export default function TrainingProgress() {
                   <span className="text-primary font-medium tabular-nums shrink-0 ml-2">{percent}%</span>
                 </div>
                 <div className="h-1.5 rounded-full bg-surface-alt overflow-hidden">
-                  <div className="h-full bg-accent rounded-full transition-all" style={{ width: `${percent}%` }} />
+                  <div className="h-full bg-accent rounded-full transition-all duration-500" style={{ width: `${percent}%` }} />
                 </div>
               </div>
             );
@@ -76,12 +76,12 @@ export default function TrainingProgress() {
       </div>
 
       {/* Weekly progress */}
-      <div className="bg-surface border border-line rounded-xl p-5">
-        <h2 className="text-sm font-semibold text-primary mb-3">Weekly Progress</h2>
+      <div className="bg-surface border border-line rounded-xl p-5 animate-[slideUp_0.4s_ease-out_0.25s_both]">
+        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary mb-3">Weekly Progress</h2>
         <div className="space-y-3">
           {progress.progress.weeklyGoals.map(goal => (
             <div key={goal.id} className="flex items-center gap-3">
-              <CheckCircle className={`w-4 h-4 shrink-0 ${goal.current >= goal.target ? 'text-accent' : 'text-secondary'}`} />
+              <CheckCircle className={`w-4 h-4 shrink-0 transition-colors ${goal.current >= goal.target ? 'text-accent' : 'text-secondary'}`} />
               <span className="text-sm text-primary flex-1">{goal.label}</span>
               <span className="text-xs text-secondary tabular-nums">{goal.current}/{goal.target}</span>
             </div>
@@ -90,9 +90,9 @@ export default function TrainingProgress() {
       </div>
 
       {/* Training calendar -- placeholder */}
-      <div className="bg-surface border border-line rounded-xl p-5">
-        <h2 className="text-sm font-semibold text-primary mb-3 flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-secondary" />
+      <div className="bg-surface border border-line rounded-xl p-5 animate-[slideUp_0.4s_ease-out_0.3s_both]">
+        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary mb-3 flex items-center gap-2">
+          <Calendar className="w-3.5 h-3.5" />
           Training Calendar
         </h2>
         <div className="grid grid-cols-7 gap-1.5">

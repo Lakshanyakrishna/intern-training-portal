@@ -15,13 +15,13 @@ export default function Achievements() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="animate-[slideUp_0.35s_ease-out]">
         <h1 className="text-2xl font-bold text-primary">Achievements</h1>
         <p className="text-sm text-secondary mt-1">Badges, levels, and milestones from your training.</p>
       </div>
 
       {/* Level */}
-      <div className="bg-surface border border-line rounded-xl p-5 flex items-center gap-4">
+      <div className="bg-surface border border-line rounded-xl p-5 flex items-center gap-4 animate-[slideUp_0.35s_ease-out_0.05s_both]">
         <div className="w-11 h-11 rounded-full bg-accent/10 text-accent flex items-center justify-center shrink-0">
           <Trophy className="w-5 h-5" />
         </div>
@@ -32,16 +32,16 @@ export default function Achievements() {
       </div>
 
       {/* Badges */}
-      <div className="bg-surface border border-line rounded-xl p-5">
-        <h2 className="text-sm font-semibold text-primary mb-3 flex items-center gap-2">
-          <Award className="w-4 h-4 text-secondary" />
+      <div className="bg-surface border border-line rounded-xl p-5 animate-[slideUp_0.35s_ease-out_0.1s_both]">
+        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary mb-3 flex items-center gap-2">
+          <Award className="w-3.5 h-3.5" />
           Badges
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {MOCK_ACHIEVEMENTS.map(a => (
             <div
               key={a.id}
-              className={`rounded-xl border p-4 text-center ${a.earned ? 'border-accent/40 bg-accent/5' : 'border-line opacity-50'}`}
+              className={`rounded-xl border p-4 text-center transition-transform duration-200 hover:-translate-y-0.5 ${a.earned ? 'border-accent/40 bg-accent/5' : 'border-line opacity-50'}`}
             >
               <Medal className={`w-5 h-5 mx-auto mb-2 ${a.earned ? 'text-accent' : 'text-secondary'}`} />
               <p className="text-xs font-medium text-primary">{a.title}</p>
@@ -52,13 +52,13 @@ export default function Achievements() {
       </div>
 
       {/* Certificates */}
-      <div className="bg-surface border border-line rounded-xl p-5">
-        <h2 className="text-sm font-semibold text-primary mb-2">Certificates</h2>
+      <div className="bg-surface border border-line rounded-xl p-5 animate-[slideUp_0.35s_ease-out_0.15s_both]">
+        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary mb-2">Certificates</h2>
         <p className="text-sm text-secondary">Issued once your track's Graduation stage is complete.</p>
       </div>
 
       {/* Leaderboard position */}
-      <div className="bg-surface border border-line rounded-xl p-5 flex items-center gap-4">
+      <div className="bg-surface border border-line rounded-xl p-5 flex items-center gap-4 animate-[slideUp_0.35s_ease-out_0.2s_both]">
         <div className="w-11 h-11 rounded-full bg-surface-alt flex items-center justify-center shrink-0">
           <Hash className="w-5 h-5 text-secondary" />
         </div>
