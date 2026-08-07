@@ -22,6 +22,22 @@ const PortfolioInfo = lazy(() => import('./pages/public/PortfolioInfo'));
 const CareersInfo = lazy(() => import('./pages/public/CareersInfo'));
 const CommunityInfo = lazy(() => import('./pages/public/CommunityInfo'));
 const Onboarding = lazy(() => import('./pages/Onboarding'));
+const TrainingLayout = lazy(() => import('./training/components/TrainingLayout'));
+const TrainingDashboard = lazy(() => import('./training/pages/Dashboard'));
+const LearningPath = lazy(() => import('./training/pages/LearningPath'));
+const ModuleViewer = lazy(() => import('./training/pages/ModuleViewer'));
+const LessonViewer = lazy(() => import('./training/pages/LessonViewer'));
+const Practice = lazy(() => import('./training/pages/Practice'));
+const CodingWorkspace = lazy(() => import('./training/pages/CodingWorkspace'));
+const Assessment = lazy(() => import('./training/pages/Assessment'));
+const AssessmentResult = lazy(() => import('./training/pages/AssessmentResult'));
+const Assignments = lazy(() => import('./training/pages/Assignments'));
+const TrainingProgress = lazy(() => import('./training/pages/Progress'));
+const TrainingMentor = lazy(() => import('./training/pages/Mentor'));
+const Achievements = lazy(() => import('./training/pages/Achievements'));
+const Resources = lazy(() => import('./training/pages/Resources'));
+const Help = lazy(() => import('./training/pages/Help'));
+const TrainingSettings = lazy(() => import('./training/pages/Settings'));
 const Profile = lazy(() => import('./pages/Profile'));
 const MentorDashboard = lazy(() => import('./pages/MentorDashboard'));
 const InternManagement = lazy(() => import('./pages/InternManagement'));
@@ -106,6 +122,38 @@ export default function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/notifications" element={<NotificationCenter />} />
               <Route path="/notifications/settings" element={<NotificationSettings />} />
+            </Route>
+
+            {/* Training -- intern+ only. Config/mock-driven LMS skeleton
+                (src/training/) -- a forte's real accepted opportunity picks
+                which mock TrainingTrackConfig renders; no curriculum
+                content or per-forte branching lives in these components.
+                Owns its own chrome (TrainingLayout), not nested in the
+                admin-style Layout/Sidebar, same reasoning as
+                ApplicantExperience. The earlier real DB-backed
+                training_tracks/training_modules system (019/039) and its
+                AdminTracks admin UI are untouched and still live, just not
+                reachable from these routes for now. */}
+            <Route element={
+              <ProtectedRoute roles={['intern', 'mentor', 'admin']}>
+                <TrainingLayout />
+              </ProtectedRoute>
+            }>
+              <Route path="/training" element={<TrainingDashboard />} />
+              <Route path="/training/path" element={<LearningPath />} />
+              <Route path="/training/module/:moduleId" element={<ModuleViewer />} />
+              <Route path="/training/lesson/:lessonId" element={<LessonViewer />} />
+              <Route path="/training/practice/:practiceId" element={<Practice />} />
+              <Route path="/training/workspace/:practiceId" element={<CodingWorkspace />} />
+              <Route path="/training/assessment/:assessmentId" element={<Assessment />} />
+              <Route path="/training/assessment/:assessmentId/result" element={<AssessmentResult />} />
+              <Route path="/training/assignment/:submissionId" element={<Assignments />} />
+              <Route path="/training/progress" element={<TrainingProgress />} />
+              <Route path="/training/mentor" element={<TrainingMentor />} />
+              <Route path="/training/achievements" element={<Achievements />} />
+              <Route path="/training/resources" element={<Resources />} />
+              <Route path="/training/help" element={<Help />} />
+              <Route path="/training/settings" element={<TrainingSettings />} />
             </Route>
 
             {/* Admin routes (authenticated + admin role) */}
