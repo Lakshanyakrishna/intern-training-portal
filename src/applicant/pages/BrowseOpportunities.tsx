@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, Grid } from '../../components/Icons';
+import { ArrowLeft, Search, Grid, CheckCircle } from '../../components/Icons';
 import Logo from '../../components/Logo';
 import EmptyState from '../components/EmptyState';
 import OpportunityCard from '../components/OpportunityCard';
 import { MOCK_OPPORTUNITIES } from '../mock/opportunities';
+import { useAuth } from '../../contexts/AuthContext';
+import { autoApply } from '../utils/autoApply';
 
 // This page has no theme toggle of its own -- ApplicantExperience owns
 // that control and writes the choice to localStorage. Without this, a
@@ -27,10 +29,21 @@ export default function BrowseOpportunities() {
   useSyncThemeClass();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('All');
   const [filtersHighlighted, setFiltersHighlighted] = useState(false);
   const filtersRef = useRef<HTMLDivElement>(null);
+  const [applyingId, setApplyingId] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+  const toastTimer = useRef<number | undefined>(undefined);
+
+  function showToast(message: string) {
+    setToast(message);
+    window.clearTimeout(toastTimer.current);
+    toastTimer.current = window.setTimeout(() => setToast(null), 4000);
+  }
+  useEffect(() => () => window.clearTimeout(toastTimer.current), []);
 
   const categories = useMemo(
     () => ['All', ...Array.from(new Set(MOCK_OPPORTUNITIES.map(o => o.category)))],
@@ -62,12 +75,33 @@ export default function BrowseOpportunities() {
     });
   }, [query, category]);
 
-  // Routes straight to the real application form -- these cards are still
-  // placeholder content until real opportunity data exists, but "Apply"
-  // itself must never fake a submission. /apply works with no specific
-  // opportunity attached; once real listings exist this can pass a real id.
-  const handleApply = (_opportunityId: string) => {
-    navigate('/apply');
+  // One-click apply (shared with ApplicantExperience's onApply): if a
+  // profile resume already exists, submits for real immediately instead of
+  // sending them through the form again. Falls back to the real form when
+  // there's nothing to auto-attach. These cards are still placeholder
+  // content (no real opportunity_id exists yet) but the submission itself
+  // is real either way -- same general application /apply already allows
+  // without one.
+  const handleApply = async (opportunityId: string) => {
+    if (!user || applyingId) {
+      navigate('/apply');
+      return;
+    }
+    setApplyingId(opportunityId);
+    try {
+      const result = await autoApply(user);
+      if (result.status === 'applied') {
+        showToast('Applied — track it from My Journey.');
+      } else if (result.status === 'already-applied') {
+        showToast("You've already applied — check My Journey for status.");
+      } else if (result.status === 'needs-form') {
+        navigate('/apply');
+      } else {
+        showToast(result.message);
+      }
+    } finally {
+      setApplyingId(null);
+    }
   };
 
   return (
@@ -139,11 +173,20 @@ export default function BrowseOpportunities() {
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map(opp => (
-              <OpportunityCard key={opp.id} opportunity={opp} onApply={handleApply} />
+              <OpportunityCard key={opp.id} opportunity={opp} onApply={handleApply} applying={applyingId === opp.id} />
             ))}
           </div>
         )}
       </main>
+
+      {toast && (
+        <div role="status" aria-live="polite" className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-[slideUp_0.2s_ease-out]">
+          <div className="flex items-center gap-2.5 bg-surface border border-line rounded-full px-4 py-2.5 shadow-lg shadow-black/10">
+            <CheckCircle className="w-4 h-4 text-accent shrink-0" />
+            <p className="text-sm font-medium text-primary">{toast}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
