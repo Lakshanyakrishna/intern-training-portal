@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Calendar, Video, Users, CheckCircle, Circle, BookOpen, MessageSquare, Zap } from '../../components/Icons';
+import FaqPanel from '../components/FaqPanel';
+import SidePanel from '../components/SidePanel';
 import type { ScheduledInterview } from '../types';
 
 const CHECKLIST_ITEMS = ['Camera', 'Microphone', 'Internet connection', 'Resume', 'Portfolio', 'GitHub'] as const;
@@ -63,9 +65,9 @@ function downloadIcs(interview: ScheduledInterview) {
 }
 
 const RESOURCES = [
-  { icon: BookOpen, label: 'Interview Guide' },
-  { icon: MessageSquare, label: 'FAQs' },
-  { icon: Zap, label: 'Tips' },
+  { id: 'guide' as const, icon: BookOpen, label: 'Interview Guide' },
+  { id: 'faq' as const, icon: MessageSquare, label: 'FAQs' },
+  { id: 'tips' as const, icon: Zap, label: 'Tips' },
 ];
 
 export default function InterviewScheduledStage({
@@ -81,10 +83,17 @@ export default function InterviewScheduledStage({
 }) {
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [confirmingCancel, setConfirmingCancel] = useState(false);
-  const [added, setAdded] = useState(false);
-  const addedTimer = useRef<number | undefined>(undefined);
+  const [toast, setToast] = useState<string | null>(null);
+  const [faqOpen, setFaqOpen] = useState(false);
+  const toastTimer = useRef<number | undefined>(undefined);
 
-  useEffect(() => () => window.clearTimeout(addedTimer.current), []);
+  useEffect(() => () => window.clearTimeout(toastTimer.current), []);
+
+  function showToast(message: string) {
+    setToast(message);
+    window.clearTimeout(toastTimer.current);
+    toastTimer.current = window.setTimeout(() => setToast(null), 4000);
+  }
 
   function toggle(item: string) {
     setChecked(prev => {
@@ -100,9 +109,17 @@ export default function InterviewScheduledStage({
 
   function handleAddToCalendar() {
     downloadIcs(interview);
-    setAdded(true);
-    window.clearTimeout(addedTimer.current);
-    addedTimer.current = window.setTimeout(() => setAdded(false), 4000);
+    showToast('Interview added to your calendar');
+  }
+
+  function handleResource(id: (typeof RESOURCES)[number]['id']) {
+    if (id === 'faq') {
+      setFaqOpen(true);
+      return;
+    }
+    // No real guide/tips content exists yet -- honest feedback instead of
+    // a button that silently does nothing.
+    showToast('Coming soon');
   }
 
   return (
@@ -171,9 +188,10 @@ export default function InterviewScheduledStage({
       <div className="rounded-2xl border border-line bg-surface shadow-sm shadow-black/[0.03] p-5 mt-4">
         <h3 className="text-sm font-semibold text-primary mb-3">Preparation resources</h3>
         <div className="grid sm:grid-cols-3 gap-2">
-          {RESOURCES.map(({ icon: Icon, label }) => (
+          {RESOURCES.map(({ id, icon: Icon, label }) => (
             <button
               key={label}
+              onClick={() => handleResource(id)}
               className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-line text-sm text-primary hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
             >
               <Icon className="w-4 h-4 text-secondary shrink-0" />
@@ -210,14 +228,18 @@ export default function InterviewScheduledStage({
         </div>
       )}
 
-      {added && (
+      {toast && (
         <div role="status" aria-live="polite" className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-[slideUp_0.2s_ease-out]">
           <div className="flex items-center gap-2.5 bg-surface border border-line rounded-full px-4 py-2.5 shadow-lg shadow-black/10">
             <CheckCircle className="w-4 h-4 text-accent shrink-0" />
-            <p className="text-sm font-medium text-primary">Interview added to your calendar</p>
+            <p className="text-sm font-medium text-primary">{toast}</p>
           </div>
         </div>
       )}
+
+      <SidePanel open={faqOpen} onClose={() => setFaqOpen(false)}>
+        <FaqPanel />
+      </SidePanel>
     </div>
   );
 }
