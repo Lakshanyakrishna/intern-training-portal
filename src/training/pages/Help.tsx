@@ -9,12 +9,12 @@ const FAQS = [
 export default function Help() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <div>
+      <div className="animate-[slideUp_0.35s_ease-out]">
         <h1 className="text-2xl font-bold text-primary">Help</h1>
         <p className="text-sm text-secondary mt-1">Common questions about training.</p>
       </div>
 
-      <div className="bg-surface border border-line rounded-xl divide-y divide-line">
+      <div className="bg-surface border border-line rounded-xl divide-y divide-line animate-[slideUp_0.35s_ease-out_0.05s_both]">
         {FAQS.map(item => (
           <div key={item.q} className="p-5">
             <p className="text-sm font-medium text-primary flex items-center gap-2">
@@ -26,12 +26,12 @@ export default function Help() {
         ))}
       </div>
 
-      <div className="bg-surface border border-line rounded-xl p-5 flex items-center justify-between gap-3">
+      <div className="bg-surface border border-line rounded-xl p-5 flex items-center justify-between gap-3 animate-[slideUp_0.35s_ease-out_0.1s_both]">
         <div className="flex items-center gap-2">
           <MessageSquare className="w-4 h-4 text-secondary" />
           <p className="text-sm text-primary">Still stuck?</p>
         </div>
-        <button className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-line text-sm font-medium text-primary hover:bg-surface-alt transition-colors">
+        <button className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-line text-sm font-medium text-primary hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface">
           <Send className="w-3.5 h-3.5" />
           Contact mentor
         </button>
