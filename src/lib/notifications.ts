@@ -56,8 +56,14 @@ export async function notifyEvent(
     metadata,
   });
 
+  // No row means the user has never touched Notification Settings -- that's
+  // not an opt-out, it's the unset state, and notification_preferences.
+  // email_enabled defaults to TRUE at the column level. Only an existing
+  // row with emailEnabled explicitly false should suppress sending; a
+  // missing row must not be treated as "disabled" or real applicants (who
+  // never visit Settings before their first notification fires) get none.
   const prefs = await getNotificationPreferences(recipientId);
-  if (!prefs?.emailEnabled) return;
+  if (prefs && !prefs.emailEnabled) return;
 
   const user: AuthUser | null = await getUser(recipientId);
   if (!user) return;
