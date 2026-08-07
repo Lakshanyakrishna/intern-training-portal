@@ -92,6 +92,9 @@ function buildRealActivity(app: DbApplication, interview: DbInterview | null): A
   if (app.status === 'accepted') {
     items.push({ id: 'real-selected', icon: 'training', title: 'Selected', description: "You've been offered a spot", timestamp: app.reviewedAt ?? app.appliedAt });
   }
+  if (app.withdrawnAt) {
+    items.push({ id: 'real-withdrawn', icon: 'decision', title: 'Application withdrawn', description: "You're welcome to apply again anytime", timestamp: app.withdrawnAt });
+  }
   if (app.offerAcceptedAt) {
     items.push({ id: 'real-offer-accepted', icon: 'training', title: 'Offer accepted', description: 'Welcome to the team', timestamp: app.offerAcceptedAt });
   }
@@ -227,7 +230,11 @@ function useApplicantJourney(userId: string | undefined, userName: string | unde
     return () => { cancelled = true; };
   }, [userId]);
 
-  useEffect(() => {
+  // Exposed (not just effect-only) so real actions below can refresh the
+  // dock immediately after writing a new notification -- without this, a
+  // real applicant who withdraws mid-session sees the confirmation land in
+  // the database but not in the panel until they reload the page.
+  function refreshNotifications() {
     if (!userId) return;
     getNotifications(userId, 10).then(list => {
       setRealNotifications(list.map(n => ({
@@ -238,6 +245,11 @@ function useApplicantJourney(userId: string | undefined, userName: string | unde
         kind: eventTypeToKind(n.eventType),
       })));
     }).catch(() => {});
+  }
+
+  useEffect(() => {
+    refreshNotifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   // Dev-only override for design QA -- distinct from the internal setter
@@ -280,10 +292,14 @@ function useApplicantJourney(userId: string | undefined, userName: string | unde
     onApply: () => navigate('/apply'),
     onEditApplication: () => { /* [Placeholder] no real edit endpoint yet -- hidden once isLive */ },
     onWithdrawApplication: () => {
-      if (isLive && realApplication) {
+      if (isLive && realApplication && userId) {
         withdrawApplication(realApplication.id).then(() => {
           setRealApplication(prev => (prev ? { ...prev, withdrawnAt: new Date().toISOString() } : prev));
           setStageState('no_application');
+          notifyEvent('application_withdrawn', userId, {
+            name: userName ?? 'there',
+            opportunity: 'the program',
+          }).catch(() => {}).finally(refreshNotifications);
         }).catch(err => {
           console.warn('withdraw_application failed', err);
         });
@@ -307,7 +323,7 @@ function useApplicantJourney(userId: string | undefined, userName: string | unde
         notifyEvent('offer_accepted', userId, {
           name: userName ?? 'there',
           opportunity: 'the program',
-        }).catch(() => {});
+        }).catch(() => {}).finally(refreshNotifications);
       }).catch(err => {
         console.warn('accept_offer: no real write applied (expected unless this application is actually accepted)', err);
       });
