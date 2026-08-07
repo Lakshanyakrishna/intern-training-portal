@@ -109,15 +109,15 @@ export default function AdminConversion() {
           {/* Accepted + confirmed - ready to convert */}
           <div className="bg-surface border border-line rounded-xl overflow-hidden">
             <div className="px-4 py-3 border-b border-line bg-surface-alt">
-              <h2 className="text-sm font-semibold text-primary">Ready to Convert</h2>
+              <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">Ready to Convert</h2>
               <p className="text-xs text-secondary">
                 {readyToConvert.length} applicant{readyToConvert.length !== 1 ? 's' : ''} — accepted the offer, confirmed on their end
               </p>
             </div>
             {readyToConvert.length === 0 ? (
-              <div className="text-center py-8 text-sm text-gray-400 dark:text-gray-500">No one's confirmed and ready yet.</div>
+              <div className="text-center py-8 text-sm text-secondary">No one's confirmed and ready yet.</div>
             ) : (
-              <div className="divide-y divide-gray-100 dark:divide-gray-700">
+              <div className="divide-y divide-line">
                 {readyToConvert.map(app => (
                   <div key={app.id} className="flex items-center justify-between gap-3 px-4 py-3">
                     <div className="min-w-0">
@@ -153,15 +153,15 @@ export default function AdminConversion() {
           {/* Accepted but not yet confirmed by the applicant */}
           <div className="bg-surface border border-line rounded-xl overflow-hidden">
             <div className="px-4 py-3 border-b border-line bg-surface-alt">
-              <h2 className="text-sm font-semibold text-primary">Waiting on Applicant</h2>
+              <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">Waiting on Applicant</h2>
               <p className="text-xs text-secondary">
                 {waitingOnApplicant.length} applicant{waitingOnApplicant.length !== 1 ? 's' : ''} — offered, haven't confirmed yet
               </p>
             </div>
             {waitingOnApplicant.length === 0 ? (
-              <div className="text-center py-8 text-sm text-gray-400 dark:text-gray-500">Nobody's pending confirmation.</div>
+              <div className="text-center py-8 text-sm text-secondary">Nobody's pending confirmation.</div>
             ) : (
-              <div className="divide-y divide-gray-100 dark:divide-gray-700">
+              <div className="divide-y divide-line">
                 {waitingOnApplicant.map(app => (
                   <div key={app.id} className="flex items-center justify-between px-4 py-3">
                     <div>
@@ -178,13 +178,13 @@ export default function AdminConversion() {
           {/* Shortlisted - waiting for interview/decision */}
           <div className="bg-surface border border-line rounded-xl overflow-hidden">
             <div className="px-4 py-3 border-b border-line bg-surface-alt">
-              <h2 className="text-sm font-semibold text-primary">Shortlisted — Pending Decision</h2>
+              <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">Shortlisted — Pending Decision</h2>
               <p className="text-xs text-secondary">{pendingApps.length} applicant{pendingApps.length !== 1 ? 's' : ''}</p>
             </div>
             {pendingApps.length === 0 ? (
-              <div className="text-center py-8 text-sm text-gray-400 dark:text-gray-500">No shortlisted applicants.</div>
+              <div className="text-center py-8 text-sm text-secondary">No shortlisted applicants.</div>
             ) : (
-              <div className="divide-y divide-gray-100 dark:divide-gray-700">
+              <div className="divide-y divide-line">
                 {pendingApps.map(app => (
                   <div key={app.id} className="flex items-center justify-between px-4 py-3">
                     <div>

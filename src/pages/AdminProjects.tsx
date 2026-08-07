@@ -82,7 +82,7 @@ export default function AdminProjects() {
   }
 
   const inputClass = 'w-full px-3.5 py-2.5 rounded-lg border border-line bg-surface text-sm text-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent transition-colors';
-  const labelClass = 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5';
+  const labelClass = 'block text-sm font-medium text-primary mb-1.5';
 
   return (
     <div className="space-y-6">
@@ -163,19 +163,19 @@ export default function AdminProjects() {
       {/* Allocations table */}
       <div className="bg-surface border border-line rounded-xl overflow-hidden">
         <div className="px-4 py-3 border-b border-line bg-surface-alt flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-primary">Allocations</h2>
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">Allocations</h2>
         </div>
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <div className="w-5 h-5 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : allocations.length === 0 ? (
-          <div className="text-center py-12 text-sm text-gray-400 dark:text-gray-500">No project allocations yet.</div>
+          <div className="text-center py-12 text-sm text-secondary">No project allocations yet.</div>
         ) : (
-          <div className="divide-y divide-gray-100 dark:divide-gray-700">
+          <div className="divide-y divide-line">
             {allocations.map(a => (
               <details key={a.id} className="group">
-                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-surface-alt/50">
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
                       <p className="text-sm font-medium text-primary">{a.internName || 'Unknown'}</p>
