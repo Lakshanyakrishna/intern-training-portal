@@ -1,34 +1,17 @@
-import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { useProgress } from '../hooks/useProgress';
-import { tracks, getTrackProgress } from '../data/tracks';
 import {
-  LayoutDashboard,
-  BookOpen,
   Layers,
-  Code,
   Briefcase,
   Flag,
-  Award,
-  Trophy,
-  MessageSquare,
   Users,
   ClipboardCheck,
   BarChart3,
   User,
-  ChevronDown,
   LogOut,
   Grid,
   Target,
 } from './Icons';
-
-const trackIcons: Record<string, React.ReactNode> = {
-  foundation: <Layers className="w-4 h-4" />,
-  development: <Code className="w-4 h-4" />,
-  project: <Briefcase className="w-4 h-4" />,
-  final: <Flag className="w-4 h-4" />,
-};
 
 // The sidebar is always dark (see --color-sidebar-* in index.css), regardless
 // of the app's own light/dark toggle, so its own classes never need a dark:
@@ -68,8 +51,6 @@ function NavItem({
 }
 
 export default function Sidebar({ open, onClose, compact }: { open: boolean; onClose: () => void; compact?: boolean }) {
-  const [programOpen, setProgramOpen] = useState(true);
-  const { getModuleProgress } = useProgress();
   const { user, signOut } = useAuth();
   const isMentor = user?.role === 'mentor' || user?.role === 'admin';
   const isApplicant = user?.role === 'applicant';
@@ -94,10 +75,6 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto py-2 space-y-0.5">
-          {!isApplicant && (
-            <NavItem to="/dashboard" label="Dashboard" end onClick={onClose} icon={<LayoutDashboard />} compact={compact} />
-          )}
-
           {isApplicant ? (
             <>
               <NavItem to="/applicant" label="My Journey" onClick={onClose} icon={<ClipboardCheck />} compact={compact} />
@@ -127,7 +104,6 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
               <NavItem to="/mentor/evaluate" label="Readiness Eval" onClick={onClose} icon={<Target />} compact={compact} />
               <NavItem to="/mentor/interns" label="Intern Mgmt" onClick={onClose} icon={<Users />} compact={compact} />
               <NavItem to="/mentor/reviews" label="Reviews" onClick={onClose} icon={<ClipboardCheck />} compact={compact} />
-              <NavItem to="/leaderboard" label="Leaderboard" onClick={onClose} icon={<Trophy />} compact={compact} />
               <NavItem to="/profile" label="Profile" onClick={onClose} icon={<User />} compact={compact} />
               <NavItem to="/notifications/settings" label="Notification Settings" onClick={onClose} icon={<BarChart3 />} compact={compact} />
             </>
@@ -142,62 +118,13 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
               <NavItem to="/mentor/reviews" label="Reviews" onClick={onClose} icon={<ClipboardCheck />} compact={compact} />
               <NavItem to="/mentor/readiness" label="Project Readiness" onClick={onClose} icon={<BarChart3 />} compact={compact} />
               <NavItem to="/mentor/completion-review" label="Completion Review" onClick={onClose} icon={<Flag />} compact={compact} />
-              <NavItem to="/leaderboard" label="Leaderboard" onClick={onClose} icon={<Trophy />} compact={compact} />
               <NavItem to="/profile" label="Profile" onClick={onClose} icon={<User />} compact={compact} />
               <NavItem to="/notifications/settings" label="Notification Settings" onClick={onClose} icon={<BarChart3 />} compact={compact} />
             </>
           ) : (
-            <>
-              {compact ? (
-                <NavItem to="/track/foundation" label="Training" onClick={onClose} icon={<BookOpen />} compact={compact} />
-              ) : (
-                <>
-                  <div className="pt-1">
-                    <button
-                      onClick={() => setProgramOpen(!programOpen)}
-                      className="flex items-center justify-between w-full px-3 py-2 text-sm text-sidebar-text-secondary hover:text-sidebar-text transition-colors"
-                    >
-                      <span className="flex items-center gap-3">
-                        <BookOpen className="w-5 h-5" />
-                        <span>Training Program</span>
-                      </span>
-                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${programOpen ? '' : '-rotate-90'}`} />
-                    </button>
-                  </div>
-                  <div className={`overflow-hidden transition-all duration-200 ease-in-out ${programOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-                    <div className="space-y-0.5 ml-3">
-                      {tracks.map(track => {
-                        const trackProg = getTrackProgress(track.id, getModuleProgress);
-                        return (
-                          <NavLink
-                            key={track.id}
-                            to={`/track/${track.id}`}
-                            onClick={onClose}
-                            className={({ isActive }) =>
-                              `flex items-center gap-3 px-3 py-2 text-sm transition-colors border-l-2 ${
-                                isActive
-                                  ? 'border-sidebar-accent bg-sidebar-surface text-sidebar-text font-medium'
-                                  : 'border-transparent text-sidebar-text-secondary hover:bg-sidebar-surface hover:text-sidebar-text'
-                              }`
-                            }
-                          >
-                            <span className="w-4 h-4 shrink-0 text-current">{trackIcons[track.id]}</span>
-                            <span className="flex-1 truncate">{track.name}</span>
-                            <span className="text-xs text-sidebar-text-secondary tabular-nums">{trackProg.completed}/{trackProg.total}</span>
-                          </NavLink>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </>
-              )}
-
-              <NavItem to="/progress-center" label="Progress" onClick={onClose} icon={<Award />} compact={compact} />
-              <NavItem to="/leaderboard" label="Leaderboard" onClick={onClose} icon={<Trophy />} compact={compact} />
-              <NavItem to="/readiness-reviews" label="Mentor Feedback" onClick={onClose} icon={<MessageSquare />} compact={compact} />
-              <NavItem to="/portfolio" label="My Portfolio" onClick={onClose} icon={<Award />} compact={compact} />
-              <NavItem to="/profile" label="Profile" onClick={onClose} icon={<User />} compact={compact} />
-            </>
+            // Interns: no training content exists yet -- real modules
+            // replace this. Profile is the only thing left to link to.
+            <NavItem to="/profile" label="Profile" onClick={onClose} icon={<User />} compact={compact} />
           )}
         </nav>
 
