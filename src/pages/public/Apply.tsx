@@ -75,7 +75,10 @@ export default function Apply() {
       return;
     }
     getApplicationByUserId(user.id).then(app => {
-      if (app) {
+      // A withdrawn application shouldn't block a fresh one -- withdrawing
+      // is meant to clear the way to reapply, matching the real
+      // withdraw_application() RPC (029_application_withdrawal.sql).
+      if (app && !app.withdrawnAt) {
         setExistingApplication({ status: app.status, appliedAt: app.appliedAt });
       } else {
         setExistingApplication(null);
