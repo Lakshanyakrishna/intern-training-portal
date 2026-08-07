@@ -5,7 +5,7 @@ import type { DbInternshipOutcome, DbTrainingCertificate, DbInternshipCertificat
 function Checkmark({ ok }: { ok: boolean }) {
   return ok
     ? <span className="text-green-600 dark:text-green-400 font-bold">&#10003;</span>
-    : <span className="text-gray-300 dark:text-gray-600">&#8212;</span>;
+    : <span className="text-secondary">&#8212;</span>;
 }
 
 export default function AdminCompletionReport() {
@@ -45,7 +45,7 @@ export default function AdminCompletionReport() {
   const noData = !stats || stats.totalApplications === 0;
 
   const funnelCards = [
-    { label: 'Applications', value: stats?.totalApplications ?? 0, color: 'text-neutral-600' },
+    { label: 'Applications', value: stats?.totalApplications ?? 0, color: 'text-primary' },
     { label: 'Interviews', value: stats?.totalInterviews ?? 0, color: 'text-indigo-600' },
     { label: 'Accepted', value: stats?.totalAccepted ?? 0, color: 'text-purple-600' },
     { label: 'Training Completed', value: stats?.trainingCompleted ?? 0, color: 'text-teal-600' },
@@ -79,7 +79,7 @@ export default function AdminCompletionReport() {
 
       {noData ? (
         <div className="bg-surface border border-line rounded-xl p-8 text-center">
-          <p className="text-sm text-gray-400 dark:text-gray-500">No completion data available yet.</p>
+          <p className="text-sm text-secondary">No completion data available yet.</p>
         </div>
       ) : (
         <>
@@ -103,11 +103,11 @@ export default function AdminCompletionReport() {
 
           <div className="bg-surface border border-line rounded-xl overflow-hidden">
             <div className="px-4 py-3 border-b border-line bg-surface-alt">
-              <h2 className="text-sm font-semibold text-primary">Internship Outcomes</h2>
+              <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">Internship Outcomes</h2>
               <p className="text-xs text-secondary">{outcomes.length} record{outcomes.length !== 1 ? 's' : ''}</p>
             </div>
             {outcomes.length === 0 ? (
-              <div className="text-center py-8 text-sm text-gray-400 dark:text-gray-500">No outcomes recorded.</div>
+              <div className="text-center py-8 text-sm text-secondary">No outcomes recorded.</div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -122,12 +122,12 @@ export default function AdminCompletionReport() {
                       <th className="text-center px-2 py-2 font-medium">Completed</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                  <tbody className="divide-y divide-line">
                     {outcomes.map(o => (
-                      <tr key={o.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                      <tr key={o.id} className="hover:bg-surface-alt/50">
                         <td className="px-4 py-2">
                           <p className="font-medium text-primary">{o.userName ?? o.userId.slice(0, 8)}</p>
-                          {o.userEmail && <p className="text-xs text-gray-400">{o.userEmail}</p>}
+                          {o.userEmail && <p className="text-xs text-secondary">{o.userEmail}</p>}
                         </td>
                         <td className="px-2 py-2 text-center"><Checkmark ok={o.trainingCompleted} /></td>
                         <td className="px-2 py-2 text-center"><Checkmark ok={o.projectCompleted} /></td>
@@ -136,11 +136,11 @@ export default function AdminCompletionReport() {
                         <td className="px-2 py-2 text-center">
                           {o.finalRating != null
                             ? <span className="text-sm font-semibold text-primary">{o.finalRating}</span>
-                            : <span className="text-gray-300 dark:text-gray-600">&mdash;</span>
+                            : <span className="text-secondary">&mdash;</span>
                           }
                         </td>
                         <td className="px-2 py-2 text-center text-xs text-secondary">
-                          {o.completedAt ? new Date(o.completedAt).toLocaleDateString() : <span className="text-gray-300 dark:text-gray-600">&mdash;</span>}
+                          {o.completedAt ? new Date(o.completedAt).toLocaleDateString() : <span className="text-secondary">&mdash;</span>}
                         </td>
                       </tr>
                     ))}
@@ -152,11 +152,11 @@ export default function AdminCompletionReport() {
 
           <div className="bg-surface border border-line rounded-xl overflow-hidden">
             <div className="px-4 py-3 border-b border-line bg-surface-alt">
-              <h2 className="text-sm font-semibold text-primary">Recent Certificates</h2>
+              <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">Recent Certificates</h2>
               <p className="text-xs text-secondary">Last 20 issued certificates</p>
             </div>
             {recentCerts.length === 0 ? (
-              <div className="text-center py-8 text-sm text-gray-400 dark:text-gray-500">No certificates issued yet.</div>
+              <div className="text-center py-8 text-sm text-secondary">No certificates issued yet.</div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -168,14 +168,14 @@ export default function AdminCompletionReport() {
                       <th className="text-left px-3 py-2 font-medium">Issued</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                  <tbody className="divide-y divide-line">
                     {recentCerts.map(c => (
-                      <tr key={`${c.type}-${c.id}`} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                      <tr key={`${c.type}-${c.id}`} className="hover:bg-surface-alt/50">
                         <td className="px-4 py-2 font-medium text-primary">{c.userName ?? c.userId.slice(0, 8)}</td>
                         <td className="px-3 py-2">
                           <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                             c.type === 'Training'
-                              ? 'bg-neutral-100 text-neutral-700 dark:bg-neutral-900/30 dark:text-neutral-300'
+                              ? 'bg-surface-alt text-secondary'
                               : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
                           }`}>{c.type}</span>
                         </td>

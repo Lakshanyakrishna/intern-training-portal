@@ -74,7 +74,7 @@ export default function AdminScreeningReport() {
         </div>
       ) : data.length === 0 ? (
         <div className="bg-surface border border-line rounded-xl p-8 text-center">
-          <p className="text-sm text-gray-400 dark:text-gray-500">No analyzed applications found. Run AI screening on applications first.</p>
+          <p className="text-sm text-secondary">No analyzed applications found. Run AI screening on applications first.</p>
         </div>
       ) : (
         <>
@@ -85,7 +85,7 @@ export default function AdminScreeningReport() {
               <p className="text-xs text-secondary">Analyzed</p>
             </div>
             <div className="bg-surface border border-line rounded-xl p-4">
-              <p className="text-2xl font-bold text-neutral-600">{avgScore}</p>
+              <p className="text-2xl font-bold text-primary">{avgScore}</p>
               <p className="text-xs text-secondary">Avg Score</p>
             </div>
             <div className="bg-surface border border-line rounded-xl p-4">
@@ -104,18 +104,18 @@ export default function AdminScreeningReport() {
 
           {/* By recommendation */}
           <div className="bg-surface border border-line rounded-xl p-5">
-            <h2 className="text-sm font-semibold text-primary mb-3">Applications by Recommendation</h2>
+            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary mb-3">Applications by Recommendation</h2>
             <div className="space-y-2">
               {Object.entries(byRecommendation).map(([rec, items]) => (
                 <div key={rec} className="flex items-center gap-3 text-sm">
                   <span className={`text-xs font-medium px-2 py-0.5 rounded-full w-28 text-center ${
                     rec === 'strongly_recommend' || rec === 'recommend' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                    rec === 'neutral' ? 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' :
+                    rec === 'neutral' ? 'bg-surface-alt text-secondary' :
                     'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
                   }`}>{rec.replace('_', ' ')}</span>
                   <span className="text-secondary">{items.length} applications</span>
-                  <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                    <div className="h-2 rounded-full bg-neutral-500" style={{ width: `${(items.length / data.length) * 100}%` }} />
+                  <div className="flex-1 bg-surface-alt rounded-full h-2">
+                    <div className="h-2 rounded-full bg-accent" style={{ width: `${(items.length / data.length) * 100}%` }} />
                   </div>
                 </div>
               ))}
@@ -126,13 +126,13 @@ export default function AdminScreeningReport() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {topMissingSkills.length > 0 && (
               <div className="bg-surface border border-line rounded-xl p-5">
-                <h2 className="text-sm font-semibold text-primary mb-3">Most Common Missing Skills</h2>
+                <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary mb-3">Most Common Missing Skills</h2>
                 <div className="space-y-2">
                   {topMissingSkills.map(([skill, count]) => (
                     <div key={skill} className="flex items-center gap-3 text-sm">
-                      <span className="flex-1 text-gray-700 dark:text-gray-300">{skill}</span>
+                      <span className="flex-1 text-primary">{skill}</span>
                       <span className="text-xs text-secondary">{count}</span>
-                      <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                      <div className="w-24 bg-surface-alt rounded-full h-1.5">
                         <div className="h-1.5 rounded-full bg-orange-500" style={{ width: `${(count / data.length) * 100}%` }} />
                       </div>
                     </div>
@@ -142,13 +142,13 @@ export default function AdminScreeningReport() {
             )}
             {topWeaknesses.length > 0 && (
               <div className="bg-surface border border-line rounded-xl p-5">
-                <h2 className="text-sm font-semibold text-primary mb-3">Most Common Weaknesses</h2>
+                <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary mb-3">Most Common Weaknesses</h2>
                 <div className="space-y-2">
                   {topWeaknesses.map(([weakness, count]) => (
                     <div key={weakness} className="flex items-center gap-3 text-sm">
-                      <span className="flex-1 text-gray-700 dark:text-gray-300">{weakness}</span>
+                      <span className="flex-1 text-primary">{weakness}</span>
                       <span className="text-xs text-secondary">{count}</span>
-                      <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                      <div className="w-24 bg-surface-alt rounded-full h-1.5">
                         <div className="h-1.5 rounded-full bg-red-500" style={{ width: `${(count / data.length) * 100}%` }} />
                       </div>
                     </div>
