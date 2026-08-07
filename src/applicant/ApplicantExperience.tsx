@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
   getUserSettings, upsertUserSettings, getApplicationByUserId, getInterviewsByApplicant,
-  acceptOffer, withdrawApplication, getNotifications,
+  acceptOffer, withdrawApplication, beginTraining, getNotifications,
 } from '../lib/db';
 import type { DbApplication, DbInterview } from '../lib/db';
 import { notifyEvent } from '../lib/notifications';
+import { roleHomePath } from '../utils/roleHome';
 import { Sun, Moon, XCircle, ChevronDown, LogOut } from '../components/Icons';
 import NotificationBell from '../components/NotificationBell';
 import Logo from '../components/Logo';
@@ -203,6 +204,7 @@ function useApplicantJourney(userId: string | undefined, userName: string | unde
   const [realInterview, setRealInterview] = useState<DbInterview | null>(null);
   const [realNotifications, setRealNotifications] = useState<NotificationItem[] | null>(null);
   const navigate = useNavigate();
+  const { refreshUser } = useAuth();
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 500);
@@ -328,7 +330,25 @@ function useApplicantJourney(userId: string | undefined, userName: string | unde
         console.warn('accept_offer: no real write applied (expected unless this application is actually accepted)', err);
       });
     },
-    onBeginTraining: () => { /* [Placeholder] would promote the account and redirect to /dashboard */ },
+    onBeginTraining: () => {
+      if (isLive) {
+        // Server-side promotion (034_begin_training.sql) -- rejected there
+        // unless this account's application is actually accepted + the
+        // offer confirmed, so a failure here means those preconditions
+        // weren't met, not a UI bug.
+        // refreshUser must resolve before navigating -- ProtectedRoute reads
+        // user.role on the very first render of the destination route, and
+        // the context still holds the stale 'applicant' role until this
+        // finishes, which would otherwise bounce the redirect right back out.
+        beginTraining().then(() => refreshUser()).then(() => {
+          navigate(roleHomePath('intern'));
+        }).catch(err => {
+          console.warn('begin_training failed', err);
+        });
+        return;
+      }
+      navigate(roleHomePath('intern')); // preview/demo mode -- no real promotion, just showing where it leads
+    },
     onUpdateProfile: () => navigate('/profile'),
   };
 
