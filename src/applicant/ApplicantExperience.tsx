@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
   getUserSettings, upsertUserSettings, getApplicationByUserId, getInterviewsByApplicant,
-  acceptOffer, withdrawApplication, beginTraining, getNotifications,
+  acceptOffer, withdrawApplication, beginTraining, getNotifications, getProfileResume,
 } from '../lib/db';
 import type { DbApplication, DbInterview } from '../lib/db';
 import { notifyEvent } from '../lib/notifications';
 import { roleHomePath } from '../utils/roleHome';
-import { Sun, Moon, XCircle, ChevronDown, LogOut } from '../components/Icons';
+import { autoApply } from './utils/autoApply';
+import type { AuthUser } from '../types';
+import { Sun, Moon, XCircle, ChevronDown, LogOut, CheckCircle } from '../components/Icons';
 import NotificationBell from '../components/NotificationBell';
 import Logo from '../components/Logo';
 import DotGrid from './components/DotGrid';
@@ -194,8 +196,12 @@ function UserMenu({ name, darkMode, onToggleTheme, onSignOut }: {
 // component downstream uses that flag to hide interactive controls that
 // have no real backend yet (self-serve interview booking/reschedule)
 // instead of silently faking success for a real applicant.
-function useApplicantJourney(userId: string | undefined, userName: string | undefined) {
+function useApplicantJourney(user: AuthUser | null | undefined) {
+  const userId = user?.id;
+  const userName = user?.name;
   const [loading, setLoading] = useState(true);
+  const [autoApplying, setAutoApplying] = useState(false);
+  const [autoApplyMessage, setAutoApplyMessage] = useState<string | null>(null);
   const [stage, setStageState] = useState<Stage>('no_application');
   const [isLive, setIsLive] = useState(false);
   const [opportunityTitle] = useState(MOCK_OPPORTUNITIES[0]?.title ?? '');
@@ -287,11 +293,35 @@ function useApplicantJourney(userId: string | undefined, userName: string | unde
     : null;
 
   const actions: JourneyActions = {
-    // No real opportunity data to browse/select yet, so this always routes
-    // to the real generic application form rather than faking a submission
-    // against a placeholder opportunity -- whatever a real applicant does
-    // here actually persists.
-    onApply: () => navigate('/apply'),
+    // Real one-click apply: if a profile resume already exists, submit
+    // immediately (autoApply, shared with BrowseOpportunities.tsx) instead
+    // of sending them through the form again. No real opportunity data
+    // exists yet to attach (mock cards only), same as the general
+    // application /apply already allows without one. Falls back to the
+    // real form when there's nothing to auto-attach, or in preview mode
+    // where nothing should write for real.
+    onApply: () => {
+      if (!isLive || !user) {
+        navigate('/apply');
+        return;
+      }
+      setAutoApplying(true);
+      autoApply(user).then(result => {
+        if (result.status === 'applied') {
+          setAutoApplyMessage('Applied — tracking it below now.');
+          getApplicationByUserId(user.id).then(app => {
+            setRealApplication(app);
+            if (app) setStageState(deriveStageFromReal(app, null));
+          }).catch(() => {});
+        } else if (result.status === 'already-applied') {
+          setAutoApplyMessage("You've already applied — see below for status.");
+        } else if (result.status === 'needs-form') {
+          navigate('/apply');
+        } else {
+          setAutoApplyMessage(result.message);
+        }
+      }).finally(() => setAutoApplying(false));
+    },
     onEditApplication: () => { /* [Placeholder] no real edit endpoint yet -- hidden once isLive */ },
     onWithdrawApplication: () => {
       if (isLive && realApplication && userId) {
@@ -363,6 +393,9 @@ function useApplicantJourney(userId: string | undefined, userName: string | unde
     offerAccepted: !!realApplication?.offerAcceptedAt,
     realActivity: realApplication ? buildRealActivity(realApplication, realInterview) : null,
     realNotifications,
+    autoApplying,
+    autoApplyMessage,
+    clearAutoApplyMessage: () => setAutoApplyMessage(null),
   };
 }
 
@@ -374,23 +407,47 @@ export default function ApplicantExperience() {
       (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
   });
   const [devPanelOpen, setDevPanelOpen] = useState(false);
+  const [hasProfileResume, setHasProfileResume] = useState(false);
   const {
     loading, stage, previewStage, application, scheduledInterview, actions,
     isLive, offerAccepted, realActivity, realNotifications,
-  } = useApplicantJourney(user?.id, user?.name);
+    autoApplying, autoApplyMessage, clearAutoApplyMessage,
+  } = useApplicantJourney(user);
 
   useEffect(() => {
     if (!user) return;
     getUserSettings(user.id).then(settings => {
       if (settings?.theme) setDarkMode(settings.theme === 'dark');
     }).catch(() => {});
+    getProfileResume(user.id).then(r => setHasProfileResume(!!r)).catch(() => {});
   }, [user]);
+
+  // Same 9-field formula Profile.tsx itself uses (name/phone/college/major/
+  // yearOfStudy/github/linkedin/portfolio/resume) -- kept in sync there
+  // deliberately rather than importing it, since this only needs a number
+  // for the dock badge, not the full profile-editing state machine.
+  const profileCompleteness = user
+    ? Math.round(
+        ([user.name, user.phone, user.college, user.major, user.yearOfStudy, user.githubUrl, user.linkedinUrl, user.portfolioUrl, hasProfileResume ? 'x' : '']
+          .filter(Boolean).length / 9) * 100
+      )
+    : 0;
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
     localStorage.setItem('theme', darkMode ? 'dark' : 'light');
     if (user) upsertUserSettings(user.id, { theme: darkMode ? 'dark' : 'light' }).catch(() => {});
   }, [darkMode, user]);
+
+  useEffect(() => {
+    if (!autoApplyMessage) return;
+    const t = setTimeout(clearAutoApplyMessage, 4000);
+    return () => clearTimeout(t);
+    // clearAutoApplyMessage is a fresh closure each render (wraps a stable
+    // setState) -- depending on it would reset this timer on every
+    // unrelated re-render instead of just when the message itself changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoApplyMessage]);
 
   return (
     <div className="min-h-screen bg-background text-primary">
@@ -490,7 +547,21 @@ export default function ApplicantExperience() {
         <QuickAccessDock
           notifications={isLive && realNotifications ? realNotifications : notificationsForStage(stage)}
           activity={isLive && realActivity ? realActivity : activityForStage(stage)}
+          profileCompleteness={profileCompleteness}
         />
+      )}
+
+      {(autoApplying || autoApplyMessage) && (
+        <div role="status" aria-live="polite" className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-[slideUp_0.2s_ease-out]">
+          <div className="flex items-center gap-2.5 bg-surface border border-line rounded-full px-4 py-2.5 shadow-lg shadow-black/10">
+            {autoApplying ? (
+              <div className="w-4 h-4 border-2 border-line border-t-accent rounded-full animate-spin shrink-0" />
+            ) : (
+              <CheckCircle className="w-4 h-4 text-accent shrink-0" />
+            )}
+            <p className="text-sm font-medium text-primary">{autoApplying ? 'Applying…' : autoApplyMessage}</p>
+          </div>
+        </div>
       )}
 
       {/* Dev-only preview switcher -- lets every stage get reviewed/QA'd
