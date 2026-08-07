@@ -2538,3 +2538,105 @@ export async function assignInternTrack(internId: string, trackId: string | null
     .upsert({ intern_id: internId, track_id: trackId }, { onConflict: 'intern_id' });
   if (error) throw error;
 }
+
+// ─── Training Modules (Phase D.10) ────────────────────────────────
+// Belongs to a single track (019's track_fortes join already scopes a
+// track -- and therefore its modules -- to whichever fortes it applies to,
+// so no separate forte column is needed here). No content/copy seeded;
+// this is the same "structure now, real content later" pattern as tracks.
+
+export interface DbTrainingModule {
+  id: string;
+  trackId: string;
+  title: string;
+  description?: string;
+  sortOrder: number;
+  estimatedMinutes?: number;
+}
+
+export async function getTrainingModules(trackId: string): Promise<DbTrainingModule[]> {
+  const supabase = requireSupabase();
+  const { data } = await supabase
+    .from('training_modules')
+    .select('*')
+    .eq('track_id', trackId)
+    .order('sort_order', { ascending: true });
+  return ((data || []) as Record<string, unknown>[]).map(m => ({
+    id: m.id as string,
+    trackId: m.track_id as string,
+    title: m.title as string,
+    description: m.description as string | undefined,
+    sortOrder: m.sort_order as number,
+    estimatedMinutes: m.estimated_minutes as number | undefined,
+  }));
+}
+
+export async function getTrainingModule(moduleId: string): Promise<DbTrainingModule | null> {
+  const supabase = requireSupabase();
+  const { data } = await supabase.from('training_modules').select('*').eq('id', moduleId).maybeSingle();
+  if (!data) return null;
+  return {
+    id: data.id,
+    trackId: data.track_id,
+    title: data.title,
+    description: data.description ?? undefined,
+    sortOrder: data.sort_order,
+    estimatedMinutes: data.estimated_minutes ?? undefined,
+  };
+}
+
+export async function createTrainingModule(data: {
+  trackId: string;
+  title: string;
+  description?: string;
+  sortOrder?: number;
+  estimatedMinutes?: number;
+}): Promise<string> {
+  const supabase = requireSupabase();
+  const { data: inserted, error } = await supabase
+    .from('training_modules')
+    .insert({
+      track_id: data.trackId,
+      title: data.title,
+      description: data.description ?? null,
+      sort_order: data.sortOrder ?? 0,
+      estimated_minutes: data.estimatedMinutes ?? null,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return inserted.id;
+}
+
+export async function deleteTrainingModule(id: string): Promise<void> {
+  const supabase = requireSupabase();
+  const { error } = await supabase.from('training_modules').delete().eq('id', id);
+  if (error) throw error;
+}
+
+export async function getInternModuleCompletions(internId: string): Promise<Set<string>> {
+  const supabase = requireSupabase();
+  const { data } = await supabase
+    .from('intern_module_completions')
+    .select('module_id')
+    .eq('intern_id', internId);
+  return new Set((data || []).map((r: { module_id: string }) => r.module_id));
+}
+
+export async function completeTrainingModule(internId: string, moduleId: string): Promise<void> {
+  const supabase = requireSupabase();
+  const { error } = await supabase
+    .from('intern_module_completions')
+    .upsert({ intern_id: internId, module_id: moduleId }, { onConflict: 'intern_id,module_id' });
+  if (error) throw error;
+}
+
+export async function uncompleteTrainingModule(internId: string, moduleId: string): Promise<void> {
+  const supabase = requireSupabase();
+  const { error } = await supabase
+    .from('intern_module_completions')
+    .delete()
+    .eq('intern_id', internId)
+    .eq('module_id', moduleId);
+  if (error) throw error;
+}
