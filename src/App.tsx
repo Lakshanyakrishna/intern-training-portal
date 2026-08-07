@@ -22,15 +22,6 @@ const PortfolioInfo = lazy(() => import('./pages/public/PortfolioInfo'));
 const CareersInfo = lazy(() => import('./pages/public/CareersInfo'));
 const CommunityInfo = lazy(() => import('./pages/public/CommunityInfo'));
 const Onboarding = lazy(() => import('./pages/Onboarding'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const ModulePage = lazy(() => import('./pages/ModulePage'));
-const Capstone = lazy(() => import('./pages/Capstone'));
-const TrackPage = lazy(() => import('./pages/TrackPage'));
-const TicketsBoard = lazy(() => import('./pages/TicketsBoard'));
-const Leaderboard = lazy(() => import('./pages/Leaderboard'));
-const ProgressCenter = lazy(() => import('./pages/ProgressCenter'));
-const ReadinessReviews = lazy(() => import('./pages/ReadinessReviews'));
-const Feedback = lazy(() => import('./pages/Feedback'));
 const Profile = lazy(() => import('./pages/Profile'));
 const MentorDashboard = lazy(() => import('./pages/MentorDashboard'));
 const InternManagement = lazy(() => import('./pages/InternManagement'));
@@ -51,7 +42,6 @@ const NotificationSettings = lazy(() => import('./pages/NotificationSettings'));
 const AdminNotificationsDashboard = lazy(() => import('./pages/AdminNotificationsDashboard'));
 const AdminScreeningReport = lazy(() => import('./pages/AdminScreeningReport'));
 const AdminCompletionReport = lazy(() => import('./pages/AdminCompletionReport'));
-const InternPortfolio = lazy(() => import('./pages/InternPortfolio'));
 const MentorCompletionReview = lazy(() => import('./pages/MentorCompletionReview'));
 
 // Each route now ships its own chunk instead of one 1.2MB bundle for every
@@ -116,26 +106,6 @@ export default function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/notifications" element={<NotificationCenter />} />
               <Route path="/notifications/settings" element={<NotificationSettings />} />
-            </Route>
-
-            {/* Training/project app -- intern+ only. An applicant who hasn't
-                been accepted yet has no training track assigned and is
-                redirected away rather than reaching these screens. */}
-            <Route element={
-              <ProtectedRoute roles={['intern', 'mentor', 'admin']}>
-                <Layout />
-              </ProtectedRoute>
-            }>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/module/:moduleId" element={<ModulePage />} />
-              <Route path="/capstone" element={<Capstone />} />
-              <Route path="/track/:trackId" element={<TrackPage />} />
-              <Route path="/tickets" element={<TicketsBoard />} />
-              <Route path="/leaderboard" element={<Leaderboard />} />
-              <Route path="/progress-center" element={<ProgressCenter />} />
-              <Route path="/readiness-reviews" element={<ReadinessReviews />} />
-              <Route path="/feedback" element={<Feedback />} />
-              <Route path="/portfolio" element={<InternPortfolio />} />
             </Route>
 
             {/* Admin routes (authenticated + admin role) */}
