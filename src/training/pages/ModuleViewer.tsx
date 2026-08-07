@@ -33,13 +33,13 @@ export default function ModuleViewer() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <Link to="/training/path" className="flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary transition-colors w-fit">
+      <Link to="/training/path" className="flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary transition-colors w-fit rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
         <ArrowLeft className="w-3.5 h-3.5" />
         Back to learning path
       </Link>
 
       {/* Overview */}
-      <div>
+      <div className="animate-[slideUp_0.35s_ease-out]">
         <p className="text-xs font-semibold uppercase tracking-wider text-accent mb-1.5">{stage.title}</p>
         <h1 className="text-2xl font-bold text-primary">{module.title}</h1>
         {module.description && <p className="text-sm text-secondary mt-2 max-w-xl">{module.description}</p>}
@@ -52,9 +52,9 @@ export default function ModuleViewer() {
       </div>
 
       {/* Lessons */}
-      <section className="bg-surface border border-line rounded-xl overflow-hidden">
+      <section className="bg-surface border border-line rounded-xl overflow-hidden animate-[slideUp_0.35s_ease-out_0.05s_both]">
         <div className="px-5 py-3 border-b border-line bg-surface-alt">
-          <h2 className="text-sm font-semibold text-primary">Lessons</h2>
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">Lessons</h2>
         </div>
         {module.lessons.length === 0 ? (
           <p className="px-5 py-4 text-sm text-secondary">No lessons yet — content will be added here.</p>
@@ -64,7 +64,11 @@ export default function ModuleViewer() {
               const done = mp.completedLessonIds.includes(lesson.id);
               const Icon = CONTENT_ICON[lesson.contentType];
               return (
-                <Link key={lesson.id} to={`/training/lesson/${lesson.id}`} className="flex items-center gap-3 px-5 py-3 hover:bg-surface-alt transition-colors">
+                <Link
+                  key={lesson.id}
+                  to={`/training/lesson/${lesson.id}`}
+                  className="flex items-center gap-3 px-5 py-3 hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
+                >
                   {done ? <CheckCircle className="w-4 h-4 text-accent shrink-0" /> : <Circle className="w-4 h-4 text-secondary shrink-0" />}
                   <Icon className="w-3.5 h-3.5 text-secondary shrink-0" />
                   <span className="text-sm text-primary flex-1 min-w-0 truncate">{lesson.title}</span>
@@ -77,9 +81,9 @@ export default function ModuleViewer() {
       </section>
 
       {/* Practice */}
-      <section className="bg-surface border border-line rounded-xl overflow-hidden">
+      <section className="bg-surface border border-line rounded-xl overflow-hidden animate-[slideUp_0.35s_ease-out_0.1s_both]">
         <div className="px-5 py-3 border-b border-line bg-surface-alt">
-          <h2 className="text-sm font-semibold text-primary">Practice</h2>
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">Practice</h2>
         </div>
         {module.practice.length === 0 ? (
           <p className="px-5 py-4 text-sm text-secondary">No practice exercises yet.</p>
@@ -88,7 +92,11 @@ export default function ModuleViewer() {
             {module.practice.slice().sort((a, b) => a.order - b.order).map(p => {
               const done = mp.completedPracticeIds.includes(p.id);
               return (
-                <Link key={p.id} to={`/training/practice/${p.id}`} className="flex items-center gap-3 px-5 py-3 hover:bg-surface-alt transition-colors">
+                <Link
+                  key={p.id}
+                  to={`/training/practice/${p.id}`}
+                  className="flex items-center gap-3 px-5 py-3 hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
+                >
                   {done ? <CheckCircle className="w-4 h-4 text-accent shrink-0" /> : <Circle className="w-4 h-4 text-secondary shrink-0" />}
                   <span className="text-sm text-primary flex-1 min-w-0 truncate">{p.title}</span>
                   <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-surface-alt text-secondary shrink-0 capitalize">{p.kind}</span>
@@ -101,7 +109,7 @@ export default function ModuleViewer() {
 
       {/* Challenge */}
       {module.challenge && (
-        <section className="bg-surface border border-line rounded-xl p-5 flex items-center gap-3">
+        <section className="bg-surface border border-line rounded-xl p-5 flex items-center gap-3 animate-[slideUp_0.35s_ease-out_0.15s_both]">
           <div className="w-9 h-9 rounded-full bg-accent/10 text-accent flex items-center justify-center shrink-0">
             <Zap className="w-4 h-4" />
           </div>
@@ -109,13 +117,18 @@ export default function ModuleViewer() {
             <p className="text-[11px] font-semibold uppercase tracking-wider text-accent">Challenge</p>
             <p className="text-sm font-medium text-primary truncate">{module.challenge.title}</p>
           </div>
-          <Link to={`/training/practice/${module.challenge.id}`} className="text-xs font-medium text-accent hover:underline shrink-0">Start</Link>
+          <Link
+            to={`/training/practice/${module.challenge.id}`}
+            className="text-xs font-medium text-accent hover:underline shrink-0 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          >
+            Start
+          </Link>
         </section>
       )}
 
       {/* Assessment */}
       {module.assessment && (
-        <section className="bg-surface border border-line rounded-xl p-5">
+        <section className="bg-surface border border-line rounded-xl p-5 animate-[slideUp_0.35s_ease-out_0.2s_both]">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-secondary mb-0.5">Assessment</p>
@@ -128,7 +141,7 @@ export default function ModuleViewer() {
             </div>
             <Link
               to={`/training/assessment/${module.assessment.id}`}
-              className="shrink-0 px-4 py-2 rounded-lg bg-accent text-accent-text text-sm font-medium hover:opacity-90 transition-opacity"
+              className="shrink-0 px-4 py-2 rounded-lg bg-accent text-accent-text text-sm font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
             >
               {mp.assessmentPassed ? 'Review' : 'Start'}
             </Link>
@@ -138,7 +151,7 @@ export default function ModuleViewer() {
 
       {/* Submission */}
       {module.submission && (
-        <section className="bg-surface border border-line rounded-xl p-5">
+        <section className="bg-surface border border-line rounded-xl p-5 animate-[slideUp_0.35s_ease-out_0.25s_both]">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-secondary mb-0.5">Submission</p>
@@ -146,7 +159,7 @@ export default function ModuleViewer() {
             </div>
             <Link
               to={`/training/assignment/${module.submission.id}`}
-              className="shrink-0 px-4 py-2 rounded-lg border border-line text-sm font-medium text-primary hover:bg-surface-alt transition-colors"
+              className="shrink-0 px-4 py-2 rounded-lg border border-line text-sm font-medium text-primary hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
             >
               {mp.submissionStatus ?? 'Submit'}
             </Link>
@@ -155,7 +168,7 @@ export default function ModuleViewer() {
       )}
 
       {/* Completion */}
-      <section className="bg-surface border border-line rounded-xl p-5 flex items-center justify-between gap-3">
+      <section className="bg-surface border border-line rounded-xl p-5 flex items-center justify-between gap-3 animate-[slideUp_0.35s_ease-out_0.3s_both]">
         <div className="flex items-center gap-3">
           <ModuleStatusIcon state={progress.moduleState(module, undefined)} />
           <p className="text-sm font-medium text-primary">
@@ -165,7 +178,7 @@ export default function ModuleViewer() {
         {canComplete && (
           <button
             onClick={() => progress.markModuleComplete(module.id)}
-            className="shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-lg bg-accent text-accent-text text-sm font-medium hover:opacity-90 transition-opacity"
+            className="shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-lg bg-accent text-accent-text text-sm font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
           >
             Mark complete
             <ArrowRight className="w-4 h-4" />

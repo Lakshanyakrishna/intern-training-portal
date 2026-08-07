@@ -1,28 +1,31 @@
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useInternTrack } from '../hooks/useInternTrack';
 import { useTrainingProgress } from '../hooks/useTrainingProgress';
 import { ModuleStatusChip, ModuleStatusIcon } from '../components/ModuleStatusChip';
 import SkeletonBlock from '../components/SkeletonBlock';
-import { ChevronDown, Clock } from '../../components/Icons';
+import { ChevronDown, Clock, Layers } from '../../components/Icons';
+import EmptyState from '../../applicant/components/EmptyState';
 import type { ModuleConfig, ModuleState, StageConfig } from '../config/types';
 
-function StageSection({ stage, previousStageLastModule, moduleState, defaultOpen }: {
+function StageSection({ stage, previousStageLastModule, moduleState, defaultOpen, style }: {
   stage: StageConfig;
   previousStageLastModule: ModuleConfig | undefined;
   moduleState: (module: ModuleConfig, previous: ModuleConfig | undefined) => ModuleState;
   defaultOpen: boolean;
+  style?: CSSProperties;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const modules = stage.modules.slice().sort((a, b) => a.order - b.order);
   const doneCount = modules.filter(m => moduleState(m, undefined) === 'completed').length;
 
   return (
-    <div className="bg-surface border border-line rounded-xl overflow-hidden">
+    <div style={style} className="bg-surface border border-line rounded-xl overflow-hidden animate-[slideUp_0.35s_ease-out_both]">
       <button
         onClick={() => setOpen(p => !p)}
-        className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-surface-alt transition-colors"
+        aria-expanded={open}
+        className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
       >
         <div>
           <h3 className="text-sm font-semibold text-primary">{stage.title}</h3>
@@ -32,15 +35,21 @@ function StageSection({ stage, previousStageLastModule, moduleState, defaultOpen
           {modules.length > 0 && (
             <span className="text-xs text-secondary tabular-nums">{doneCount}/{modules.length}</span>
           )}
-          <ChevronDown className={`w-4 h-4 text-secondary transition-transform ${open ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`w-4 h-4 text-secondary transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
         </div>
       </button>
 
       {open && (
         modules.length === 0 ? (
-          <div className="px-5 pb-4 text-sm text-secondary">Modules for this stage aren't available yet.</div>
+          <div className="border-t border-line animate-[slideUp_0.25s_ease-out]">
+            <EmptyState
+              icon={<Layers className="w-4 h-4" />}
+              title="Curriculum is on its way"
+              description="Modules for this stage aren't available yet — check back soon."
+            />
+          </div>
         ) : (
-          <div className="divide-y divide-line border-t border-line">
+          <div className="divide-y divide-line border-t border-line animate-[slideUp_0.25s_ease-out]">
             {modules.map((module, i) => {
               const prev = i === 0 ? previousStageLastModule : modules[i - 1];
               const state = moduleState(module, prev);
@@ -67,9 +76,13 @@ function StageSection({ stage, previousStageLastModule, moduleState, defaultOpen
                 </div>
               );
               return locked ? (
-                <div key={module.id} className="opacity-50 cursor-not-allowed">{content}</div>
+                <div key={module.id} aria-disabled="true" className="opacity-50 cursor-not-allowed">{content}</div>
               ) : (
-                <Link key={module.id} to={`/training/module/${module.id}`} className="block hover:bg-surface-alt transition-colors">
+                <Link
+                  key={module.id}
+                  to={`/training/module/${module.id}`}
+                  className="block hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
+                >
                   {content}
                 </Link>
               );
@@ -118,6 +131,7 @@ export default function LearningPath() {
               previousStageLastModule={previousStageLastModule}
               moduleState={progress.moduleState}
               defaultOpen={i === 0 || stage.id === progress.currentStage?.id}
+              style={{ animationDelay: `${i * 0.05}s` }}
             />
           );
         })}

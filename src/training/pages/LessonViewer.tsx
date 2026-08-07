@@ -77,8 +77,8 @@ export default function LessonViewer() {
 
   return (
     <div className="grid lg:grid-cols-[1fr_260px] gap-6 items-start">
-      <div className="min-w-0 space-y-5">
-        <Link to={`/training/module/${module.id}`} className="flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary transition-colors w-fit">
+      <div className="min-w-0 space-y-5 animate-[slideUp_0.35s_ease-out]">
+        <Link to={`/training/module/${module.id}`} className="flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary transition-colors w-fit rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
           <ArrowLeft className="w-3.5 h-3.5" />
           Back to {module.title}
         </Link>
@@ -89,7 +89,7 @@ export default function LessonViewer() {
             onClick={toggleBookmark}
             aria-pressed={bookmarked}
             aria-label="Bookmark this lesson"
-            className={`shrink-0 p-2 rounded-lg border transition-colors ${bookmarked ? 'border-accent text-accent bg-accent/10' : 'border-line text-secondary hover:text-primary'}`}
+            className={`shrink-0 p-2 rounded-lg border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background ${bookmarked ? 'border-accent text-accent bg-accent/10' : 'border-line text-secondary hover:text-primary'}`}
           >
             <Flag className="w-4 h-4" />
           </button>
@@ -99,7 +99,7 @@ export default function LessonViewer() {
         <LessonContentPlaceholder contentType={lesson.contentType} />
 
         <div className="bg-surface border border-line rounded-xl p-5">
-          <h2 className="text-sm font-semibold text-primary mb-2">Notes</h2>
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary mb-2">Notes</h2>
           <textarea
             value={notes}
             onChange={e => saveNotes(e.target.value)}
@@ -113,14 +113,14 @@ export default function LessonViewer() {
           <button
             onClick={() => prevLesson && navigate(`/training/lesson/${prevLesson.id}`)}
             disabled={!prevLesson}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-line text-sm font-medium text-primary hover:bg-surface-alt transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-line text-sm font-medium text-primary hover:bg-surface-alt transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Previous
           </button>
           <button
             onClick={handleComplete}
-            className={`flex items-center gap-1.5 px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center gap-1.5 px-5 py-2 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
               done ? 'border border-line text-secondary hover:bg-surface-alt' : 'bg-accent text-accent-text hover:opacity-90'
             }`}
           >
@@ -131,7 +131,7 @@ export default function LessonViewer() {
       </div>
 
       {/* Overview sidebar */}
-      <div className="bg-surface border border-line rounded-xl p-2 lg:sticky lg:top-20">
+      <div className="bg-surface border border-line rounded-xl p-2 lg:sticky lg:top-20 animate-[slideUp_0.35s_ease-out_0.1s_both]">
         <p className="text-[11px] font-semibold uppercase tracking-wider text-secondary px-3 pt-2 pb-1.5">In this module</p>
         <div className="space-y-0.5">
           {sortedLessons.map((l, i) => {
@@ -141,7 +141,7 @@ export default function LessonViewer() {
               <Link
                 key={l.id}
                 to={`/training/lesson/${l.id}`}
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
+                className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                   active ? 'bg-accent/10 text-accent font-medium' : 'text-secondary hover:bg-surface-alt hover:text-primary'
                 }`}
               >
