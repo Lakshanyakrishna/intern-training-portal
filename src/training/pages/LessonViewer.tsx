@@ -5,6 +5,7 @@ import { useInternTrack } from '../hooks/useInternTrack';
 import { useTrainingProgress } from '../hooks/useTrainingProgress';
 import { findLesson } from '../config/types';
 import SkeletonBlock from '../components/SkeletonBlock';
+import LessonContent from '../components/LessonContent';
 import {
   ArrowLeft, CheckCircle, Circle, FileText, Flag, Video,
 } from '../../components/Icons';
@@ -96,7 +97,7 @@ export default function LessonViewer() {
         </div>
         {lesson.summary && <p className="text-sm text-secondary">{lesson.summary}</p>}
 
-        <LessonContentPlaceholder contentType={lesson.contentType} />
+        {lesson.content ? <LessonContent content={lesson.content} /> : <LessonContentPlaceholder contentType={lesson.contentType} />}
 
         <div className="bg-surface border border-line rounded-xl p-5">
           <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary mb-2">Notes</h2>
