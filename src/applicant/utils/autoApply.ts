@@ -10,13 +10,14 @@ export type AutoApplyResult =
   | { status: 'needs-form' }
   | { status: 'error'; message: string };
 
-// Opportunities are still placeholder content (src/applicant/mock/
-// opportunities.ts) -- no real opportunity_id exists yet to attach, so this
-// submits the same general application /apply already allows without one.
-// One-click only works when a profile resume already exists to attach;
-// without one there's nothing to auto-submit, so the real form (with its
+// One-click apply: if a profile resume already exists, submits for real
+// immediately instead of sending them through the form again. Without a
+// resume there's nothing to auto-attach, so the real form (with its
 // required Resume field) is the honest next step instead of a fake success.
-export async function autoApply(user: AuthUser): Promise<AutoApplyResult> {
+// opportunityId is what lets useInternTrack later resolve the intern's
+// correct training track -- always pass the real DB opportunity id through
+// from the card that was actually clicked, never omit it.
+export async function autoApply(user: AuthUser, opportunityId?: string): Promise<AutoApplyResult> {
   try {
     const existing = await getApplicationByUserId(user.id);
     if (existing && !existing.withdrawnAt) {
@@ -34,6 +35,7 @@ export async function autoApply(user: AuthUser): Promise<AutoApplyResult> {
       yearOfStudy: user.yearOfStudy,
       major: user.major,
       userId: user.id,
+      opportunityId,
     });
     await attachResumeToApplication(resume.id, applicationId);
     notifyEvent('application_submitted', user.id, { name: user.name, opportunity: 'the program' }).catch(() => {});

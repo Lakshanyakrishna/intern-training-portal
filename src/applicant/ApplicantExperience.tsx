@@ -4,11 +4,13 @@ import { useAuth } from '../contexts/AuthContext';
 import {
   getUserSettings, upsertUserSettings, getApplicationByUserId, getInterviewsByApplicant,
   acceptOffer, withdrawApplication, beginTraining, getNotifications, getProfileResume,
+  getOpportunities,
 } from '../lib/db';
 import type { DbApplication, DbInterview } from '../lib/db';
 import { notifyEvent } from '../lib/notifications';
 import { roleHomePath } from '../utils/roleHome';
 import { autoApply } from './utils/autoApply';
+import { mapDbOpportunityToApplicant } from './utils/mapOpportunity';
 import type { AuthUser } from '../types';
 import { Sun, Moon, XCircle, ChevronDown, LogOut, CheckCircle } from '../components/Icons';
 import NotificationBell from '../components/NotificationBell';
@@ -20,7 +22,6 @@ import WhatsNext from './components/WhatsNext';
 import StageContent from './components/StageContent';
 import QuickAccessDock from './components/QuickAccessDock';
 import QuickStats from './components/QuickStats';
-import { MOCK_OPPORTUNITIES } from './mock/opportunities';
 import { applicationForStage } from './mock/application';
 import { MOCK_INTERVIEW_SLOTS, MOCK_SCHEDULED_INTERVIEW } from './mock/interviews';
 import { activityForStage } from './mock/activity';
@@ -28,7 +29,7 @@ import { notificationsForStage } from './mock/notifications';
 import { MOCK_QUICK_STATS } from './mock/stats';
 import type {
   ActivityItem, ApplicationSummary, JourneyActions, NotificationItem, NotificationKind,
-  ScheduledInterview, Stage,
+  Opportunity, ScheduledInterview, Stage,
 } from './types';
 
 // Real application status -> Stage. Only reachable states from the real
@@ -204,13 +205,22 @@ function useApplicantJourney(user: AuthUser | null | undefined) {
   const [autoApplyMessage, setAutoApplyMessage] = useState<string | null>(null);
   const [stage, setStageState] = useState<Stage>('no_application');
   const [isLive, setIsLive] = useState(false);
-  const [opportunityTitle] = useState(MOCK_OPPORTUNITIES[0]?.title ?? '');
+  const opportunityTitle = 'the program';
   const [scheduledInterview, setScheduledInterview] = useState<ScheduledInterview>(MOCK_SCHEDULED_INTERVIEW);
   const [realApplication, setRealApplication] = useState<DbApplication | null>(null);
   const [realInterview, setRealInterview] = useState<DbInterview | null>(null);
   const [realNotifications, setRealNotifications] = useState<NotificationItem[] | null>(null);
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
+
+  useEffect(() => {
+    let cancelled = false;
+    getOpportunities('active').then(rows => {
+      if (!cancelled) setOpportunities(rows.map(mapDbOpportunityToApplicant));
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 500);
@@ -295,18 +305,19 @@ function useApplicantJourney(user: AuthUser | null | undefined) {
   const actions: JourneyActions = {
     // Real one-click apply: if a profile resume already exists, submit
     // immediately (autoApply, shared with BrowseOpportunities.tsx) instead
-    // of sending them through the form again. No real opportunity data
-    // exists yet to attach (mock cards only), same as the general
-    // application /apply already allows without one. Falls back to the
-    // real form when there's nothing to auto-attach, or in preview mode
-    // where nothing should write for real.
-    onApply: () => {
+    // of sending them through the form again. opportunityId is the real DB
+    // row id (see mapDbOpportunityToApplicant) and must reach both
+    // navigate() and autoApply() -- dropping it is what silently assigns a
+    // new intern to the wrong training track. Falls back to the real form
+    // when there's nothing to auto-attach, or in preview mode where
+    // nothing should write for real.
+    onApply: (opportunityId: string) => {
       if (!isLive || !user) {
-        navigate('/apply');
+        navigate(`/apply/${opportunityId}`);
         return;
       }
       setAutoApplying(true);
-      autoApply(user).then(result => {
+      autoApply(user, opportunityId).then(result => {
         if (result.status === 'applied') {
           setAutoApplyMessage('Applied — tracking it below now.');
           getApplicationByUserId(user.id).then(app => {
@@ -316,7 +327,7 @@ function useApplicantJourney(user: AuthUser | null | undefined) {
         } else if (result.status === 'already-applied') {
           setAutoApplyMessage("You've already applied — see below for status.");
         } else if (result.status === 'needs-form') {
-          navigate('/apply');
+          navigate(`/apply/${opportunityId}`);
         } else {
           setAutoApplyMessage(result.message);
         }
@@ -390,6 +401,7 @@ function useApplicantJourney(user: AuthUser | null | undefined) {
     scheduledInterview: realScheduledInterview ?? scheduledInterview,
     actions,
     isLive,
+    opportunities,
     offerAccepted: !!realApplication?.offerAcceptedAt,
     realActivity: realApplication ? buildRealActivity(realApplication, realInterview) : null,
     realNotifications,
@@ -410,7 +422,7 @@ export default function ApplicantExperience() {
   const [hasProfileResume, setHasProfileResume] = useState(false);
   const {
     loading, stage, previewStage, application, scheduledInterview, actions,
-    isLive, offerAccepted, realActivity, realNotifications,
+    isLive, offerAccepted, realActivity, realNotifications, opportunities,
     autoApplying, autoApplyMessage, clearAutoApplyMessage,
   } = useApplicantJourney(user);
 
@@ -525,7 +537,7 @@ export default function ApplicantExperience() {
             <CurrentMission>
               <StageContent
                 stage={stage}
-                opportunities={MOCK_OPPORTUNITIES}
+                opportunities={opportunities}
                 application={application}
                 slotGroups={MOCK_INTERVIEW_SLOTS}
                 interview={scheduledInterview}

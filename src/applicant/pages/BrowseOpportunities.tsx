@@ -4,9 +4,11 @@ import { ArrowLeft, Search, Grid, CheckCircle } from '../../components/Icons';
 import Logo from '../../components/Logo';
 import EmptyState from '../components/EmptyState';
 import OpportunityCard from '../components/OpportunityCard';
-import { MOCK_OPPORTUNITIES } from '../mock/opportunities';
 import { useAuth } from '../../contexts/AuthContext';
 import { autoApply } from '../utils/autoApply';
+import { getOpportunities } from '../../lib/db';
+import { mapDbOpportunityToApplicant } from '../utils/mapOpportunity';
+import type { Opportunity } from '../types';
 
 // This page has no theme toggle of its own -- ApplicantExperience owns
 // that control and writes the choice to localStorage. Without this, a
@@ -37,6 +39,7 @@ export default function BrowseOpportunities() {
   const [applyingId, setApplyingId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<number | undefined>(undefined);
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
 
   function showToast(message: string) {
     setToast(message);
@@ -45,9 +48,17 @@ export default function BrowseOpportunities() {
   }
   useEffect(() => () => window.clearTimeout(toastTimer.current), []);
 
+  useEffect(() => {
+    let cancelled = false;
+    getOpportunities('active').then(rows => {
+      if (!cancelled) setOpportunities(rows.map(mapDbOpportunityToApplicant));
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
   const categories = useMemo(
-    () => ['All', ...Array.from(new Set(MOCK_OPPORTUNITIES.map(o => o.category)))],
-    []
+    () => ['All', ...Array.from(new Set(opportunities.map(o => o.category)))],
+    [opportunities]
   );
 
   // "Find your fit" (QuickStats, dashboard) sends applicants here wanting to
@@ -68,34 +79,34 @@ export default function BrowseOpportunities() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return MOCK_OPPORTUNITIES.filter(opp => {
+    return opportunities.filter(opp => {
       const matchesCategory = category === 'All' || opp.category === category;
       const matchesQuery = !q || opp.title.toLowerCase().includes(q) || opp.skills.some(s => s.toLowerCase().includes(q));
       return matchesCategory && matchesQuery;
     });
-  }, [query, category]);
+  }, [opportunities, query, category]);
 
   // One-click apply (shared with ApplicantExperience's onApply): if a
   // profile resume already exists, submits for real immediately instead of
   // sending them through the form again. Falls back to the real form when
-  // there's nothing to auto-attach. These cards are still placeholder
-  // content (no real opportunity_id exists yet) but the submission itself
-  // is real either way -- same general application /apply already allows
-  // without one.
+  // there's nothing to auto-attach. opportunityId is the real DB row id
+  // (see mapDbOpportunityToApplicant) and always has to reach both
+  // navigate() and autoApply() -- dropping it is what silently assigns a
+  // new intern to the wrong training track.
   const handleApply = async (opportunityId: string) => {
     if (!user || applyingId) {
-      navigate('/apply');
+      navigate(`/apply/${opportunityId}`);
       return;
     }
     setApplyingId(opportunityId);
     try {
-      const result = await autoApply(user);
+      const result = await autoApply(user, opportunityId);
       if (result.status === 'applied') {
         showToast('Applied — track it from My Journey.');
       } else if (result.status === 'already-applied') {
         showToast("You've already applied — check My Journey for status.");
       } else if (result.status === 'needs-form') {
-        navigate('/apply');
+        navigate(`/apply/${opportunityId}`);
       } else {
         showToast(result.message);
       }
@@ -125,9 +136,9 @@ export default function BrowseOpportunities() {
         <div>
           <h1 className="text-xl font-semibold text-primary mb-1">Browse all opportunities</h1>
           <p className="text-sm text-secondary">
-            {filtered.length === MOCK_OPPORTUNITIES.length
-              ? `${MOCK_OPPORTUNITIES.length} open opportunit${MOCK_OPPORTUNITIES.length === 1 ? 'y' : 'ies'}`
-              : `${filtered.length} of ${MOCK_OPPORTUNITIES.length} opportunities`}
+            {filtered.length === opportunities.length
+              ? `${opportunities.length} open opportunit${opportunities.length === 1 ? 'y' : 'ies'}`
+              : `${filtered.length} of ${opportunities.length} opportunities`}
           </p>
         </div>
 
