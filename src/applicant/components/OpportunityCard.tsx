@@ -1,11 +1,15 @@
 import type { Opportunity } from '../types';
 
 // Structural card, not real listing UI -- the point right now is the shape
-// (image slot, title, description, skills, duration, seats, deadline,
-// apply action), not the specific opportunities, which are mock. Apply is
-// a no-op placeholder (onApply prop) until a real application flow exists
-// on this route.
-export default function OpportunityCard({ opportunity, onApply }: { opportunity: Opportunity; onApply: (id: string) => void }) {
+// (image slot, title, description, skills, duration, seats, deadline),
+// not the specific opportunities, which are mock. Apply itself is real:
+// onApply triggers the shared autoApply flow (src/applicant/utils/
+// autoApply.ts), which submits for real when a profile resume exists.
+export default function OpportunityCard({ opportunity, onApply, applying }: {
+  opportunity: Opportunity;
+  onApply: (id: string) => void;
+  applying?: boolean;
+}) {
   return (
     <div className="rounded-2xl border border-line bg-surface overflow-hidden flex flex-col shadow-sm shadow-black/[0.03] hover:shadow-md hover:shadow-black/[0.06] hover:-translate-y-0.5 transition-all duration-200">
       <div className="h-40 bg-surface-alt flex items-center justify-center text-[11px] text-secondary overflow-hidden">
@@ -45,9 +49,11 @@ export default function OpportunityCard({ opportunity, onApply }: { opportunity:
 
         <button
           onClick={() => onApply(opportunity.id)}
-          className="mt-4 w-full py-2.5 rounded-lg bg-accent text-accent-text text-sm font-medium hover:bg-accent-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+          disabled={applying}
+          className="mt-4 w-full py-2.5 rounded-lg bg-accent text-accent-text text-sm font-medium hover:bg-accent-hover transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:opacity-60 disabled:cursor-wait flex items-center justify-center gap-2"
         >
-          Apply
+          {applying && <span className="w-3.5 h-3.5 border-2 border-accent-text/40 border-t-accent-text rounded-full animate-spin" />}
+          {applying ? 'Applying…' : 'Apply'}
         </button>
       </div>
     </div>
