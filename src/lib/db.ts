@@ -670,6 +670,15 @@ export async function withdrawApplication(applicationId: string): Promise<void> 
   if (error) throw error;
 }
 
+// Self-service applicant -> intern promotion, gated server-side on an
+// accepted + confirmed offer (034_begin_training.sql). A direct role
+// update from the client would be rejected by trg_guard_user_role_field.
+export async function beginTraining(): Promise<void> {
+  const supabase = requireSupabase();
+  const { error } = await supabase.rpc('begin_training');
+  if (error) throw error;
+}
+
 // ─── Resume Files (Phase D.7) ─────────────────────────────────────
 
 export interface DbResumeFile {
