@@ -71,10 +71,10 @@ export default function AdminMentors() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Assign form */}
         <form onSubmit={handleAssign} className="bg-surface border border-line rounded-xl p-6 space-y-5">
-          <h2 className="text-sm font-semibold text-primary">New Assignment</h2>
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">New Assignment</h2>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Intern *</label>
+            <label className="block text-sm font-medium text-primary mb-1.5">Intern *</label>
             <select required value={selectedIntern} onChange={e => setSelectedIntern(e.target.value)} className={inputClass}>
               <option value="">Select intern...</option>
               {unassignedInterns.map(i => (
@@ -84,7 +84,7 @@ export default function AdminMentors() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Mentor *</label>
+            <label className="block text-sm font-medium text-primary mb-1.5">Mentor *</label>
             <select required value={selectedMentor} onChange={e => setSelectedMentor(e.target.value)} className={inputClass}>
               <option value="">Select mentor...</option>
               {mentors.map(m => (
@@ -97,7 +97,7 @@ export default function AdminMentors() {
             Assign Mentor
           </button>
 
-          <p className="text-xs text-gray-400 dark:text-gray-500">
+          <p className="text-xs text-secondary">
             {unassignedInterns.length} unassigned intern{unassignedInterns.length !== 1 ? 's' : ''} available.
           </p>
         </form>
@@ -105,16 +105,16 @@ export default function AdminMentors() {
         {/* Current assignments */}
         <div className="bg-surface border border-line rounded-xl overflow-hidden">
           <div className="px-4 py-3 border-b border-line bg-surface-alt">
-            <h2 className="text-sm font-semibold text-primary">Current Assignments</h2>
+            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">Current Assignments</h2>
           </div>
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <div className="w-5 h-5 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : assignments.length === 0 ? (
-            <div className="text-center py-8 text-sm text-gray-400 dark:text-gray-500">No assignments yet.</div>
+            <div className="text-center py-8 text-sm text-secondary">No assignments yet.</div>
           ) : (
-            <div className="divide-y divide-gray-100 dark:divide-gray-700">
+            <div className="divide-y divide-line">
               {assignments.map(a => (
                 <div key={a.id} className="flex items-center justify-between px-4 py-3">
                   <div>
@@ -122,7 +122,7 @@ export default function AdminMentors() {
                     <p className="text-xs text-secondary">Mentor: {a.mentorName || 'Unknown'}</p>
                   </div>
                   <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-                    a.status === 'active' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                    a.status === 'active' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' : 'bg-surface-alt text-secondary'
                   }`}>{a.status}</span>
                 </div>
               ))}
