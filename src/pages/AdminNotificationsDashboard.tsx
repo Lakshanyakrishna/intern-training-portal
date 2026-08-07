@@ -148,8 +148,8 @@ export default function AdminNotificationsDashboard() {
           onClick={() => setTab('logs')}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             tab === 'logs'
-              ? 'border-neutral-600 text-accent dark:border-neutral-400'
-              : 'border-transparent text-secondary hover:text-gray-700 dark:hover:text-gray-300'
+              ? 'border-accent text-accent'
+              : 'border-transparent text-secondary hover:text-primary'
           }`}
         >
           Email Logs
@@ -158,8 +158,8 @@ export default function AdminNotificationsDashboard() {
           onClick={() => setTab('templates')}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             tab === 'templates'
-              ? 'border-neutral-600 text-accent dark:border-neutral-400'
-              : 'border-transparent text-secondary hover:text-gray-700 dark:hover:text-gray-300'
+              ? 'border-accent text-accent'
+              : 'border-transparent text-secondary hover:text-primary'
           }`}
         >
           Templates
@@ -180,11 +180,11 @@ export default function AdminNotificationsDashboard() {
       {tab === 'logs' && (
         <div className="bg-surface border border-line rounded-xl overflow-hidden">
           <div className="px-4 py-3 border-b border-line bg-surface-alt">
-            <h2 className="text-sm font-semibold text-primary">Recent Email Logs</h2>
+            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">Recent Email Logs</h2>
             <p className="text-xs text-secondary">Last 50 emails</p>
           </div>
           {emailLogs.length === 0 ? (
-            <div className="text-center py-8 text-sm text-gray-400 dark:text-gray-500">No email logs found.</div>
+            <div className="text-center py-8 text-sm text-secondary">No email logs found.</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -197,12 +197,12 @@ export default function AdminNotificationsDashboard() {
                     <th className="px-4 py-3 font-medium">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                <tbody className="divide-y divide-line">
                   {emailLogs.map(log => (
-                    <tr key={log.id} className="text-gray-700 dark:text-gray-300">
+                    <tr key={log.id} className="text-primary">
                       <td className="px-4 py-3 max-w-[200px] truncate">{log.recipientEmail}</td>
                       <td className="px-4 py-3">
-                        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-secondary font-medium">
+                        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-surface-alt text-secondary font-medium">
                           {log.eventType}
                         </span>
                       </td>
@@ -214,7 +214,7 @@ export default function AdminNotificationsDashboard() {
                             ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
                             : log.status === 'bounced'
                             ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400'
-                            : 'bg-gray-100 dark:bg-gray-700 text-secondary'
+                            : 'bg-surface-alt text-secondary'
                         }`}>
                           {log.status}
                         </span>
@@ -245,7 +245,7 @@ export default function AdminNotificationsDashboard() {
       {tab === 'templates' && (
         <div className="space-y-4">
           {templates.length === 0 ? (
-            <div className="text-center py-8 text-sm text-gray-400 dark:text-gray-500">No templates found.</div>
+            <div className="text-center py-8 text-sm text-secondary">No templates found.</div>
           ) : (
             templates.map(t => (
               <div key={t.id} className="bg-surface border border-line rounded-xl overflow-hidden">
@@ -262,7 +262,7 @@ export default function AdminNotificationsDashboard() {
                       </button>
                       <button
                         onClick={cancelEdit}
-                        className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                        className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary font-medium hover:bg-surface-alt transition-colors"
                       >
                         Cancel
                       </button>
@@ -270,7 +270,7 @@ export default function AdminNotificationsDashboard() {
                   ) : (
                     <button
                       onClick={() => startEdit(t)}
-                      className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      className="text-xs px-3 py-1.5 rounded-lg border border-line text-secondary font-medium hover:bg-surface-alt transition-colors"
                     >
                       Edit
                     </button>
@@ -308,9 +308,9 @@ export default function AdminNotificationsDashboard() {
                   </div>
                 ) : (
                   <div className="p-4 space-y-2 text-sm">
-                    <p><span className="text-xs text-secondary font-medium">Subject:</span> <span className="text-gray-700 dark:text-gray-300">{t.subject}</span></p>
-                    <p><span className="text-xs text-secondary font-medium">Email Body:</span> <span className="text-gray-700 dark:text-gray-300 line-clamp-2 font-mono text-xs">{t.emailBody}</span></p>
-                    <p><span className="text-xs text-secondary font-medium">In-App Template:</span> <span className="text-gray-700 dark:text-gray-300 line-clamp-2 font-mono text-xs">{t.inAppTemplate}</span></p>
+                    <p><span className="text-xs text-secondary font-medium">Subject:</span> <span className="text-primary">{t.subject}</span></p>
+                    <p><span className="text-xs text-secondary font-medium">Email Body:</span> <span className="text-primary line-clamp-2 font-mono text-xs">{t.emailBody}</span></p>
+                    <p><span className="text-xs text-secondary font-medium">In-App Template:</span> <span className="text-primary line-clamp-2 font-mono text-xs">{t.inAppTemplate}</span></p>
                   </div>
                 )}
               </div>
