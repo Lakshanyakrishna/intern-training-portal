@@ -11,10 +11,7 @@ export function roleHomePath(role: UserRole | undefined): string {
     case 'admin':
       return '/admin/applications';
     case 'intern':
-      // No training dashboard exists yet -- real modules replace the mock
-      // ones that used to live at /dashboard. Profile is the only page
-      // left that an intern can actually reach.
-      return '/profile';
+      return '/training';
     default:
       return '/profile';
   }

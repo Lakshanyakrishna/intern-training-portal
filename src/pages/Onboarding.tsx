@@ -16,7 +16,7 @@ export default function Onboarding() {
 
   const handleStart = () => {
     completeOnboarding();
-    navigate('/profile');
+    navigate('/training');
   };
 
   return (
