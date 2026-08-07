@@ -24,8 +24,8 @@ export default function CodingWorkspace() {
   const { module, practice } = found;
 
   return (
-    <div className="space-y-4">
-      <Link to={`/training/practice/${practice.id}`} className="flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary transition-colors w-fit">
+    <div className="space-y-4 animate-[slideUp_0.35s_ease-out]">
+      <Link to={`/training/practice/${practice.id}`} className="flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary transition-colors w-fit rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
         <ArrowLeft className="w-3.5 h-3.5" />
         Back to practice
       </Link>
@@ -36,7 +36,7 @@ export default function CodingWorkspace() {
         {/* Instructions + hints panel */}
         <div className="space-y-4">
           <div className="bg-surface border border-line rounded-xl p-4">
-            <h2 className="text-sm font-semibold text-primary mb-2">Instructions</h2>
+            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary mb-2">Instructions</h2>
             <p className="text-sm text-secondary">
               {practice.description ?? 'Exercise instructions will appear here once this practice is written.'}
             </p>
@@ -45,10 +45,11 @@ export default function CodingWorkspace() {
           <div className="bg-surface border border-line rounded-xl overflow-hidden">
             <button
               onClick={() => setHintsOpen(p => !p)}
-              className="w-full flex items-center justify-between gap-2 px-4 py-3 text-left hover:bg-surface-alt transition-colors"
+              aria-expanded={hintsOpen}
+              className="w-full flex items-center justify-between gap-2 px-4 py-3 text-left hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
             >
-              <span className="flex items-center gap-2 text-sm font-semibold text-primary">
-                <Target className="w-4 h-4 text-secondary" />
+              <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-secondary">
+                <Target className="w-3.5 h-3.5" />
                 Hints
               </span>
               <ChevronDown className={`w-4 h-4 text-secondary transition-transform ${hintsOpen ? 'rotate-180' : ''}`} />
@@ -80,7 +81,7 @@ export default function CodingWorkspace() {
 
           <button
             onClick={() => progress.markPracticeComplete(module.id, practice.id)}
-            className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-accent text-accent-text text-sm font-medium hover:opacity-90 transition-opacity"
+            className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-accent text-accent-text text-sm font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             <Send className="w-4 h-4" />
             Submit

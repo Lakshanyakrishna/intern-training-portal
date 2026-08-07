@@ -40,8 +40,8 @@ export default function Practice() {
   const done = progress.getModuleProgress(module.id).completedPracticeIds.includes(practice.id);
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <Link to={`/training/module/${module.id}`} className="flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary transition-colors w-fit">
+    <div className="max-w-2xl mx-auto space-y-6 animate-[slideUp_0.35s_ease-out]">
+      <Link to={`/training/module/${module.id}`} className="flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary transition-colors w-fit rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
         <ArrowLeft className="w-3.5 h-3.5" />
         Back to {module.title}
       </Link>
@@ -57,7 +57,7 @@ export default function Practice() {
       {practice.kind === 'coding' && (
         <Link
           to={`/training/workspace/${practice.id}`}
-          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg border border-line text-sm font-medium text-primary hover:bg-surface-alt transition-colors"
+          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg border border-line text-sm font-medium text-primary hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <Code className="w-4 h-4" />
           Open Coding Workspace
@@ -67,7 +67,7 @@ export default function Practice() {
       <button
         onClick={() => progress.markPracticeComplete(module.id, practice.id)}
         disabled={done}
-        className={`w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-60 ${
+        className={`w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
           done ? 'border border-line text-secondary' : 'bg-accent text-accent-text hover:opacity-90'
         }`}
       >
