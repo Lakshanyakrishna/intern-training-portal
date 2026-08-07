@@ -17,7 +17,7 @@ const STATUSES: DbOpportunity['status'][] = ['draft', 'active', 'closed'];
 const QUESTION_TYPES: DbOpportunityQuestion['type'][] = ['text', 'textarea', 'select'];
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' },
+  draft: { label: 'Draft', color: 'bg-surface-alt text-secondary' },
   active: { label: 'Active', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' },
   closed: { label: 'Closed', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' },
 };
@@ -176,7 +176,7 @@ export default function AdminOpportunities() {
   }
 
   const inputClass = 'w-full px-3.5 py-2.5 rounded-lg border border-line bg-surface text-sm text-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent transition-colors';
-  const labelClass = 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5';
+  const labelClass = 'block text-sm font-medium text-primary mb-1.5';
   const selectClass = inputClass;
 
   return (
@@ -206,11 +206,11 @@ export default function AdminOpportunities() {
         </div>
       ) : opportunities.length === 0 ? (
         <div className="bg-surface border border-line rounded-xl p-8 text-center">
-          <p className="text-sm text-gray-400 dark:text-gray-500">No opportunities yet. Create one to get started.</p>
+          <p className="text-sm text-secondary">No opportunities yet. Create one to get started.</p>
         </div>
       ) : (
         <div className="bg-surface border border-line rounded-xl overflow-hidden">
-          <div className="divide-y divide-gray-100 dark:divide-gray-700">
+          <div className="divide-y divide-line">
             {opportunities.map(opp => (
               <div key={opp.id}>
                 <div className="flex items-center justify-between px-4 py-3">
@@ -258,7 +258,7 @@ export default function AdminOpportunities() {
                         </button>
                         <button
                           onClick={e => { e.stopPropagation(); setDeleteConfirmId(null); }}
-                          className="text-xs px-2 py-1.5 rounded-lg border border-line text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          className="text-xs px-2 py-1.5 rounded-lg border border-line text-primary hover:bg-surface-alt transition-colors"
                         >
                           Cancel
                         </button>
@@ -277,7 +277,7 @@ export default function AdminOpportunities() {
                   <div className="px-4 pb-4 pl-8 border-t border-line pt-3">
                     <div className="mb-3">
                       <p className="text-xs text-secondary mb-1">Description</p>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">{opp.description}</p>
+                      <p className="text-sm text-primary">{opp.description}</p>
                     </div>
                     {(opp.startDate || opp.endDate) && (
                       <div className="flex items-center gap-4 mb-3 text-xs text-secondary">
@@ -300,17 +300,17 @@ export default function AdminOpportunities() {
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
                                   <p className="text-sm text-primary">{q.question}</p>
-                                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-secondary">
+                                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-surface text-secondary">
                                     {QUESTION_TYPE_LABELS[q.type]}
                                   </span>
                                   {q.required && (
-                                    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-900/30 text-accent">Required</span>
+                                    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-surface text-accent">Required</span>
                                   )}
                                 </div>
                                 {q.type === 'select' && q.options && q.options.length > 0 && (
                                   <p className="text-xs text-secondary mt-0.5">Options: {q.options.join(', ')}</p>
                                 )}
-                                <p className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">Order: {q.sortOrder}</p>
+                                <p className="text-[10px] text-secondary mt-0.5">Order: {q.sortOrder}</p>
                               </div>
                               <button
                                 onClick={() => handleDeleteQuestion(opp.id, q.id)}
@@ -321,12 +321,12 @@ export default function AdminOpportunities() {
                             </div>
                           ))}
                           {(questions[opp.id] || []).length === 0 && (
-                            <p className="text-xs text-gray-400 dark:text-gray-500 py-1">No questions added yet.</p>
+                            <p className="text-xs text-secondary py-1">No questions added yet.</p>
                           )}
                         </div>
                       )}
                       <div className="mt-3 pt-3 border-t border-line">
-                        <h4 className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Add Question</h4>
+                        <h4 className="text-xs font-medium text-primary mb-2">Add Question</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div className="sm:col-span-2">
                             <input
@@ -348,12 +348,12 @@ export default function AdminOpportunities() {
                             </select>
                           </div>
                           <div className="flex items-center gap-3">
-                            <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                            <label className="flex items-center gap-2 text-sm text-primary">
                               <input
                                 type="checkbox"
                                 checked={questionForm.required}
                                 onChange={e => setQuestionForm(p => ({ ...p, required: e.target.checked }))}
-                                className="rounded border-line text-neutral-600 focus:ring-accent"
+                                className="rounded border-line text-accent focus:ring-accent"
                               />
                               Required
                             </label>
@@ -403,7 +403,7 @@ export default function AdminOpportunities() {
               <h2 className="text-lg font-semibold text-primary">Create Opportunity</h2>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                className="text-secondary hover:text-primary transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -513,7 +513,7 @@ export default function AdminOpportunities() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2.5 border border-line text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm"
+                  className="px-4 py-2.5 border border-line text-primary font-medium rounded-lg hover:bg-surface-alt transition-colors text-sm"
                 >
                   Cancel
                 </button>
