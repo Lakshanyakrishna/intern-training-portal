@@ -143,7 +143,7 @@ export default function AdminInterviews() {
   const shortlistedApps = applications.filter(a => a.status === 'shortlisted' && a.userId);
 
   const inputClass = 'w-full px-3.5 py-2.5 rounded-lg border border-line bg-surface text-sm text-primary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent transition-colors';
-  const labelClass = 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5';
+  const labelClass = 'block text-sm font-medium text-primary mb-1.5';
 
   return (
     <div className="space-y-6">
@@ -153,8 +153,8 @@ export default function AdminInterviews() {
           <p className="text-sm text-secondary mt-1">Schedule and evaluate interviews.</p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => { setTab('list'); refresh(); }} className={`text-xs px-3 py-1.5 rounded-lg font-medium ${tab === 'list' ? 'bg-accent text-white' : 'bg-gray-100 dark:bg-gray-800 text-secondary'}`}>All Interviews</button>
-          <button onClick={() => setTab('schedule')} className={`text-xs px-3 py-1.5 rounded-lg font-medium ${tab === 'schedule' ? 'bg-accent text-white' : 'bg-gray-100 dark:bg-gray-800 text-secondary'}`}>Schedule New</button>
+          <button onClick={() => { setTab('list'); refresh(); }} className={`text-xs px-3 py-1.5 rounded-lg font-medium ${tab === 'list' ? 'bg-accent text-white' : 'bg-surface-alt text-secondary'}`}>All Interviews</button>
+          <button onClick={() => setTab('schedule')} className={`text-xs px-3 py-1.5 rounded-lg font-medium ${tab === 'schedule' ? 'bg-accent text-white' : 'bg-surface-alt text-secondary'}`}>Schedule New</button>
         </div>
       </div>
 
@@ -168,9 +168,9 @@ export default function AdminInterviews() {
           {tab === 'list' && (
             <div className="bg-surface border border-line rounded-xl overflow-hidden">
               {interviews.length === 0 ? (
-                <div className="text-center py-12 text-sm text-gray-400 dark:text-gray-500">No interviews scheduled yet.</div>
+                <div className="text-center py-12 text-sm text-secondary">No interviews scheduled yet.</div>
               ) : (
-                <div className="divide-y divide-gray-100 dark:divide-gray-700">
+                <div className="divide-y divide-line">
                   {interviews.map(iv => (
                     <div key={iv.id} className="p-4">
                     <div className="flex items-center justify-between">
@@ -188,9 +188,9 @@ export default function AdminInterviews() {
                       </div>
                       <div className="flex items-center gap-3">
                         <span className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${
-                          iv.status === 'scheduled' ? 'bg-neutral-100 text-neutral-700 dark:bg-neutral-900/30 dark:text-neutral-300' :
+                          iv.status === 'scheduled' ? 'bg-surface-alt text-secondary' :
                           iv.status === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                          'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                          'bg-surface-alt text-secondary'
                         }`}>{iv.status}</span>
                         {iv.status === 'scheduled' && (
                           <>

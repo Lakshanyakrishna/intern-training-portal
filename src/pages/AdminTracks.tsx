@@ -128,20 +128,20 @@ export default function AdminTracks() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <form onSubmit={handleCreate} className="bg-surface border border-line rounded-xl p-6 space-y-5">
-          <h2 className="text-sm font-semibold text-primary">New Track</h2>
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">New Track</h2>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Name *</label>
+            <label className="block text-sm font-medium text-primary mb-1.5">Name *</label>
             <input required value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Frontend Fundamentals" className={inputClass} />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
+            <label className="block text-sm font-medium text-primary mb-1.5">Description</label>
             <textarea value={description} onChange={e => setDescription(e.target.value)} rows={2} placeholder="Optional" className={inputClass} />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Applies to which fortes</label>
+            <label className="block text-sm font-medium text-primary mb-1.5">Applies to which fortes</label>
             <div className="flex flex-wrap gap-2">
               {OPPORTUNITY_FORTES.map(forte => (
                 <button
@@ -166,18 +166,18 @@ export default function AdminTracks() {
 
         <div className="bg-surface border border-line rounded-xl overflow-hidden">
           <div className="px-4 py-3 border-b border-line bg-surface-alt">
-            <h2 className="text-sm font-semibold text-primary">Catalog</h2>
+            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">Catalog</h2>
           </div>
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <div className="w-5 h-5 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : tracks.length === 0 ? (
-            <div className="text-center py-8 text-sm text-gray-400 dark:text-gray-500">
+            <div className="text-center py-8 text-sm text-secondary">
               No tracks yet — the picker in Conversion will stay empty until you add one.
             </div>
           ) : (
-            <div className="divide-y divide-gray-100 dark:divide-gray-700">
+            <div className="divide-y divide-line">
               {tracks.map(t => (
                 <div
                   key={t.id}
@@ -215,7 +215,7 @@ export default function AdminTracks() {
       {selectedTrack && (
         <div className="bg-surface border border-line rounded-xl overflow-hidden">
           <div className="px-4 py-3 border-b border-line bg-surface-alt">
-            <h2 className="text-sm font-semibold text-primary">Modules — {selectedTrack.name}</h2>
+            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">Modules — {selectedTrack.name}</h2>
           </div>
 
           <form onSubmit={handleCreateModule} className="p-4 border-b border-line grid gap-3 sm:grid-cols-[1fr_1fr_100px_auto]">
@@ -254,11 +254,11 @@ export default function AdminTracks() {
               <div className="w-5 h-5 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : modules.length === 0 ? (
-            <div className="text-center py-8 text-sm text-gray-400 dark:text-gray-500">
+            <div className="text-center py-8 text-sm text-secondary">
               No modules yet — interns assigned to this track will see an empty state until you add one.
             </div>
           ) : (
-            <div className="divide-y divide-gray-100 dark:divide-gray-700">
+            <div className="divide-y divide-line">
               {modules.map((m, i) => (
                 <div key={m.id} className="flex items-start justify-between gap-3 px-4 py-3">
                   <div className="min-w-0">
