@@ -9,8 +9,8 @@ import { notifyEvent } from '../lib/notifications';
 import type { DbApplication, DbResumeAnalysis, DbAnalysisVersion, DbResumeFile } from '../lib/db';
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  pending: { label: 'Pending', color: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' },
-  reviewed: { label: 'Reviewed', color: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-900/30 dark:text-neutral-300' },
+  pending: { label: 'Pending', color: 'bg-surface-alt text-secondary' },
+  reviewed: { label: 'Reviewed', color: 'bg-surface-alt text-secondary' },
   shortlisted: { label: 'Shortlisted', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' },
   rejected: { label: 'Rejected', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' },
   accepted: { label: 'Accepted', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' },
@@ -18,7 +18,7 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
 
 const SCREENING_LABELS: Record<string, { label: string; color: string }> = {
   pending: { label: 'Not screened', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' },
-  processing: { label: 'Screening...', color: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-900/30 dark:text-neutral-300' },
+  processing: { label: 'Screening...', color: 'bg-surface-alt text-secondary' },
   failed: { label: 'Screening failed', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' },
 };
 
@@ -130,7 +130,7 @@ export default function AdminApplications() {
             className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${
               filter === s.key
                 ? 'bg-accent text-white'
-                : 'bg-gray-100 dark:bg-gray-800 text-secondary hover:bg-gray-200 dark:hover:bg-gray-700'
+                : 'bg-surface-alt text-secondary hover:bg-line/40'
             }`}
           >
             {s.label} ({countByStatus(s.key)})
@@ -146,9 +146,9 @@ export default function AdminApplications() {
               <div className="w-5 h-5 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : filtered.length === 0 ? (
-            <div className="text-center py-12 text-sm text-gray-400 dark:text-gray-500">No applications found.</div>
+            <div className="text-center py-12 text-sm text-secondary">No applications found.</div>
           ) : (
-            <div className="divide-y divide-gray-100 dark:divide-gray-700 max-h-[70vh] overflow-y-auto">
+            <div className="divide-y divide-line max-h-[70vh] overflow-y-auto">
               {filtered.map(app => {
                 const si = STATUS_LABELS[app.status];
                 const sc = app.screeningStatus && app.screeningStatus !== 'analyzed'
@@ -158,8 +158,8 @@ export default function AdminApplications() {
                   <button
                     key={app.id}
                     onClick={() => openDetail(app.id)}
-                    className={`w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${
-                      selectedId === app.id ? 'bg-neutral-50 dark:bg-neutral-900/20' : ''
+                    className={`w-full text-left px-4 py-3 hover:bg-surface-alt/50 transition-colors ${
+                      selectedId === app.id ? 'bg-surface-alt' : ''
                     }`}
                   >
                     <p className="text-sm font-medium text-primary truncate">{app.name}</p>
@@ -167,7 +167,7 @@ export default function AdminApplications() {
                     <div className="flex items-center gap-1.5 flex-wrap mt-1.5">
                       <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${si.color}`}>{si.label}</span>
                       {sc && <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${sc.color}`}>{sc.label}</span>}
-                      <span className="text-[11px] text-gray-400 dark:text-gray-500 ml-auto">{new Date(app.appliedAt).toLocaleDateString()}</span>
+                      <span className="text-[11px] text-secondary ml-auto">{new Date(app.appliedAt).toLocaleDateString()}</span>
                     </div>
                   </button>
                 );
@@ -180,7 +180,7 @@ export default function AdminApplications() {
         <div className="lg:col-span-2">
           {!detail ? (
             <div className="bg-surface border border-line rounded-xl p-8 text-center">
-              <p className="text-sm text-gray-400 dark:text-gray-500">Select an application to review.</p>
+              <p className="text-sm text-secondary">Select an application to review.</p>
             </div>
           ) : (
             <div className="bg-surface border border-line rounded-xl p-6 space-y-6">
@@ -235,14 +235,14 @@ export default function AdminApplications() {
               {detail.whyJoin && (
                 <div>
                   <p className="text-xs text-secondary mb-1">Why they want to join</p>
-                  <p className="text-sm text-gray-700 dark:text-gray-300 bg-surface-alt rounded-lg p-3">{detail.whyJoin}</p>
+                  <p className="text-sm text-primary bg-surface-alt rounded-lg p-3">{detail.whyJoin}</p>
                 </div>
               )}
 
               {/* Resume + AI Analysis */}
               <div className="border-t border-line pt-4 space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-primary">Resume & AI Screening</h3>
+                  <h3 className="text-[11px] font-semibold uppercase tracking-wider text-secondary">Resume & AI Screening</h3>
                   <button
                     onClick={handleTriggerAnalysis}
                     disabled={analyzing}
@@ -280,7 +280,7 @@ export default function AdminApplications() {
                 )}
 
                 {analysis === undefined && (
-                  <p className="text-sm text-gray-400 dark:text-gray-500">Loading analysis...</p>
+                  <p className="text-sm text-secondary">Loading analysis...</p>
                 )}
 
                 {analysis === null && detail.screeningStatus === 'failed' && (
@@ -288,7 +288,7 @@ export default function AdminApplications() {
                 )}
 
                 {analysis === null && detail.screeningStatus !== 'failed' && resumeFiles.length > 0 && (
-                  <p className="text-sm text-gray-400 dark:text-gray-500">Not yet analyzed. Click "Analyze" to run AI screening.</p>
+                  <p className="text-sm text-secondary">Not yet analyzed. Click "Analyze" to run AI screening.</p>
                 )}
 
                 {analysis && (
@@ -301,7 +301,7 @@ export default function AdminApplications() {
                           {analysis.overallScore}/100
                         </span>
                       </div>
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                      <div className="w-full bg-surface-alt rounded-full h-2">
                         <div className={`h-2 rounded-full transition-all ${
                           (analysis.overallScore || 0) >= 70 ? 'bg-green-500' : (analysis.overallScore || 0) >= 50 ? 'bg-yellow-500' : 'bg-red-500'
                         }`} style={{ width: `${analysis.overallScore || 0}%` }} />
@@ -312,8 +312,8 @@ export default function AdminApplications() {
                     <div className="flex items-center gap-3 flex-wrap">
                       <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                         analysis.recommendation === 'strongly_recommend' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                        analysis.recommendation === 'recommend' ? 'bg-neutral-100 text-neutral-700 dark:bg-neutral-900/30 dark:text-neutral-300' :
-                        analysis.recommendation === 'neutral' ? 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' :
+                        analysis.recommendation === 'recommend' ? 'bg-surface-alt text-secondary' :
+                        analysis.recommendation === 'neutral' ? 'bg-surface-alt text-secondary' :
                         'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
                       }`}>
                         {analysis.recommendation?.replace('_', ' ')}
@@ -326,7 +326,7 @@ export default function AdminApplications() {
                     {analysis.topReasons && analysis.topReasons.length > 0 && (
                       <div>
                         <p className="text-xs font-medium text-secondary mb-1.5">Top Reasons</p>
-                        <ol className="list-decimal list-inside text-sm text-gray-700 dark:text-gray-300 space-y-0.5">
+                        <ol className="list-decimal list-inside text-sm text-primary space-y-0.5">
                           {analysis.topReasons.map((r, i) => <li key={i}>{r}</li>)}
                         </ol>
                       </div>
@@ -334,7 +334,7 @@ export default function AdminApplications() {
 
                     {/* Detailed Scores */}
                     <details className="text-sm">
-                      <summary className="cursor-pointer text-xs font-medium text-secondary hover:text-gray-700 dark:hover:text-gray-200">Detailed Scores</summary>
+                      <summary className="cursor-pointer text-xs font-medium text-secondary hover:text-primary">Detailed Scores</summary>
                       <div className="mt-2 grid grid-cols-2 gap-2">
                         {[
                           { label: 'Technical', value: analysis.technicalScore },
@@ -350,7 +350,7 @@ export default function AdminApplications() {
                         ].map(s => (
                           <div key={s.label} className="flex items-center justify-between px-3 py-1.5 bg-surface-alt rounded-lg">
                             <span className="text-xs text-secondary">{s.label}</span>
-                            <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{s.value ?? '-'}</span>
+                            <span className="text-xs font-medium text-primary">{s.value ?? '-'}</span>
                           </div>
                         ))}
                       </div>
@@ -391,11 +391,11 @@ export default function AdminApplications() {
                     {/* Version History */}
                     {versions.length > 1 && (
                       <details className="text-sm">
-                        <summary className="cursor-pointer text-xs font-medium text-secondary hover:text-gray-700 dark:hover:text-gray-200">Analysis History ({versions.length} versions)</summary>
+                        <summary className="cursor-pointer text-xs font-medium text-secondary hover:text-primary">Analysis History ({versions.length} versions)</summary>
                         <div className="mt-2 space-y-2">
                           {versions.map(v => (
                             <div key={v.id} className="px-3 py-2 bg-surface-alt rounded-lg text-xs text-secondary">
-                              <span className="font-medium text-gray-700 dark:text-gray-300">v{v.versionNumber}</span>
+                              <span className="font-medium text-primary">v{v.versionNumber}</span>
                               {' '}— {v.triggerReason} — {new Date(v.createdAt).toLocaleDateString()}
                               {v.scores && ` — Score: ${v.scores.overall || '-'}`}
                             </div>
