@@ -13,6 +13,12 @@ export interface LessonConfig {
   title: string;
   summary?: string;
   contentType: LessonContentType;
+  // The lesson body, written in a small markdown-lite subset (##/### headings,
+  // paragraphs, -/* bullet lists, ```fenced code blocks```, `inline code`,
+  // **bold**) -- rendered by src/training/components/LessonContent.tsx.
+  // Optional so tracks without real content yet still show the existing
+  // "content will render here" placeholder.
+  content?: string;
   estimatedMinutes?: number;
   order: number;
 }
