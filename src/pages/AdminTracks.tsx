@@ -1,6 +1,10 @@
-import { useState, useEffect } from 'react';
-import { getTrainingTracks, createTrainingTrack, deleteTrainingTrack, OPPORTUNITY_FORTES } from '../lib/db';
-import type { DbTrainingTrack, OpportunityForte } from '../lib/db';
+import { useState, useEffect, useCallback } from 'react';
+import {
+  getTrainingTracks, createTrainingTrack, deleteTrainingTrack, OPPORTUNITY_FORTES,
+  getTrainingModules, createTrainingModule, deleteTrainingModule,
+} from '../lib/db';
+import type { DbTrainingTrack, OpportunityForte, DbTrainingModule } from '../lib/db';
+import { Plus, Trash2 } from '../components/Icons';
 
 export default function AdminTracks() {
   const [tracks, setTracks] = useState<DbTrainingTrack[]>([]);
@@ -9,6 +13,13 @@ export default function AdminTracks() {
   const [description, setDescription] = useState('');
   const [fortes, setFortes] = useState<OpportunityForte[]>([]);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const [selectedTrackId, setSelectedTrackId] = useState<string | null>(null);
+  const [modules, setModules] = useState<DbTrainingModule[]>([]);
+  const [modulesLoading, setModulesLoading] = useState(false);
+  const [moduleTitle, setModuleTitle] = useState('');
+  const [moduleDescription, setModuleDescription] = useState('');
+  const [moduleMinutes, setModuleMinutes] = useState('');
 
   async function refresh() {
     setLoading(true);
@@ -20,6 +31,19 @@ export default function AdminTracks() {
   }
 
   useEffect(() => { refresh(); }, []);
+
+  const refreshModules = useCallback(async (trackId: string) => {
+    setModulesLoading(true);
+    try {
+      setModules(await getTrainingModules(trackId));
+    } catch { /* ignore */ } finally {
+      setModulesLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedTrackId) refreshModules(selectedTrackId);
+  }, [selectedTrackId, refreshModules]);
 
   function toggleForte(forte: OpportunityForte) {
     setFortes(prev => prev.includes(forte) ? prev.filter(f => f !== forte) : [...prev, forte]);
@@ -44,20 +68,51 @@ export default function AdminTracks() {
     try {
       await deleteTrainingTrack(track.id);
       setMessage({ type: 'success', text: `Removed "${track.name}"` });
+      if (selectedTrackId === track.id) setSelectedTrackId(null);
       await refresh();
     } catch (err) {
       setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Failed to remove track.' });
     }
   }
 
+  async function handleCreateModule(e: React.FormEvent) {
+    e.preventDefault();
+    if (!selectedTrackId || !moduleTitle.trim()) return;
+    try {
+      await createTrainingModule({
+        trackId: selectedTrackId,
+        title: moduleTitle.trim(),
+        description: moduleDescription.trim() || undefined,
+        sortOrder: modules.length,
+        estimatedMinutes: moduleMinutes.trim() ? Number(moduleMinutes.trim()) : undefined,
+      });
+      setModuleTitle('');
+      setModuleDescription('');
+      setModuleMinutes('');
+      await refreshModules(selectedTrackId);
+    } catch (err) {
+      setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Failed to add module.' });
+    }
+  }
+
+  async function handleDeleteModule(m: DbTrainingModule) {
+    try {
+      await deleteTrainingModule(m.id);
+      if (selectedTrackId) await refreshModules(selectedTrackId);
+    } catch (err) {
+      setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Failed to remove module.' });
+    }
+  }
+
   const inputClass = 'w-full px-3.5 py-2.5 rounded-lg border border-line bg-surface text-sm text-primary focus:outline-none focus:ring-2 focus:ring-accent transition-colors';
+  const selectedTrack = tracks.find(t => t.id === selectedTrackId) ?? null;
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-primary">Training Tracks</h1>
         <p className="text-sm text-secondary mt-1">
-          The catalog interns get assigned to on conversion. Curriculum content isn't built yet — this is the structure it slots into.
+          The catalog interns get assigned to on conversion. Select a track below to add its modules.
         </p>
       </div>
 
@@ -124,8 +179,16 @@ export default function AdminTracks() {
           ) : (
             <div className="divide-y divide-gray-100 dark:divide-gray-700">
               {tracks.map(t => (
-                <div key={t.id} className="flex items-start justify-between gap-3 px-4 py-3">
-                  <div className="min-w-0">
+                <div
+                  key={t.id}
+                  className={`w-full flex items-start justify-between gap-3 px-4 py-3 transition-colors ${
+                    t.id === selectedTrackId ? 'bg-surface-alt' : 'hover:bg-surface-alt'
+                  }`}
+                >
+                  <button
+                    onClick={() => setSelectedTrackId(t.id === selectedTrackId ? null : t.id)}
+                    className="min-w-0 flex-1 text-left"
+                  >
                     <p className="text-sm font-medium text-primary">{t.name}</p>
                     {t.description && <p className="text-xs text-secondary mt-0.5">{t.description}</p>}
                     {t.fortes.length > 0 && (
@@ -135,7 +198,7 @@ export default function AdminTracks() {
                         ))}
                       </div>
                     )}
-                  </div>
+                  </button>
                   <button
                     onClick={() => handleDelete(t)}
                     className="text-xs font-medium text-secondary hover:text-red-500 transition-colors shrink-0"
@@ -148,6 +211,77 @@ export default function AdminTracks() {
           )}
         </div>
       </div>
+
+      {selectedTrack && (
+        <div className="bg-surface border border-line rounded-xl overflow-hidden">
+          <div className="px-4 py-3 border-b border-line bg-surface-alt">
+            <h2 className="text-sm font-semibold text-primary">Modules — {selectedTrack.name}</h2>
+          </div>
+
+          <form onSubmit={handleCreateModule} className="p-4 border-b border-line grid gap-3 sm:grid-cols-[1fr_1fr_100px_auto]">
+            <input
+              required
+              value={moduleTitle}
+              onChange={e => setModuleTitle(e.target.value)}
+              placeholder="Module title"
+              className={inputClass}
+            />
+            <input
+              value={moduleDescription}
+              onChange={e => setModuleDescription(e.target.value)}
+              placeholder="Description (optional)"
+              className={inputClass}
+            />
+            <input
+              type="number"
+              min={0}
+              value={moduleMinutes}
+              onChange={e => setModuleMinutes(e.target.value)}
+              placeholder="Minutes"
+              className={inputClass}
+            />
+            <button
+              type="submit"
+              className="flex items-center justify-center gap-1.5 px-4 py-2.5 bg-accent text-white text-sm font-medium rounded-lg hover:bg-accent-hover transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Add
+            </button>
+          </form>
+
+          {modulesLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="w-5 h-5 border-2 border-neutral-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : modules.length === 0 ? (
+            <div className="text-center py-8 text-sm text-gray-400 dark:text-gray-500">
+              No modules yet — interns assigned to this track will see an empty state until you add one.
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-100 dark:divide-gray-700">
+              {modules.map((m, i) => (
+                <div key={m.id} className="flex items-start justify-between gap-3 px-4 py-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-primary">
+                      <span className="text-secondary tabular-nums mr-1.5">{String(i + 1).padStart(2, '0')}</span>
+                      {m.title}
+                    </p>
+                    {m.description && <p className="text-xs text-secondary mt-0.5">{m.description}</p>}
+                    {m.estimatedMinutes && <p className="text-[11px] text-secondary mt-1">{m.estimatedMinutes} min</p>}
+                  </div>
+                  <button
+                    onClick={() => handleDeleteModule(m)}
+                    className="text-secondary hover:text-red-500 transition-colors shrink-0 p-1"
+                    title="Remove module"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
