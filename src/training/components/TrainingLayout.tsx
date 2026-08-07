@@ -3,7 +3,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { getUserSettings, upsertUserSettings } from '../../lib/db';
 import Logo from '../../components/Logo';
-import { HelpCircle, LogOut, Moon, Sun } from '../../components/Icons';
+import { ChevronDown, HelpCircle, LogOut, Moon, Sun } from '../../components/Icons';
 
 const NAV_ITEMS = [
   { to: '/training', label: 'Dashboard', end: true },
@@ -80,8 +80,12 @@ export default function TrainingLayout() {
             >
               {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
-            <span className="w-7 h-7 rounded-full bg-surface-alt flex items-center justify-center text-xs font-bold text-primary shrink-0" title={user?.name}>
-              {user?.name?.charAt(0).toUpperCase() ?? '?'}
+            <span className="flex items-center gap-1.5 pl-1 pr-1.5 py-1 rounded-full hover:bg-surface-alt transition-colors">
+              <span className="w-7 h-7 rounded-full bg-surface-alt flex items-center justify-center text-xs font-bold text-primary shrink-0">
+                {user?.name?.charAt(0).toUpperCase() ?? '?'}
+              </span>
+              <span className="text-sm font-medium text-primary hidden md:inline truncate max-w-[140px]">{user?.name}</span>
+              <ChevronDown className="w-3.5 h-3.5 text-secondary hidden md:inline" />
             </span>
             <button
               onClick={signOut}

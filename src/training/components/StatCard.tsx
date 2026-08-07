@@ -1,8 +1,12 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
-export default function StatCard({ icon, label, value }: { icon: ReactNode; label: string; value: ReactNode }) {
+export default function StatCard({ icon, label, value, delay }: { icon: ReactNode; label: string; value: ReactNode; delay?: number }) {
+  const style: CSSProperties | undefined = delay ? { animationDelay: `${delay}s` } : undefined;
   return (
-    <div className="bg-surface border border-line rounded-xl p-4 flex items-center gap-3">
+    <div
+      style={style}
+      className="bg-surface border border-line rounded-xl p-4 flex items-center gap-3 animate-[slideUp_0.4s_ease-out_both]"
+    >
       <div className="w-9 h-9 rounded-full bg-surface-alt flex items-center justify-center text-secondary shrink-0">
         {icon}
       </div>
