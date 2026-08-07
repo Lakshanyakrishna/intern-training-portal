@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { getUserSettings, upsertUserSettings } from '../lib/db';
 import { roleHomePath } from '../utils/roleHome';
@@ -16,9 +16,6 @@ export default function Layout() {
     }
     return false;
   });
-  const location = useLocation();
-  const isModuleRoute = location.pathname.startsWith('/module/');
-
   useEffect(() => {
     if (!user) return;
     getUserSettings(user.id).then(settings => {
@@ -38,8 +35,8 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-background text-primary">
-      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} compact={isModuleRoute} />
-      <div className={`transition-all duration-300 ease-in-out ${isModuleRoute ? 'lg:ml-16' : 'lg:ml-64'}`}>
+      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div className="transition-all duration-300 ease-in-out lg:ml-64">
         <header className="sticky top-0 z-10 bg-surface/80 backdrop-blur border-b border-line">
           <div className="flex items-center justify-between px-4 h-14">
             <button
@@ -77,7 +74,7 @@ export default function Layout() {
             </div>
           </div>
         </header>
-        <main className={`transition-all duration-300 ease-in-out ${isModuleRoute ? 'p-4 md:p-6 lg:p-8 max-w-none' : 'p-4 md:p-6 lg:p-8 max-w-6xl mx-auto'}`}>
+        <main className="transition-all duration-300 ease-in-out p-4 md:p-6 lg:p-8 max-w-6xl mx-auto">
           <Outlet />
         </main>
       </div>
