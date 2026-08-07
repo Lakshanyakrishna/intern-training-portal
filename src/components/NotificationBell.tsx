@@ -25,7 +25,7 @@ function getNotificationLink(n: DbNotification): string {
     case 'application_reviewed': return '/applications';
     case 'mentor_assigned': return '/mentor';
     case 'xp_earned':
-    case 'project_allocated': return '/dashboard';
+    case 'project_allocated': return '/profile';
     case 'certificate_issued': return '/certificates';
     default: return '/notifications';
   }
