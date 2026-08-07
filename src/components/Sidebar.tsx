@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
+  BookOpen,
   Layers,
   Briefcase,
   Flag,
@@ -122,9 +123,10 @@ export default function Sidebar({ open, onClose, compact }: { open: boolean; onC
               <NavItem to="/notifications/settings" label="Notification Settings" onClick={onClose} icon={<BarChart3 />} compact={compact} />
             </>
           ) : (
-            // Interns: no training content exists yet -- real modules
-            // replace this. Profile is the only thing left to link to.
-            <NavItem to="/profile" label="Profile" onClick={onClose} icon={<User />} compact={compact} />
+            <>
+              <NavItem to="/training" label="Training" end onClick={onClose} icon={<BookOpen />} compact={compact} />
+              <NavItem to="/profile" label="Profile" onClick={onClose} icon={<User />} compact={compact} />
+            </>
           )}
         </nav>
 
